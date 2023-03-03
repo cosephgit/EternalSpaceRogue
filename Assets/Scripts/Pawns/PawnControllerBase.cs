@@ -15,12 +15,15 @@ public class PawnControllerBase : MonoBehaviour
 {
     [SerializeField]private float moveSpeed = 8f; // rate at which this pawn moves from space to space (units per second)
     [SerializeField]private int movePoints = 4; // how many moves can this pawn make each round?
+    [SerializeField]protected  int healthMax = 5; // how many points of damage this pawn can take before death
     protected bool moving = false; // is this pawn currently moving between cells?
     protected int movePointsLeft;
+    protected int health;
 
-    void Awake()
+    protected virtual void Awake()
     {
         movePointsLeft = movePoints;
+        health = healthMax;
     }
 
     // this is the main action loop that is called during Update for as long as this pawn is the active pawn
@@ -34,7 +37,7 @@ public class PawnControllerBase : MonoBehaviour
     // returns true if possible, else returns false
     protected bool CanMove(Vector2 target)
     {
-        bool blocked = Physics2D.OverlapCircle(target, 0.2f);
+        bool blocked = Physics2D.OverlapCircle(target, 0.2f, Global.LayerWall());
 
         return !blocked;
     }
@@ -60,5 +63,10 @@ public class PawnControllerBase : MonoBehaviour
 
             if (lastMove) moving = false;
         }
+    }
+
+    public virtual void TakeDamage(int amount)
+    {
+        health -= amount;
     }
 }

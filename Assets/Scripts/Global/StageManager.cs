@@ -36,6 +36,12 @@ public class StageManager : MonoBehaviour
     public StageState state { get; private set; } = StageState.StageInit;
     private List<EnemyPawn> enemyPawns; // enemy pawns are created during StageInit and stored in this list
     [field: SerializeField]public PlayerPawn playerPawn  { get; private set; } // player pawn is placed in the scene in the editor and stored here
+    [SerializeField]private List<TilemapSegment> tilemapPrefabs; // these are used to generate the play area
+    [SerializeField]private TilemapSegment tilemapPrefabEnd; // an endcap that can fit anywhere
+    [SerializeField]private int tilemapSizeMin = 10; // once this many tilemaps are placed avoid tilemaps with lots of branches (2-3 exits)
+    [SerializeField]private int tilemapSizeGood = 15; // start reducing the number of branches once this many tilemaps are placed (1-3 exits)
+    [SerializeField]private int tilemapSizeMax = 20; // always use closed segments when this many tilemaps are placed (1 exit)
+    List<TilemapSegment> tilemapActive = new List<TilemapSegment>(); // a list of all the actual tilemaps in the level
 
     // Awake
     // set up singleton
@@ -52,7 +58,128 @@ public class StageManager : MonoBehaviour
         else instance = this;
 
         // TEMP
-        state = StageState.PlayerActive;
+        state = StageState.StageInit;
+    }
+
+    // removes any tilemaps in the stage
+    void ClearTilemap()
+    {
+        for (int i = tilemapActive.Count - 1; i >= 0; i--)
+        {
+            GameObject destroyThis = tilemapActive[i].gameObject;
+            // TODO destroy all occupants of the tilemap too!!!
+
+            tilemapActive.Remove(tilemapActive[i]);
+            Destroy(destroyThis);
+        }
+        tilemapActive = new List<TilemapSegment>();
+    }
+
+    List<TilemapSegment> SelectTilemapsByExits(List<TilemapSegment> segmentList, int exitMin, int exitMax)
+    {
+        List<TilemapSegment> segmentListCleared = new List<TilemapSegment>();
+
+        for (int i = 0; i < segmentList.Count; i++)
+        {
+            if (segmentList[i].ExitCount() <= exitMax && segmentList[i].ExitCount() >= exitMin)
+            {
+                segmentListCleared.Add(segmentList[i]);
+            }
+        }
+
+        return segmentListCleared;
+    }
+
+    // called at the start of a stage to populate it with tilemap segments
+    void BuildTilemap()
+    {
+        bool complete = false;
+        int whileDump = 0; // paranoid infinite loop protection
+        List<TilemapSegment> tilemapOptions = SelectTilemapsByExits(tilemapPrefabs, 3, 4);
+
+        if (tilemapActive.Count > 0)
+        {
+            ClearTilemap();
+        }
+
+        // place the first tilemap segment at the origin
+        TilemapSegment tilemapHub = Instantiate(tilemapOptions[Random.Range(0, tilemapOptions.Count)], Vector3.zero, Quaternion.identity);
+        tilemapActive.Add(tilemapHub);
+
+        while (complete == false && whileDump < 100)
+        {
+            List<TilemapSegment> tilemapIncomplete = new List<TilemapSegment>();
+            TilemapSegment tilemapBase; // the current tilemap segment which will be used to connect the next segment to
+            Vector3 tilePlaceOffset = new Vector3(); // the offset from the current tilemap segment to place the new tilemap segment on
+
+            // make a list of all the tilemap sections that are not complete (not all exits have been closed)
+            for (int i = 0; i < tilemapActive.Count; i++)
+            {
+                if (!tilemapActive[i].exitsDone)
+                    tilemapIncomplete.Add(tilemapActive[i]);
+            }
+
+            if (tilemapIncomplete.Count > 0)
+            {
+                // a list of all tilemap segments that are acceptable and can connect to the current tilemapBase
+                List<TilemapSegment> tilemapConnected = new List<TilemapSegment>();
+
+                tilemapBase = tilemapIncomplete[Random.Range(0, tilemapIncomplete.Count)]; // this is the base tile which the next tilemap is being placed from
+                tilePlaceOffset = tilemapBase.PickAdjacentDirection();
+
+                for (int i = 0; i < tilemapOptions.Count; i++)
+                {
+                    if (tilemapOptions[i].CanConnect(tilePlaceOffset))
+                    {
+                        tilemapConnected.Add(tilemapOptions[i]);
+                    }
+                }
+
+                if (tilemapConnected.Count == 0)
+                {
+                    tilemapConnected.Add(tilemapPrefabEnd); // for some reason (bug?) there are no acceptable connection tiles, use the generic end cap
+                }
+
+                if (Mathf.Approximately(tilePlaceOffset.magnitude, 0))
+                {
+                    Debug.Log("<color=orange>WARNING</color> tilePlace offset is zero vector!");
+                }
+                else
+                {
+                    Vector3 tilePlacePos = tilemapBase.transform.position + tilePlaceOffset * Global.TILEMAPDIMS;
+                    TilemapSegment tilemapAdded = Instantiate(tilemapConnected[Random.Range(0, tilemapConnected.Count)], tilePlacePos, Quaternion.identity);
+
+                    tilemapActive.Add(tilemapAdded);
+                    tilemapAdded.BuildNavNodes();
+                    if (tilemapAdded.ExitCount() <= 1) tilemapAdded.ExitsDone(); // will always be done when placed
+
+                    if (tilemapActive.Count == tilemapSizeMin)
+                    {
+                        // once at least tilemapSizeMin are placed, reduce the amount of branching
+                        tilemapOptions = SelectTilemapsByExits(tilemapPrefabs, 2, 4);
+                    }
+                    if (tilemapActive.Count == tilemapSizeGood)
+                    {
+                        // once at least tilemapSizeGood are placed, reduce the possible number of branches and start ending branches
+                        tilemapOptions = SelectTilemapsByExits(tilemapPrefabs, 1, 3);
+                    }
+                    if (tilemapActive.Count == tilemapSizeMax)
+                    {
+                        // once at least tilemapSizeMax are placed, start closing off
+                        tilemapOptions = SelectTilemapsByExits(tilemapPrefabs, 0, 1);
+                    }
+                }
+            }
+            else
+            {
+                // all exits are closed
+                complete = true;
+            }
+
+            whileDump++;
+        }
+
+        if (!complete) Debug.Log("<color=red>ERROR</color> Dumped out of tilemap generation in BuildTilemap()");
     }
 
     void Update()
@@ -71,6 +198,8 @@ public class StageManager : MonoBehaviour
                 // level exit
                 // traps and puzzle elements
                 // when complete, transition to PlayerActive
+                BuildTilemap();
+                state = StageState.PlayerActive;
                 break;
             }
             case StageState.PlayerActive:

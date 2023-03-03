@@ -10,6 +10,17 @@ public class PlayerPawn : PawnControllerBase
 {
     [SerializeField]private float moveSensitivty = 0.1f; // how much input is needed to accept a move request
 
+    void Start()
+    {
+        UpdateHealthBar();
+    }
+
+    void UpdateHealthBar()
+    {
+        float healthRatio = (float)health / (float)healthMax;
+        UIManager.instance.healthBar.UpdateHealth(healthRatio);
+    }
+
     public override bool PawnUpdate()
     {
         if (moving) return false; // in the middle of a move, take no inputs
@@ -42,10 +53,17 @@ public class PlayerPawn : PawnControllerBase
             return false;
         }
 
+        TakeDamage(1);
+
         // some sort of valid move input has been received, start moving
         StartCoroutine(MovePosition(transform.position + move));
 
         return false;
     }
 
+    public override void TakeDamage(int amount)
+    {
+        base.TakeDamage(amount);
+        UpdateHealthBar();
+    }
 }
