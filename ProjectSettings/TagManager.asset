@@ -38,6 +38,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Floor
+    uniqueID: 1723128477
+    locked: 0
+  - name: Obstacles
+    uniqueID: 2835587233
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
