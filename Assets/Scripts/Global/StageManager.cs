@@ -38,10 +38,14 @@ public class StageManager : MonoBehaviour
     [field: SerializeField]public PlayerPawn playerPawn  { get; private set; } // player pawn is placed in the scene in the editor and stored here
     [SerializeField]private List<TilemapSegment> tilemapPrefabs; // these are used to generate the play area
     [SerializeField]private TilemapSegment tilemapPrefabEnd; // an endcap that can fit anywhere
+    [SerializeField]private EnemyPawn[] enemyPrefabs; // enemies that may be spawned in a level
+    [SerializeField]private PowerUpBase[] powerupPrefabs; // powerups that may be spawned in a level
     [SerializeField]private int tilemapSizeMin = 10; // once this many tilemaps are placed avoid tilemaps with lots of branches (2-3 exits)
     [SerializeField]private int tilemapSizeGood = 15; // start reducing the number of branches once this many tilemaps are placed (1-3 exits)
     [SerializeField]private int tilemapSizeMax = 20; // always use closed segments when this many tilemaps are placed (1 exit)
     List<TilemapSegment> tilemapActive = new List<TilemapSegment>(); // a list of all the actual tilemaps in the level
+    List<NavNode> spawnPoints = new List<NavNode>();
+    NavNode[] navNodeMap;
 
     // Awake
     // set up singleton
@@ -105,6 +109,7 @@ public class StageManager : MonoBehaviour
         // place the first tilemap segment at the origin
         TilemapSegment tilemapHub = Instantiate(tilemapOptions[Random.Range(0, tilemapOptions.Count)], Vector3.zero, Quaternion.identity);
         tilemapActive.Add(tilemapHub);
+        tilemapHub.BuildNavNodes();
 
         while (complete == false && whileDump < 100)
         {
@@ -182,6 +187,132 @@ public class StageManager : MonoBehaviour
         if (!complete) Debug.Log("<color=red>ERROR</color> Dumped out of tilemap generation in BuildTilemap()");
     }
 
+    // this collects all instantiated navnodes and stores them in an array for pathfinding
+    // it also copies this list into the spawnpoint list (used for placing enemies, loot, etc)
+    void BuildNavmap()
+    {
+        navNodeMap = (NavNode[])Object.FindObjectsOfType(typeof(NavNode));
+        // TODO build pathfindingdata? is this needed?
+        // I think it DOES need connection data, without that pathfinding will take longer and this data will never change so is ok
+        // but the pathing data may be redundant (as enemies will block movement)
+
+        #if UNITY_EDITOR
+        Debug.Log("BuildNavmap found " + navNodeMap.Length + " NavNode objects");
+        #endif
+        // NOTE: this produces some 4000+ NavNodes in a typical stage build
+        // so building full pathfinding data on each stage build is probably NOT viable
+        // but pathfinding should never be needed between nodes more than (say) 20 nodes apart, so the pathfinding cost should be fairly low and will only be called every few seconds
+
+        // set up the spawn points
+        spawnPoints.Clear();
+        spawnPoints.AddRange(navNodeMap);
+    }
+
+    // this randomises through the list of spawn points
+    // spawn points are checked for rejection criteria (e.g. too close to the player or too close to another spawn) and spawn points are removed from the list piecemeal
+    // like this rather than doing it all at once up front
+    Vector3 SelectSpawnPoint()
+    {
+        NavNode spawnPoint;
+        Vector3 result = Vector3.zero;
+
+        if (spawnPoints.Count > 0)
+        {
+            bool needPoint = true;
+            int whileDump = 0;
+
+            while (needPoint && whileDump < 100)
+            {
+                if (spawnPoints.Count > 0)
+                {
+                    Vector3 offset;
+
+                    spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
+
+                    offset = playerPawn.transform.position - spawnPoint.transform.position;
+
+                    spawnPoints.Remove(spawnPoint); // remove this entry from spawn points so nothing else is spawned there
+
+                    if (Mathf.Abs(offset.x) > GameManager.instance.screenCellWidth + 2
+                        || Mathf.Abs(offset.y) > GameManager.instance.screenCellHeight + 2)
+                    {
+                        result = spawnPoint.transform.position;
+                        needPoint  = false;
+                    }
+                    else
+                    {
+                        // reject and try again
+                        whileDump++;
+                    }
+                }
+                else
+                {
+                    Debug.Log("<color=orange>WARNING</color> trying to SelectSpawnPoint with no spawn points");
+                    needPoint = false;
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("<color=orange>WARNING</color> trying to SelectSpawnPoint with no spawn points");
+        }
+
+        return result;
+    }
+
+    void PopulateEnemies()
+    {
+        EnemyPawn enemySpawned;
+        float stageStrength = 100; // the number of strength points of enemies to spawn in the stage
+        float stageStrengthIndividual = 1; // the target strength of each individual enemy
+
+        while (stageStrength > 0)
+        {
+            Vector3 pos = SelectSpawnPoint();
+
+            if (pos.magnitude > 0)
+            {
+                enemySpawned = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)], pos, Quaternion.identity);
+                stageStrength -= enemySpawned.SetStrength(Mathf.Min(stageStrengthIndividual, stageStrength));
+            }
+            else
+            {
+                // else there are no valid spawn points so stop trying to spawn (this SHOULD NOT HAPPEN!)
+                stageStrength = 0;
+            }
+        }
+    }
+
+    void PopulateLoot()
+    {
+        PowerUpBase powerupSpawned;
+        float stagePower = 20; // the number of points of powerups to spawn in the stage
+        float stagePowerIndividual = 1; // the target power of each powerup
+
+        while (stagePower > 0)
+        {
+            Vector3 pos = SelectSpawnPoint();
+
+            if (pos.magnitude > 0)
+            {
+                powerupSpawned = Instantiate(powerupPrefabs[Random.Range(0, powerupPrefabs.Length)], pos, Quaternion.identity);
+                stagePower -= stagePowerIndividual;
+            }
+            else
+            {
+                // else there are no valid spawn points so stop trying to spawn (this SHOULD NOT HAPPEN!)
+                stagePower = 0;
+            }
+        }
+
+        Debug.Log("<color=red>TODO</color> populate loot");
+    }
+
+    void PlaceObjective()
+    {
+        Debug.Log("<color=red>TODO</color> place objective");
+    }
+
     void Update()
     {
         switch (state)
@@ -199,6 +330,12 @@ public class StageManager : MonoBehaviour
                 // traps and puzzle elements
                 // when complete, transition to PlayerActive
                 BuildTilemap();
+                BuildNavmap();
+                PopulateEnemies();
+                PopulateLoot();
+                PlaceObjective();
+
+                playerPawn.RoundPrep();
                 state = StageState.PlayerActive;
                 break;
             }

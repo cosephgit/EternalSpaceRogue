@@ -51,7 +51,7 @@ public class TilemapSegment : MonoBehaviour
                 {
                     // if there IS a collision with floor (i.e. there is floor here) then this is a viable movement spot
                     // TODO possibly add a double-check to make sure there ISNT wall here too later on if there's any reason to doubt it
-                    Instantiate(navnodePrefab, pos, Quaternion.identity);
+                    Instantiate(navnodePrefab, pos, Quaternion.identity, transform);
                 }
             }
         }

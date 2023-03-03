@@ -12,6 +12,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public int screenCellWidth { get; private set; } = 10; // TODO actually calculate these later from the camera?
+    public int screenCellHeight { get; private set; } = 6;
 
     void Awake()
     {

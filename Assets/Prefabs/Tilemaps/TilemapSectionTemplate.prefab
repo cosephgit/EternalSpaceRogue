@@ -1789,6 +1789,7 @@ MonoBehaviour:
   <exitRight>k__BackingField: 1
   <exitBottom>k__BackingField: 1
   <exitLeft>k__BackingField: 1
+  navnodePrefab: {fileID: 5202452686970387697, guid: f45928c7cbce1fa4380958063efb0562, type: 3}
 --- !u!1 &411738420216017372
 GameObject:
   m_ObjectHideFlags: 0

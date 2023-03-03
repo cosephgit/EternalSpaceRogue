@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class EnemyPawn : PawnControllerBase
 {
-    // Start is called before the first frame update
-    void Start()
+    // this is called after an enemy is instantiated
+    // it attempts to calibrate the enemy strength (damage, health, speed, etc) to the provided targetStrength
+    // it returns the ACTUAL strength of the enemy (resulting from e.g. rounding) for the StageManager to adjust the level balance
+    public float SetStrength(float targetStrength)
     {
-        
-    }
+        float actualStrength = targetStrength;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // TODO actual strength calculation and balancing
+
+        return actualStrength;
     }
 }

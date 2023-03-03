@@ -10,6 +10,7 @@ public static class Global
     public const int TILEMAPDIMS = 14; // this is the required x and y dimension for all tilemap segments
     // collision layer index references
     private const string LAYERWALL = "Default";
+    private const string LAYERPAWN = "Pawn";
     private const string LAYERFLOOR = "Floor";
     public static float scalePawnSpeed = 1f; // this can be used to adjust the rate at which pawns move from space to space
 
@@ -29,5 +30,9 @@ public static class Global
     public static LayerMask LayerAll()
     {
         return LayerMask.GetMask(new string[2] { LAYERWALL, LAYERFLOOR });
+    }
+    public static LayerMask LayerObstacle()
+    {
+        return LayerMask.GetMask(new string[2] { LAYERWALL, LAYERPAWN });
     }
 }
