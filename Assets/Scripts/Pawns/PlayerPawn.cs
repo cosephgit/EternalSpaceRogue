@@ -11,11 +11,15 @@ public class PlayerPawn : PawnControllerBase
     [SerializeField]private float moveSensitivity = 0.1f; // how much input is needed to accept a move request
     List<SquareIndicator> indicators;
     bool enteredActionState = false;
+    int experienceLevel = 10;
+    int experience = 0;
+    bool stageComplete = false;
 
     void Start()
     {
         UpdateHealthBar();
         UpdateActionBar();
+        UpdateXPBar();
         enteredActionState = false;
         indicators = new List<SquareIndicator>();
     }
@@ -30,10 +34,16 @@ public class PlayerPawn : PawnControllerBase
         UIManager.instance.actionBar.UpdateHealth(movePoints, movePointsMax);
     }
 
+    void UpdateXPBar()
+    {
+        UIManager.instance.xpBar.UpdateHealth(experience, experienceLevel);
+    }
+
     public override void RoundPrep()
     {
         base.RoundPrep();
         enteredActionState = false;
+        stageComplete = false;
         UpdateActionBar();
         PlaceMoveIndicators();
         UIManager.instance.instructions.ShowInstruction(Instruction.Move);
@@ -245,5 +255,29 @@ public class PlayerPawn : PawnControllerBase
     {
         base.TakeDamage(amount);
         UpdateHealthBar();
+    }
+
+    public void AddXP(int amount)
+    {
+        experience += amount;
+        while (experience >= experienceLevel)
+        {
+            Debug.Log("LEVEL UP!");
+            experience -= experienceLevel;
+        }
+        UpdateXPBar();
+    }
+
+    protected override void Death()
+    {
+        base.Death();
+        Debug.Log("YOU DIED!");
+    }
+
+    public void ObjectiveReached(int xp)
+    {
+        AddXP(xp);
+        stageComplete = true;
+        Debug.Log("STAGE COMPLETE!");
     }
 }

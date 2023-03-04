@@ -28,6 +28,7 @@ public class StageManager : StateMachine
     [SerializeField]public TilemapSegment tilemapPrefabEnd; // an endcap that can fit anywhere
     [SerializeField]public EnemyPawn[] enemyPrefabs; // enemies that may be spawned in a level
     [SerializeField]public PowerUpBase[] powerupPrefabs; // powerups that may be spawned in a level
+    [SerializeField]public ObjectiveZone objectiveZone; // zone markers for objectives
     [SerializeField]public int tilemapSizeMin = 10; // once this many tilemaps are placed avoid tilemaps with lots of branches (2-3 exits)
     [SerializeField]public int tilemapSizeGood = 15; // start reducing the number of branches once this many tilemaps are placed (1-3 exits)
     [SerializeField]public int tilemapSizeMax = 20; // always use closed segments when this many tilemaps are placed (1 exit)
@@ -35,6 +36,7 @@ public class StageManager : StateMachine
     [HideInInspector]public List<TilemapSegment> tilemapActive = new List<TilemapSegment>(); // a list of all the actual tilemaps in the level
     [HideInInspector]public List<NavNode> spawnPoints = new List<NavNode>();
     [HideInInspector]public NavNode[] navNodeMap;
+    [HideInInspector]public List<EnemyPawn> enemySpawns = new List<EnemyPawn>(); // actual list of spawned enemies in the stage
     // FSM states
     [HideInInspector]public StageInit initStage; // initial state, sets up the stage
     [HideInInspector]public StagePlayerActive playerActiveStage;
@@ -76,6 +78,14 @@ public class StageManager : StateMachine
     protected override BaseState GetInitialState()
     {
         return initStage;
+    }
+
+    // this is called by an enemy when it is spawned to have it de-listed and give the player xp
+    // the enemy destroys itself after calling this
+    public void EnemyDead(EnemyPawn enemy, int xpGain)
+    {
+        enemySpawns.Remove(enemy);
+        playerPawn.AddXP(xpGain);
     }
 
     #if UNITY_EDITOR

@@ -112,6 +112,7 @@ public class PawnControllerBase : MonoBehaviour
             PawnControllerBase hitPawn = hit.GetComponent<PawnControllerBase>();
             if (hitPawn)
             {
+                hitPawn.TakeDamage(1);
                 Debug.Log("HIT!");
             }
         }
@@ -126,5 +127,19 @@ public class PawnControllerBase : MonoBehaviour
     public virtual void TakeDamage(int amount)
     {
         health -= amount;
+        if (health <= 0)
+        {
+            Death();
+        }
+    }
+
+    protected virtual void Death()
+    {
+
+    }
+
+    public bool IsAlive()
+    {
+        return (health > 0);
     }
 }

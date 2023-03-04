@@ -13,6 +13,7 @@ public static class Global
     private const string LAYERPAWN = "Pawn";
     private const string LAYERFLOOR = "Floor";
     private const string LAYERNAV = "NavNode";
+    private const string LAYEROBJ = "Objective";
     public static float scalePawnSpeed = 1f; // this can be used to adjust the rate at which pawns move from space to space
 
 
@@ -45,5 +46,9 @@ public static class Global
     public static LayerMask LayerObstacle()
     {
         return LayerMask.GetMask(new string[2] { LAYERWALL, LAYERPAWN });
+    }
+    public static LayerMask LayerObstacleNoActionZones() // returns a layer with all physical obstacles AND all action zones (e.g. the exit zone) blocked too
+    {
+        return LayerMask.GetMask(new string[3] { LAYERWALL, LAYERPAWN, LAYEROBJ });
     }
 }
