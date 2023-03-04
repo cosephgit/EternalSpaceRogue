@@ -633,6 +633,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ActionPoints
       objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604348, guid: ff04c5276df68574fbff56832fbaac57, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1456394568520804036, guid: ff04c5276df68574fbff56832fbaac57, type: 3}
       propertyPath: m_Color.g
       value: 1
@@ -1347,6 +1351,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Experience
       objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604348, guid: ff04c5276df68574fbff56832fbaac57, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1456394568520804036, guid: ff04c5276df68574fbff56832fbaac57, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -1616,6 +1624,10 @@ PrefabInstance:
     - target: {fileID: 1456394568146604348, guid: ff04c5276df68574fbff56832fbaac57, type: 3}
       propertyPath: m_Name
       value: HealthBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604348, guid: ff04c5276df68574fbff56832fbaac57, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1456394568520804037, guid: ff04c5276df68574fbff56832fbaac57, type: 3}
       propertyPath: m_AnchorMax.x

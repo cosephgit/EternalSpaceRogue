@@ -88,6 +88,16 @@ public class StageManager : StateMachine
         playerPawn.AddXP(xpGain);
     }
 
+    // pathfinds from origin to target
+    // range is the total travel distance to the target
+    // returns a Vector3 direction for which move should be made first
+    // range -1 and return Vector3.zero means that no path could be found
+    public Vector3 Pathfind(Vector3 origin, Vector3 target, out int range)
+    {
+        range = -1;
+        return Vector3.zero;
+    }
+
     #if UNITY_EDITOR
     void OnGUI()
     {

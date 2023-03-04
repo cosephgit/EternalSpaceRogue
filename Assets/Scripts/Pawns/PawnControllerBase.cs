@@ -89,12 +89,12 @@ public class PawnControllerBase : MonoBehaviour
     // this is called at the start of an attack for any pawn-specific handling
     protected virtual void PreAttack()
     {
-        
+        moving = true;
     }
     // this is called at the end of an attack for any pawn-specific handling
     protected virtual void PostAttack()
     {
-        
+        moving = false;
     }
 
     // this coroutine manages performing the current attack

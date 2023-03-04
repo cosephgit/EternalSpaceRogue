@@ -28,10 +28,11 @@ public class StageEnemyActive : BaseState
         {
             // check if each enemy is or should be alert and, if so, add them to the active list
             if (_sm.enemySpawns[i].IsAlert(_sm.playerPawn.transform.position))
+            {
                 enemyActive.Add(_sm.enemySpawns[i]);
+                _sm.enemySpawns[i].RoundPrep();
+            }
         }
-
-        Debug.Log("Alert enemies " + enemyActive.Count);
     }
     public override void UpdateLogic()
     {
@@ -43,8 +44,6 @@ public class StageEnemyActive : BaseState
         // sort the list based on their proximity to the player
         // then iterate through the last activating enemies one at a time
         // TODO add idle enemy wandering around behaviour
-
-        Debug.Log("Checking enemy " + enemyCurrent);
 
         if (enemyCurrent >= enemyActive.Count)
         {

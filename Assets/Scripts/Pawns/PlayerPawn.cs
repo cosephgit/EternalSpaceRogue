@@ -115,13 +115,13 @@ public class PlayerPawn : PawnControllerBase
 
     protected override void PreAttack()
     {
+        base.PreAttack();
         FlashAttackIndicators();
-        moving = true;
     }
     protected override void PostAttack()
     {
+        base.PostAttack();
         ClearIndicators();
-        moving = false;
     }
 
     public override bool PawnUpdate()
