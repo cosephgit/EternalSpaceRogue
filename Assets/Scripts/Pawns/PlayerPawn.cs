@@ -13,12 +13,17 @@ public class PlayerPawn : PawnControllerBase
     void Start()
     {
         UpdateHealthBar();
+        UpdateActionBar();
     }
 
     void UpdateHealthBar()
     {
-        float healthRatio = (float)health / (float)healthMax;
-        UIManager.instance.healthBar.UpdateHealth(healthRatio);
+        UIManager.instance.healthBar.UpdateHealth(health, healthMax);
+    }
+
+    void UpdateActionBar()
+    {
+        UIManager.instance.actionBar.UpdateHealth(movePoints, movePointsMax);
     }
 
     public override void RoundPrep()
@@ -26,14 +31,21 @@ public class PlayerPawn : PawnControllerBase
         base.RoundPrep();
     }
 
+    // player chooses to spend their action moving again
+    void ActionRun()
+    {
+        movePoints = movePointsMax;
+        UpdateActionBar();
+    }
+
     public override bool PawnUpdate()
     {
         if (moving) return false; // in the middle of a move, take no inputs
 
-        if (movePointsLeft == 0 && moveActionDone)
+        if (movePoints == 0 && moveActionDone)
             return true;
 
-        if (movePointsLeft > 0)
+        if (movePoints > 0)
         {
             Vector3 move = new Vector3();
 
@@ -60,7 +72,8 @@ public class PlayerPawn : PawnControllerBase
                 return false;
             }
 
-            TakeDamage(1);
+            movePoints--;
+            UpdateActionBar();
 
             // some sort of valid move input has been received, start moving
             StartCoroutine(MovePosition(transform.position + move));
@@ -68,6 +81,8 @@ public class PlayerPawn : PawnControllerBase
         else
         {
             // handle the player action
+            ActionRun();
+            moveActionDone = true;
         }
 
 
