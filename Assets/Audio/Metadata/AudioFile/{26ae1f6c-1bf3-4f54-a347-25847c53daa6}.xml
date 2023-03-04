@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{26ae1f6c-1bf3-4f54-a347-25847c53daa6}">
+		<property name="assetPath">
+			<value>Lofi vibes.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>203.57224489795919</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f95c799a-5fc6-498b-aad8-ce38ee283c6a}</destination>
+		</relationship>
+	</object>
+</objects>
