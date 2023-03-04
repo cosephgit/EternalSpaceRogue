@@ -14,16 +14,16 @@ using UnityEngine;
 public class PawnControllerBase : MonoBehaviour
 {
     [SerializeField]private float moveSpeed = 8f; // rate at which this pawn moves from space to space (units per second)
-    [SerializeField]private int movePoints = 4; // how many moves can this pawn make each round?
+    [SerializeField]protected int movePointsMax = 4; // how many moves can this pawn make each round?
     [SerializeField]protected  int healthMax = 5; // how many points of damage this pawn can take before death
     protected bool moving = false; // is this pawn currently moving between cells?
-    protected int movePointsLeft;
+    protected int movePoints;
     protected bool moveActionDone;
     protected int health;
 
     protected virtual void Awake()
     {
-        movePointsLeft = movePoints;
+        movePoints = movePointsMax;
         moveActionDone = false;
         health = healthMax;
     }
@@ -33,7 +33,7 @@ public class PawnControllerBase : MonoBehaviour
     // prepare the "action" (for enemies this means "attack", for the player there are options)
     public virtual void RoundPrep()
     {
-        movePointsLeft = movePoints;
+        movePoints = movePointsMax;
         moveActionDone = false;
     }
 

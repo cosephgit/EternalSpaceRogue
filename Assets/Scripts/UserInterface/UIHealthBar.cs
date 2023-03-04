@@ -2,18 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIHealthBar : MonoBehaviour
 {
     [SerializeField]Slider healthSlider;
-    float healthValue;
+    [SerializeField]TextMeshProUGUI healthCount;
+    float healthValue = -1;
 
-    public void UpdateHealth(float health)
+    // takes the maximum and current values of health and updates the bar and counter
+    public void UpdateHealth(float health, float healthMax)
     {
-        if (health != healthValue)
+        float healthNew = health / healthMax;
+        if (healthNew != healthValue)
         {
-            healthValue = health;
-            healthSlider.value = health;
+            float healthView = Mathf.Ceil(health * 10) * 0.1f; // round to 1 d.p
+            healthValue = healthNew;
+            healthSlider.value = healthNew;
+            healthCount.text = "" + healthView;
         }
     }
 }

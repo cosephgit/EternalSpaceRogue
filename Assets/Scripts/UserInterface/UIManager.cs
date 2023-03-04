@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
     public UIHealthBar healthBar;
+    public UIHealthBar actionBar;
 
     void Awake()
     {
