@@ -12,6 +12,7 @@ public static class Global
     private const string LAYERWALL = "Default";
     private const string LAYERPAWN = "Pawn";
     private const string LAYERFLOOR = "Floor";
+    private const string LAYERNAV = "NavNode";
     public static float scalePawnSpeed = 1f; // this can be used to adjust the rate at which pawns move from space to space
 
 
@@ -26,8 +27,18 @@ public static class Global
     {
         return LayerMask.GetMask(LAYERWALL);
     }
+    // used to check for barriers in movement
+    public static LayerMask LayerNav()
+    {
+        return LayerMask.GetMask(LAYERNAV);
+    }
+    // used to check for barriers in movement
+    public static LayerMask LayerPawn()
+    {
+        return LayerMask.GetMask(LAYERPAWN);
+    }
     // used to check for anything at all (e.g. the presence of a tilemap)
-    public static LayerMask LayerAll()
+    public static LayerMask LayerTerrain()
     {
         return LayerMask.GetMask(new string[2] { LAYERWALL, LAYERFLOOR });
     }

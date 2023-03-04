@@ -70,25 +70,25 @@ public class TilemapSegment : MonoBehaviour
 
         if (exitTop)
         {
-            if (!Physics2D.OverlapCircle(transform.position + Vector3.up * Global.TILEMAPDIMS, 1f, Global.LayerAll()))
+            if (!Physics2D.OverlapCircle(transform.position + Vector3.up * Global.TILEMAPDIMS, 1f, Global.LayerTerrain()))
                 directionOptions.Add(Vector3.up);
             //else Debug.Log("tilemap " + gameObject + " found obstacle at position " + (transform.position + Vector3.up * Global.TILEMAPDIMS));
         }
         if (exitRight)
         {
-            if (!Physics2D.OverlapCircle(transform.position + Vector3.right * Global.TILEMAPDIMS, 1f, Global.LayerAll()))
+            if (!Physics2D.OverlapCircle(transform.position + Vector3.right * Global.TILEMAPDIMS, 1f, Global.LayerTerrain()))
                 directionOptions.Add(Vector3.right);
             //else Debug.Log("tilemap " + gameObject + " found obstacle at position " + (transform.position + Vector3.up * Global.TILEMAPDIMS));
         }
         if (exitBottom)
         {
-            if (!Physics2D.OverlapCircle(transform.position + Vector3.down * Global.TILEMAPDIMS, 1f, Global.LayerAll()))
+            if (!Physics2D.OverlapCircle(transform.position + Vector3.down * Global.TILEMAPDIMS, 1f, Global.LayerTerrain()))
                 directionOptions.Add(Vector3.down);
             //else Debug.Log("tilemap " + gameObject + " found obstacle at position " + (transform.position + Vector3.up * Global.TILEMAPDIMS));
         }
         if (exitLeft)
         {
-            if (!Physics2D.OverlapCircle(transform.position + Vector3.left * Global.TILEMAPDIMS, 1f, Global.LayerAll()))
+            if (!Physics2D.OverlapCircle(transform.position + Vector3.left * Global.TILEMAPDIMS, 1f, Global.LayerTerrain()))
                 directionOptions.Add(Vector3.left);
             //else Debug.Log("tilemap " + gameObject + " found obstacle at position " + (transform.position + Vector3.up * Global.TILEMAPDIMS));
         }

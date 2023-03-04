@@ -20,6 +20,8 @@ public class PawnControllerBase : MonoBehaviour
     protected int movePoints;
     protected bool moveActionDone;
     protected int health;
+    protected Vector3 attackFacing; // always a unit in either axis
+    protected int attackRange; // the currently selected attack range
 
     protected virtual void Awake()
     {
@@ -53,10 +55,16 @@ public class PawnControllerBase : MonoBehaviour
         return !blocked;
     }
 
+    // this is for when specific pawns have a thing they should always do after a move
+    protected virtual void PostMove() { }
+    
     // this Coroutine manages moving a pawn from it's old position to a new position
-    protected IEnumerator MovePosition(Vector3 target)
+    protected virtual IEnumerator MovePosition(Vector3 direction)
     {
+        Vector3 target = transform.position + direction;
+
         moving = true;
+        attackFacing = direction;
 
         while (moving)
         {
@@ -74,8 +82,47 @@ public class PawnControllerBase : MonoBehaviour
 
             if (lastMove) moving = false;
         }
+
+        PostMove();
     }
 
+    // this is called at the start of an attack for any pawn-specific handling
+    protected virtual void PreAttack()
+    {
+        
+    }
+    // this is called at the end of an attack for any pawn-specific handling
+    protected virtual void PostAttack()
+    {
+        
+    }
+
+    // this coroutine manages performing the current attack
+    // the attack direction, range and weapon are already stored in the class, this manages the timing and execution of those presets
+    protected virtual IEnumerator Attack()
+    {
+        PreAttack();
+        // TODO swing sound and animation
+        yield return new WaitForSeconds(0.2f);
+        // TODO attack hit and damage inflicting
+        Vector3 attackPoint = transform.position + attackFacing;
+        Collider2D[] attackHits = Physics2D.OverlapCircleAll(attackPoint, 0.1f, Global.LayerPawn());
+        foreach (Collider2D hit in attackHits)
+        {
+            PawnControllerBase hitPawn = hit.GetComponent<PawnControllerBase>();
+            if (hitPawn)
+            {
+                Debug.Log("HIT!");
+            }
+        }
+
+        yield return new WaitForSeconds(0.2f);
+        // TODO return weapon to ready position
+        yield return new WaitForSeconds(0.2f);
+        PostAttack();
+    }
+
+    // reduce health and detect death
     public virtual void TakeDamage(int amount)
     {
         health -= amount;

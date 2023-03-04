@@ -17,7 +17,7 @@ TagManager:
   - 
   - Floor
   - Pawn
-  - 
+  - NavNode
   - 
   - 
   - 
@@ -46,4 +46,7 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: SquareIndicator
+    uniqueID: 1271484659
     locked: 0
