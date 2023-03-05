@@ -13,7 +13,7 @@ using UnityEngine;
 
 public class PawnControllerBase : MonoBehaviour
 {
-    [SerializeField]private float moveSpeed = 8f; // rate at which this pawn moves from space to space (units per second)
+    [SerializeField]protected float moveSpeed = 8f; // rate at which this pawn moves from space to space (units per second)
     [SerializeField]protected int movePointsMax = 4; // how many moves can this pawn make each round?
     [SerializeField]protected  int healthMax = 5; // how many points of damage this pawn can take before death
     protected bool moving = false; // is this pawn currently moving between cells?
@@ -46,18 +46,23 @@ public class PawnControllerBase : MonoBehaviour
         return true; // temp
     }
 
-    // this checks if it is possible for this pawn to move to the target (checks colliders)
+    // this checks if it is possible for this pawn to move in direction dir (checks colliders)
     // returns true if possible, else returns false
-    protected bool CanMove(Vector2 target)
+    protected bool CanMove(Vector3 dir)
     {
-        bool blocked = Physics2D.OverlapCircle(target, 0.2f, Global.LayerObstacle());
+        bool blocked = Physics2D.OverlapCircle(transform.position + dir, 0.2f, Global.LayerObstacle());
 
         return !blocked;
     }
 
     // this is for when specific pawns have a thing they should always do after a move
     protected virtual void PostMove() { }
-    
+
+    protected virtual float MoveSpeedScalar()
+    {
+        return moveSpeed * Global.scalePawnSpeed;
+    }
+
     // this Coroutine manages moving a pawn from it's old position to a new position
     protected virtual IEnumerator MovePosition(Vector3 direction)
     {
@@ -70,7 +75,7 @@ public class PawnControllerBase : MonoBehaviour
         {
             bool lastMove = false;
             Vector3 moveStep = target - transform.position; // the actual movement for this frame
-            float moveDistanceFrame = moveSpeed * Global.scalePawnSpeed * Time.deltaTime; // the maximum movement allowed for this Update frame
+            float moveDistanceFrame = MoveSpeedScalar() * Time.deltaTime; // the maximum movement allowed for this Update frame
 
             if (moveStep.magnitude > moveDistanceFrame)
                 moveStep = moveStep.normalized * moveDistanceFrame;

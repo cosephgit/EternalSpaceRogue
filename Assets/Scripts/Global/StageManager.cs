@@ -90,18 +90,84 @@ public class StageManager : StateMachine
 
     // pathfinds from origin to target
     // range is the total travel distance to the target
-    // returns a Vector3 direction for which move should be made first
-    // range -1 and return Vector3.zero means that no path could be found
-    public Vector3 Pathfind(Vector3 origin, Vector3 target, out int range)
+    // returns the result as a Vector3 list of moves to reach the target IN REVERSE ORDER
+    // an empty list means no path could be found OR the path is too long
+    public List<Vector3> Pathfind(Vector3 origin, Vector3 target)
     {
-        range = -1;
-        return Vector3.zero;
+        Collider2D originNodeCollider = Physics2D.OverlapPoint(origin, Global.LayerNav());
+        NavNode originNode = originNodeCollider.GetComponent<NavNode>();
+        Collider2D targetNodeCollider = Physics2D.OverlapPoint(target, Global.LayerNav());
+        NavNode targetNode = targetNodeCollider.GetComponent<NavNode>();
+        Vector3 offset = target - origin;
+        float fullHDist = offset.magnitude;
+        List<Vector3> result = new List<Vector3>();
+
+        if (fullHDist > Global.PATHFINDMAX)
+        {
+            return result;
+        }
+        else if (originNode && targetNode)
+        {
+            for (int i = 0; i < navNodeMap.Length; i++)
+            {
+                navNodeMap[i].PathClear();
+            }
+            // build the pathfinding data to the target
+            originNode.PathFind(targetNode);
+            result.AddRange(BuildPath(targetNode));
+
+            // so theoretically we have a route to the target created now
+            // it is in reverse order from LAST move to FIRST move
+
+            return result;
+        }
+        else
+        {
+            // something has gone wrong! a pawn is in a position that lacks a navnode
+            Debug.LogError("<color=red>ERROR</color> NavNode not present at pawn or target pawn position");
+        }
+
+        return result;
+    }
+
+    // the START of the returned list will be the LAST move required to reach the target
+    // each entry in the list is an integer indicating a direction required for that move
+    List<Vector3> BuildPath(NavNode target)
+    {
+        List<Vector3> path = new List<Vector3>();
+        List<Vector3> pathSegment = new List<Vector3>();
+        Vector3 testPath;
+        // don't need to add the target square to the list - we just want to get adjacent! 
+        // TODO later on we WILL want to get into the target for objectives/switches/etc but not needed right now
+        if (target.pathPrev)
+        {
+            testPath = target.PathDirFrom(target.pathPrev);
+            if (testPath == Vector3.zero)
+            {
+                Debug.Log("BuildPath failed with invalid testpath");
+                return null;
+            }
+            path.Add(testPath);
+            pathSegment = BuildPath(target.pathPrev);
+            if (pathSegment == null)
+            {
+            }
+            else
+            {
+                path.AddRange(pathSegment);
+            }
+            return path;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     #if UNITY_EDITOR
     void OnGUI()
     {
-        GUILayout.Label($"<color='black'><size=40>State: {currentState.name}</size></color>");
+        GUILayout.Label($"<color='yellow'><size=40>State: {currentState.name}</size></color>");
     }
     #endif
 }

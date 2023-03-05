@@ -139,19 +139,19 @@ public class PlayerPawn : PawnControllerBase
         {
             Vector3 move = new Vector3();
 
-            if (Input.GetAxis("Horizontal") > moveSensitivity && CanMove(transform.position + new Vector3(1f, 0f, 0f)))
+            if (Input.GetAxis("Horizontal") > moveSensitivity && CanMove(Vector3.right))
             {
                 move.x = 1f;
             }
-            else if (Input.GetAxis("Horizontal") < -moveSensitivity && CanMove(transform.position + new Vector3(-1f, 0f, 0f)))
+            else if (Input.GetAxis("Horizontal") < -moveSensitivity && CanMove(Vector3.left))
             {
                 move.x = -1f;
             }
-            else if (Input.GetAxis("Vertical") > moveSensitivity && CanMove(transform.position + new Vector3(0f, 1f, 0f)))
+            else if (Input.GetAxis("Vertical") > moveSensitivity && CanMove(Vector3.up))
             {
                 move.y = 1f;
             }
-            else if (Input.GetAxis("Vertical") < -moveSensitivity && CanMove(transform.position + new Vector3(0f, -1f, 0f)))
+            else if (Input.GetAxis("Vertical") < -moveSensitivity && CanMove(Vector3.down))
             {
                 move.y = -1f;
             }

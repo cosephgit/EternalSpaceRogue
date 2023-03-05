@@ -174,9 +174,6 @@ public class StageInit : BaseState
         }
 
         _sm.navNodeMap = (NavNode[])Object.FindObjectsOfType(typeof(NavNode));
-        // TODO build pathfindingdata? is this needed?
-        // I think it DOES need connection data, without that pathfinding will take longer and this data will never change so is ok
-        // but the pathing data may be redundant (as enemies will block movement)
 
         #if UNITY_EDITOR
         Debug.Log("BuildNavmap found " + _sm.navNodeMap.Length + " NavNode objects");
@@ -184,6 +181,11 @@ public class StageInit : BaseState
         // NOTE: this produces some 4000+ NavNodes in a typical stage build
         // so building full pathfinding data on each stage build is probably NOT viable
         // but pathfinding should never be needed between nodes more than (say) 20 nodes apart, so the pathfinding cost should be fairly low and will only be called every few seconds
+
+        for (int i = 0; i < _sm.navNodeMap.Length; i++)
+        {
+            _sm.navNodeMap[i].CheckConnection(i);
+        }
 
         // set up the spawn points
         _sm.spawnPoints.Clear();
