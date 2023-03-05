@@ -26,7 +26,6 @@ public class NavNode : MonoBehaviour
     int pathGCost = 0;
     int pathHCost = 0;
     int pathFCost = 0;
-    bool dirty = false;
     public NavNode pathPrev { get; private set; }
 
 
@@ -65,31 +64,32 @@ public class NavNode : MonoBehaviour
         }
     }
 
-    public void PathFind(NavNode target, NavNode previous = null)
+    public void PathFind(NavNode target, NavNode previous, bool avoidPawns, int distMax)
     {// initiate pathfinding from this square to the target square
         List<int> path = new List<int>();
 
-        if (upNode) upNode.PathNodeSet(target, this, pathGCost);
-        if (rightNode) rightNode.PathNodeSet(target, this, pathGCost);
-        if (downNode) downNode.PathNodeSet(target, this, pathGCost);
-        if (leftNode) leftNode.PathNodeSet(target, this, pathGCost);
+        // initialise all uninitialised adjacent nodes
+        if (upNode) upNode.PathNodeSet(target, this, pathGCost, avoidPawns, distMax);
+        if (rightNode) rightNode.PathNodeSet(target, this, pathGCost, avoidPawns, distMax);
+        if (downNode) downNode.PathNodeSet(target, this, pathGCost, avoidPawns, distMax);
+        if (leftNode) leftNode.PathNodeSet(target, this, pathGCost, avoidPawns, distMax);
 
         if (previous == null)
         {// this is the first node in the search
             pathStatus = 3;
-            dirty = true;
         }
         else
         {
             pathStatus = 2;
-            dirty = true;
         }
+
+        StageManager.instance.navNodeDirty.Add(this);
 
         NavNode optimalNode = null;
         int optimalDist = 1000000;
         int optimalHDist = 1000000;
         foreach(NavNode node in StageManager.instance.navNodeMap)
-        {// initialise pathfinding distance in all adjacent squares that are not already initialised
+        {
             if (node.pathStatus == 1)
             {
                 if (node.pathFCost < optimalDist)
@@ -100,8 +100,10 @@ public class NavNode : MonoBehaviour
                 }
                 else if (node.pathFCost == optimalDist)
                 {
-                    if (node.pathHCost < optimalHDist)
-                    {// tie breaker - pick the node that is the shortest direct distance to the target to prioritise paths that will typically reach the target sooner
+                    if (node.pathHCost < optimalHDist || Global.RandomBool())
+                    {
+                        // tie breaker - pick the node that is the shortest direct distance to the target to prioritise paths that will typically reach the target sooner
+                        // or just randomly split if they're identical to create some enemy pathing variation
                         optimalNode = node;
                         optimalDist = node.pathFCost;
                         optimalHDist = node.pathHCost;
@@ -118,51 +120,60 @@ public class NavNode : MonoBehaviour
             }
             else
             {
-                optimalNode.PathFind(target, this);
+                optimalNode.PathFind(target, this, avoidPawns, distMax);
             }
         }
         else
         {// there are no more nodes with pathStatus 1
-            Debug.Log("Pathfinding could not find path");
+            Debug.Log("<color=blue>INFO</color> Pathfinding could not find path");
             // return a null path list
         }
     }
     // the pathing has now been created and is stored in the nodes, so the path does not need to be identified here
 
     // sets the pathfinding data to this node
-    public void PathNodeSet(NavNode target, NavNode previous, int currentG)
+    public void PathNodeSet(NavNode target, NavNode previous, int currentG, bool avoidPawns, int distMax)
     {// set up f value for this node
         if (pathStatus == 0)
         {// only set it up if it's not been set up already
-            pathStatus = 1; // initialise this square
+            StageManager.instance.navNodeDirty.Add(this);
+            if (avoidPawns && target != this)
+            {
+                // this node may have a blocking occupant
+                Collider2D blocker = Physics2D.OverlapPoint(transform.position, Global.LayerPawn());
+                if (blocker)
+                {
+                    pathStatus = 2; // blocked, don't consider this node for pathfinding
+                    return;
+                }
+            }
             pathGCost = currentG + 1; // currently always 1 unit but terrain penalties may change this later
             pathHCost = PathHDist(target);
             pathFCost = pathGCost + pathHCost;
+            if (pathFCost > distMax)
+            {
+                pathStatus = 2; // too far, don't consider this node for pathfinding
+                return;
+            }
+            pathStatus = 1; // this square has been initialised
             pathPrev = previous;
-            dirty = true;
         }
     }
     // clears all pathfinding data from this node
     // this needs to be done before all pathfinding checks
     public void PathClear()
     {
-        if (dirty)
-        {
-            pathStatus = 0;
-            pathGCost = 0;
-            pathHCost = 0;
-            pathFCost = 0;
-            pathPrev = null;
-            dirty = false;
-        }
+        pathStatus = 0;
+        pathGCost = 0;
+        pathHCost = 0;
+        pathFCost = 0;
+        pathPrev = null;
     }
     // calculates the H dist from this node to the target point
     // only calculates with orthogonal movement, no diagonals (since there is no diagonal movement allowed)
     public int PathHDist(NavNode target)
     {
-        Vector3 offset = target.transform.position - transform.position;
-
-        return Mathf.CeilToInt(Mathf.Abs(offset.x) + Mathf.Abs(offset.y));
+        return Global.OrthogonalDist(target.transform.position, transform.position);
     }
     // returns the direction (as an integer) to travel from the origin to the current square
     public Vector3 PathDirFrom(NavNode origin)
@@ -172,7 +183,7 @@ public class NavNode : MonoBehaviour
         if (origin.downNode == this) return Vector3.down;
         if (origin.leftNode == this) return Vector3.left;
 
-        Debug.Log("Invalid SquareDirection");
+        Debug.Log("<color=orange>WARNING</color> Invalid SquareDirection");
         return Vector3.zero;
     }
 }

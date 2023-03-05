@@ -106,5 +106,5 @@ MonoBehaviour:
   attackColor: {r: 1, g: 0, b: 0, a: 0.1882353}
   attackColorFade: {r: 0.5019608, g: 0, b: 0, a: 0.1254902}
   attackCycleRate: 6
-  attackColorFlash: {r: 1, g: 0, b: 0, a: 0.5019608}
+  attackColorFlash: {r: 1, g: 0, b: 0, a: 0.3764706}
   indicator: {fileID: 9048642854227161778}

@@ -58,8 +58,13 @@ public static class Global
     {
         return (Mathf.Approximately(a.x, b.x) && Mathf.Approximately(a.y, b.y));
     }
+    public static int OrthogonalDist(Vector3 a, Vector3 b)
+    {
+        Vector3 offset = a - b;
 
-    public static string VectoryArrayToString(List<Vector3> route)
+        return Mathf.CeilToInt(Mathf.Abs(offset.x) + Mathf.Abs(offset.y));
+    }
+    public static string VectorListToString(List<Vector3> route)
     {
         string output = "";
 
@@ -69,5 +74,9 @@ public static class Global
         }
 
         return output;
+    }
+    public static bool RandomBool()
+    {
+        return (Random.Range(0, 2) == 0);
     }
 }

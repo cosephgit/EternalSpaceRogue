@@ -34,7 +34,7 @@ public class EnemyPawn : PawnControllerBase
         // pathfind to target
         route = StageManager.instance.Pathfind(transform.position, StageManager.instance.playerPawn.transform.position);
 
-        Debug.Log(Global.VectoryArrayToString(route));
+        //Debug.Log(Global.VectorListToString(route));
 
         if (route.Count > Global.PATHFINDMAX)
         {
@@ -113,20 +113,25 @@ public class EnemyPawn : PawnControllerBase
     }
 
     // this checks if this enemy is already active OR if not, if they can see the player pos (passed in for convenience) and so can become active
-    public bool IsAlert(Vector3 playerPos)
+    public bool CheckAlert(Vector3 playerPos)
     {
         if (!IsAlive()) return false;
         if (alert) return true;
 
-        if (!alert)
+        if (CanSeePlayer(playerPos))
         {
-            if (CanSeePlayer(playerPos))
-            {
-                // TODO play some sort of alert exclamation mark event?
-                alert = true;
-            }
+            // TODO play some sort of alert exclamation mark event?
+            alert = true;
         }
 
         return alert;
+    }
+    // checks if an enemy is already active, returns false if dead or already alert, returns true if it wasn't alert (and it now is)
+    public bool MakeAlert()
+    {
+        if (!IsAlive()) return false;
+        if (alert) return false;
+        alert = true;
+        return true;
     }
 }

@@ -47,7 +47,7 @@ public class WeaponBase : MonoBehaviour
             if (ammoMax < 1) ammoMax = -1;
             if (hitOffsets.Length != hitDamage.Length)
             {
-                Debug.Log("Weapon " + gameObject + " set up with invalid damage and area arrays");
+                Debug.Log("<color=orange>WARNING</color> Weapon " + gameObject + " set up with invalid damage and area arrays");
                 hitPointCount = Mathf.Min(hitOffsets.Length, hitDamage.Length);
             }
             else hitPointCount = hitOffsets.Length;
@@ -142,7 +142,7 @@ public class WeaponBase : MonoBehaviour
                 if (hitPawn)
                 {
                     hitPawn.TakeDamage(hitDamage[i]);
-                    Debug.Log("HIT!");
+                    Debug.Log("<color=blue>INFO</color> HIT");
                 }
             }
             if (hitEffectPrefab)

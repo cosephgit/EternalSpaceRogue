@@ -99,8 +99,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 8
-  movePoints: 4
+  movePointsMax: 4
   healthMax: 2
+  weaponOptions: {fileID: 0}
+  weaponUnarmed: {fileID: 0}
+  damageEffect: {fileID: 1964195880454469233, guid: c137f120d6a577444b3ca32d30857d0e, type: 3}
 --- !u!61 &5538609470978712661
 BoxCollider2D:
   m_ObjectHideFlags: 0

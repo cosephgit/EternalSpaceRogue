@@ -20,6 +20,8 @@ public class StageEnemyActive : BaseState
 
     public override void Enter()
     {
+        Vector3 playerPos = _sm.playerPawn.transform.position; // going to use this a lot here
+
         enemyCurrent = 0;
 
         enemyActive.Clear();
@@ -27,12 +29,31 @@ public class StageEnemyActive : BaseState
         for (int i = 0; i < _sm.enemySpawns.Count; i++)
         {
             // check if each enemy is or should be alert and, if so, add them to the active list
-            if (_sm.enemySpawns[i].IsAlert(_sm.playerPawn.transform.position))
+            if (_sm.enemySpawns[i].CheckAlert(playerPos))
             {
                 enemyActive.Add(_sm.enemySpawns[i]);
                 _sm.enemySpawns[i].RoundPrep();
             }
         }
+        for (int i = 0; i < enemyActive.Count; i++)
+        {
+            Collider2D[] enemyAdjacent = Physics2D.OverlapCircleAll(enemyActive[i].transform.position, 2.5f, Global.LayerPawn());
+
+            for (int j = 0; j < enemyAdjacent.Length; j++)
+            {
+                EnemyPawn enemyPawn = enemyAdjacent[j].GetComponent<EnemyPawn>();
+                if (enemyPawn)
+                {
+                    if (enemyPawn.MakeAlert()) // this returns true if the pawn wasn't alert, but is now made alert
+                    {
+                        enemyActive.Add(enemyPawn);
+                    }
+                }
+            }
+        }
+        // TODO update the music volume with the number and strength of active enemies
+        //enemyActive.Sort((p1,p2)=>p1.score.CompareTo(p2.score));
+        enemyActive.Sort((p1,p2)=>p1.DistanceTo(playerPos).CompareTo(p2.DistanceTo(playerPos)));
     }
     public override void UpdateLogic()
     {

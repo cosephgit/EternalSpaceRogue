@@ -18,6 +18,7 @@ public class PawnControllerBase : MonoBehaviour
     [SerializeField]protected  int healthMax = 5; // how many points of damage this pawn can take before death
     [SerializeField]WeaponList weaponOptions; // if this list is present the pawn will have one of this list as their equipped weapon
     [SerializeField]protected WeaponBase weaponUnarmed; // this is the unarmed weapon that this enemy uses when not carrying a weapon
+    [SerializeField]EffectTimed damageEffect; // the timed effect which is created when this pawn is damaged
     protected bool moving = false; // is this pawn currently moving between cells?
     protected int movePoints;
     protected bool moveActionDone;
@@ -40,7 +41,7 @@ public class PawnControllerBase : MonoBehaviour
             {
                 weaponEquipped = Instantiate(weaponSelection);
                 weaponEquipped.EquipWeapon(this);
-                Debug.Log("weapon " + weaponEquipped + " equipped on " + gameObject + " has ammo " + weaponEquipped.ammo + " of " + weaponEquipped.ammoMax);
+                Debug.Log("<color=blue>INFO</color> weapon " + weaponEquipped + " equipped on " + gameObject + " has ammo " + weaponEquipped.ammo + " of " + weaponEquipped.ammoMax);
             }
         }
     }
@@ -85,6 +86,7 @@ public class PawnControllerBase : MonoBehaviour
 
         moving = true;
         attackFacing = direction;
+        attackRange = 1;
 
         while (moving)
         {
@@ -139,7 +141,7 @@ public class PawnControllerBase : MonoBehaviour
                 if (hitPawn)
                 {
                     hitPawn.TakeDamage(1);
-                    Debug.Log("HIT!");
+                    Debug.Log("<color=blue>INFO</color> HIT!");
                 }
             }
         }
@@ -153,6 +155,11 @@ public class PawnControllerBase : MonoBehaviour
     // reduce health and detect death
     public virtual void TakeDamage(int amount)
     {
+        if (damageEffect)
+        {
+            EffectTimed blood = Instantiate(damageEffect, transform.position, transform.rotation);
+            blood.PlayEffect();
+        }
         health -= amount;
         if (health <= 0)
         {
@@ -173,7 +180,7 @@ public class PawnControllerBase : MonoBehaviour
     // this is called by a weapon which wants this pawn to unequip it
     public virtual void UnequipWeapon(WeaponBase weaponUnequip)
     {
-        Debug.Log(gameObject + " Unequip called");
+        Debug.Log("<color=blue>INFO</color> " + gameObject + " Unequip called");
         if (weaponEquipped)
         {
             if (weaponEquipped == weaponUnequip)
@@ -181,5 +188,10 @@ public class PawnControllerBase : MonoBehaviour
                 weaponEquipped = null;
             }
         }
+    }
+
+    public int DistanceTo(Vector3 targ)
+    {
+        return Global.OrthogonalDist(transform.position, targ);
     }
 }

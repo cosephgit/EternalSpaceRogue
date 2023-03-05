@@ -36,6 +36,7 @@ public class StageManager : StateMachine
     [HideInInspector]public List<TilemapSegment> tilemapActive = new List<TilemapSegment>(); // a list of all the actual tilemaps in the level
     [HideInInspector]public List<NavNode> spawnPoints = new List<NavNode>();
     [HideInInspector]public NavNode[] navNodeMap;
+    [HideInInspector]public List<NavNode> navNodeDirty = new List<NavNode>();
     [HideInInspector]public List<EnemyPawn> enemySpawns = new List<EnemyPawn>(); // actual list of spawned enemies in the stage
     // FSM states
     [HideInInspector]public StageInit initStage; // initial state, sets up the stage
@@ -88,36 +89,75 @@ public class StageManager : StateMachine
         playerPawn.AddXP(xpGain);
     }
 
+    void CleanNavNodes()
+    {
+        for (int i = 0; i < navNodeDirty.Count; i++)
+        {
+            navNodeDirty[i].PathClear();
+        }
+        navNodeDirty.Clear();
+    }
+
     // pathfinds from origin to target
     // range is the total travel distance to the target
     // returns the result as a Vector3 list of moves to reach the target IN REVERSE ORDER
     // an empty list means no path could be found OR the path is too long
-    public List<Vector3> Pathfind(Vector3 origin, Vector3 target)
+    public List<Vector3> Pathfind(Vector3 origin, Vector3 target, bool acceptBlocked = true, int distMax = Global.PATHFINDMAX)
     {
         Collider2D originNodeCollider = Physics2D.OverlapPoint(origin, Global.LayerNav());
-        NavNode originNode = originNodeCollider.GetComponent<NavNode>();
         Collider2D targetNodeCollider = Physics2D.OverlapPoint(target, Global.LayerNav());
-        NavNode targetNode = targetNodeCollider.GetComponent<NavNode>();
-        Vector3 offset = target - origin;
-        float fullHDist = offset.magnitude;
+        NavNode originNode = null;
+        NavNode targetNode = null;
+        int fullHDist = Global.OrthogonalDist(target, origin);
         List<Vector3> result = new List<Vector3>();
+        List<Vector3> testList = new List<Vector3>();
 
-        if (fullHDist > Global.PATHFINDMAX)
+        if (originNodeCollider) originNode = originNodeCollider.GetComponent<NavNode>();
+        if (targetNodeCollider) targetNode = targetNodeCollider.GetComponent<NavNode>();
+
+        if (fullHDist > Global.PATHFINDMAX) // the shortest possible path is too long
         {
             return result;
         }
         else if (originNode && targetNode)
         {
-            for (int i = 0; i < navNodeMap.Length; i++)
-            {
-                navNodeMap[i].PathClear();
-            }
+            if (originNode == targetNode) return result;
+
+            List<Vector3> resultDirect = new List<Vector3>(); // this is used to make a direct path, ignoring pawn obstacles, so enemies stack up if they can't find an open route or if the open route is too long
+
+            CleanNavNodes();
             // build the pathfinding data to the target
-            originNode.PathFind(targetNode);
-            result.AddRange(BuildPath(targetNode));
+            originNode.PathFind(targetNode, null, true, distMax);
+            testList = BuildPath(targetNode);
+            if (testList.Count > 0) result.AddRange(testList);
+
+            if (acceptBlocked)
+            {
+                CleanNavNodes();
+                originNode.PathFind(targetNode, null, false, distMax);
+                testList = BuildPath(targetNode);
+                if (testList.Count > 0) resultDirect.AddRange(testList);
+            }
 
             // so theoretically we have a route to the target created now
             // it is in reverse order from LAST move to FIRST move
+
+            if (result.Count > Global.PATHFINDMAX || result.Count == 0 || (acceptBlocked && resultDirect.Count * 4 < result.Count))
+            {
+                // EITHER: the open route is too long, there is no open route, or the open route is over 4x the length of the direct route
+                // this will allow for enemies that try to wrap around the player in melee, but wont go on a massive diversion to find an open route
+
+                result.Clear();
+
+                if (acceptBlocked)
+                {
+                    // then try to accept a path that is not clear
+                    if (resultDirect.Count > 0 && resultDirect.Count <= Global.PATHFINDMAX)
+                    {
+                        result = resultDirect;
+                    }
+                }
+            }
 
             return result;
         }
@@ -160,7 +200,7 @@ public class StageManager : StateMachine
         }
         else
         {
-            return null;
+            return path;
         }
     }
 

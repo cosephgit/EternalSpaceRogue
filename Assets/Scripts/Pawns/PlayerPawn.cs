@@ -45,7 +45,7 @@ public class PlayerPawn : PawnControllerBase
         int ammoNow = 0, ammoMax = 1;
         if (weaponEquipped)
         {
-            Debug.Log("weapon " + weaponEquipped + " equipped on " + gameObject + " has ammo " + weaponEquipped.ammo + " of " + weaponEquipped.ammoMax);
+            Debug.Log("<color=blue>INFO</color> weapon " + weaponEquipped + " equipped on " + gameObject + " has ammo " + weaponEquipped.ammo + " of " + weaponEquipped.ammoMax);
             if (weaponEquipped.ammoMax > 0)
             {
                 ammoNow = weaponEquipped.ammo;
@@ -91,23 +91,29 @@ public class PlayerPawn : PawnControllerBase
     // this takes the current number of movement points and places movement indicators on all accessible spaces in range
     void PlaceMoveIndicators()
     {
-        int totalPoints = movePoints + (moveActionDone ? 0 : movePointsMax);
+        int totalPoints = movePoints; // + (moveActionDone ? 0 : movePointsMax); // cut these to reduce path finding frame time
         Collider2D[] nodes = Physics2D.OverlapCircleAll(transform.position, totalPoints, Global.LayerNav());
 
-        foreach (Collider2D node in nodes)
+        for (int i = 0; i < nodes.Length; i++)
         {
-            Vector3 offset = (transform.position - node.transform.position);
-            float dist = Mathf.Abs(offset.x) + Mathf.Abs(offset.y);
-
-            // TODO add pathfinding check here
-            if (dist <= totalPoints && dist > 0.1f)
+            Debug.Log("node check " + i);
+            int dist = Global.OrthogonalDist(transform.position, nodes[i].transform.position);
+            bool clear = !Physics2D.OverlapPoint(nodes[i].transform.position, Global.LayerPawn());
+            if (clear && dist > 0)
             {
-                SquareIndicator indicatorNew = Instantiate(PrefabProvider.inst.indicator, node.transform.position, Quaternion.identity);
-                if (dist <= movePoints && !moveActionDone) // only show blue on the first move, always appear yellow on the second move
-                    indicatorNew.InitIndicator(IndicatorType.Move);
-                else // second move appears yellow to remind that you're not going to get an attack
-                    indicatorNew.InitIndicator(IndicatorType.Run);
-                indicators.Add(indicatorNew);
+                // only do expensive path finding if it's a possible point to reach
+                dist = StageManager.instance.Pathfind(transform.position, nodes[i].transform.position, false, totalPoints).Count;
+
+                // TODO add pathfinding check here
+                if (dist <= totalPoints && dist > 0)
+                {
+                    SquareIndicator indicatorNew = Instantiate(PrefabProvider.inst.indicator, nodes[i].transform.position, Quaternion.identity);
+                    if (dist <= movePoints && !moveActionDone) // only show blue on the first move, always appear yellow on the second move
+                        indicatorNew.InitIndicator(IndicatorType.Move);
+                    else // second move appears yellow to remind that you're not going to get an attack
+                        indicatorNew.InitIndicator(IndicatorType.Run);
+                    indicators.Add(indicatorNew);
+                }
             }
         }
     }
@@ -183,7 +189,7 @@ public class PlayerPawn : PawnControllerBase
             {
                 move.y = -1f;
             }
-            else if (Input.GetButtonDown("Confirm"))
+            else if (Input.GetButtonDown("Fire3"))
             {
                 // cancel remaining movement
                 movePoints = 0;
@@ -242,8 +248,8 @@ public class PlayerPawn : PawnControllerBase
                 return false;
             }
             // TODO take inputs and move indicator
-            // run
-            else if (Input.GetButtonDown("Fire1"))
+            // cancel attack and run instead
+            else if (Input.GetButtonDown("Fire3"))
             {
                 moveActionDone = true;
                 ClearIndicators();
@@ -317,7 +323,7 @@ public class PlayerPawn : PawnControllerBase
         experience += amount;
         while (experience >= experienceLevel)
         {
-            Debug.Log("LEVEL UP!");
+            Debug.Log("<color=blue>INFO</color> LEVEL UP!");
             experience -= experienceLevel;
         }
         UpdateXPBar();
@@ -326,14 +332,14 @@ public class PlayerPawn : PawnControllerBase
     protected override void Death()
     {
         base.Death();
-        Debug.Log("YOU DIED!");
+        Debug.Log("<color=blue>INFO</color> YOU DIED!");
     }
 
     public void ObjectiveReached(int xp)
     {
         AddXP(xp);
         stageComplete = true;
-        Debug.Log("STAGE COMPLETE!");
+        Debug.Log("<color=blue>INFO</color> STAGE COMPLETE!");
     }
 
     public override void UnequipWeapon(WeaponBase weaponUnequip)
