@@ -20,6 +20,7 @@ public class PlayerPawn : PawnControllerBase
         UpdateHealthBar();
         UpdateActionBar();
         UpdateXPBar();
+        UpdateAmmoBar();
         enteredActionState = false;
         indicators = new List<SquareIndicator>();
     }
@@ -37,6 +38,25 @@ public class PlayerPawn : PawnControllerBase
     void UpdateXPBar()
     {
         UIManager.instance.xpBar.UpdateHealth(experience, experienceLevel);
+    }
+
+    void UpdateAmmoBar()
+    {
+        int ammoNow = 0, ammoMax = 1;
+        if (weaponEquipped)
+        {
+            Debug.Log("weapon " + weaponEquipped + " equipped on " + gameObject + " has ammo " + weaponEquipped.ammo + " of " + weaponEquipped.ammoMax);
+            if (weaponEquipped.ammoMax > 0)
+            {
+                ammoNow = weaponEquipped.ammo;
+                ammoMax = weaponEquipped.ammoMax;
+            }
+
+            UIManager.instance.ammoBar.UpdateTitle(weaponEquipped.title);
+        }
+        else
+            UIManager.instance.ammoBar.UpdateTitle(weaponUnarmed.title);
+        UIManager.instance.ammoBar.UpdateHealth(ammoNow, ammoMax);
     }
 
     public override void RoundPrep()
@@ -98,9 +118,17 @@ public class PlayerPawn : PawnControllerBase
     {
         if (attackFacing.magnitude > 0)
         {
-            SquareIndicator indicatorAttack = Instantiate(PrefabProvider.inst.indicator, transform.position + attackFacing, Quaternion.identity);
-            indicatorAttack.InitIndicator(IndicatorType.Attack);
-            indicators.Add(indicatorAttack);
+            Vector3[] indicatorPoints;
+
+            if (weaponEquipped) indicatorPoints = weaponEquipped.GetHitLocations(transform.position, attackFacing, attackRange);
+            else indicatorPoints = weaponUnarmed.GetHitLocations(transform.position, attackFacing, 1);
+
+            for (int i = 0; i < indicatorPoints.Length; i++)
+            {
+                SquareIndicator indicatorAttack = Instantiate(PrefabProvider.inst.indicator, indicatorPoints[i], Quaternion.identity);
+                indicatorAttack.InitIndicator(IndicatorType.Attack);
+                indicators.Add(indicatorAttack);
+            }
         }
     }
 
@@ -108,7 +136,6 @@ public class PlayerPawn : PawnControllerBase
     {
         for (int i = indicators.Count - 1; i >= 0; i--)
         {
-            // this call tells the indicator to destroy itself, so the reference must be removed right away
             indicators[i].Flash();
         }
     }
@@ -117,6 +144,7 @@ public class PlayerPawn : PawnControllerBase
     {
         base.PreAttack();
         FlashAttackIndicators();
+        UpdateAmmoBar();
     }
     protected override void PostAttack()
     {
@@ -230,19 +258,46 @@ public class PlayerPawn : PawnControllerBase
                 {
                     // player has selected the same direction as currently facing
                     // later this will allow you to adjust range
+                    if (weaponEquipped && attackRange < weaponEquipped.rangeMax)
+                    {
+                        ClearIndicators();
+                        attackRange++;
+                        PlaceAttackIndicators();
+                        StartCoroutine(AimDelay());
+                    }
                 }
                 else
                 {
-                    // change the current facing to the entered direction
-                    ClearIndicators();
-                    attackFacing = tryAttack;
-                    PlaceAttackIndicators();
+                    if (attackFacing == -tryAttack && weaponEquipped && attackRange > weaponEquipped.rangeMin)
+                    {
+                        // the desired facing is opposite to the current facing - instead of changing direction, reduce the range
+                        ClearIndicators();
+                        attackRange--;
+                        PlaceAttackIndicators();
+                        StartCoroutine(AimDelay());
+                    }
+                    else
+                    {
+                        // change the current facing to the entered direction
+                        ClearIndicators();
+                        attackFacing = tryAttack;
+                        PlaceAttackIndicators();
+                        StartCoroutine(AimDelay());
+                    }
                 }
             }
         }
 
 
         return false;
+    }
+
+    // this is a simple coroutine to slow down aim adjustments 
+    IEnumerator AimDelay()
+    {
+        moving = true;
+        yield return new WaitForSeconds(0.1f);
+        moving = false;
     }
 
     protected override void PostMove()
@@ -279,5 +334,12 @@ public class PlayerPawn : PawnControllerBase
         AddXP(xp);
         stageComplete = true;
         Debug.Log("STAGE COMPLETE!");
+    }
+
+    public override void UnequipWeapon(WeaponBase weaponUnequip)
+    {
+        base.UnequipWeapon(weaponUnequip);
+        attackRange = 1;
+        UpdateAmmoBar();
     }
 }

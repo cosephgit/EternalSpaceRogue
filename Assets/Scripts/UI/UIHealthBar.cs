@@ -8,6 +8,7 @@ public class UIHealthBar : MonoBehaviour
 {
     [SerializeField]Slider healthSlider;
     [SerializeField]TextMeshProUGUI healthCount;
+    [SerializeField]TextMeshProUGUI sliderTitle;
     float healthValue = -1;
 
     // takes the maximum and current values of health and updates the bar and counter
@@ -21,5 +22,10 @@ public class UIHealthBar : MonoBehaviour
             healthSlider.value = healthNew;
             healthCount.text = "" + healthView;
         }
+    }
+
+    public void UpdateTitle(string title)
+    {
+        sliderTitle.text = title;
     }
 }

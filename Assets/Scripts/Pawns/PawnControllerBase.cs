@@ -16,18 +16,33 @@ public class PawnControllerBase : MonoBehaviour
     [SerializeField]protected float moveSpeed = 8f; // rate at which this pawn moves from space to space (units per second)
     [SerializeField]protected int movePointsMax = 4; // how many moves can this pawn make each round?
     [SerializeField]protected  int healthMax = 5; // how many points of damage this pawn can take before death
+    [SerializeField]WeaponList weaponOptions; // if this list is present the pawn will have one of this list as their equipped weapon
+    [SerializeField]protected WeaponBase weaponUnarmed; // this is the unarmed weapon that this enemy uses when not carrying a weapon
     protected bool moving = false; // is this pawn currently moving between cells?
     protected int movePoints;
     protected bool moveActionDone;
     protected int health;
-    protected Vector3 attackFacing; // always a unit in either axis
-    protected int attackRange; // the currently selected attack range
+    protected Vector3 attackFacing = Vector3.up; // always a unit in either axis
+    protected int attackRange = 1; // the currently selected attack range
+    protected WeaponBase weaponEquipped;
 
     protected virtual void Awake()
     {
         movePoints = movePointsMax;
         moveActionDone = false;
         health = healthMax;
+
+        // equip one of the 
+        if (weaponOptions)
+        {
+            WeaponBase weaponSelection = weaponOptions.Select();
+            if (weaponSelection)
+            {
+                weaponEquipped = Instantiate(weaponSelection);
+                weaponEquipped.EquipWeapon(this);
+                Debug.Log("weapon " + weaponEquipped + " equipped on " + gameObject + " has ammo " + weaponEquipped.ammo + " of " + weaponEquipped.ammoMax);
+            }
+        }
     }
 
     // tells the pawn it's about to start a new round
@@ -106,23 +121,30 @@ public class PawnControllerBase : MonoBehaviour
     // the attack direction, range and weapon are already stored in the class, this manages the timing and execution of those presets
     protected virtual IEnumerator Attack()
     {
-        PreAttack();
         // TODO swing sound and animation
+        if (weaponEquipped) weaponEquipped.AttackStart(attackFacing);
+        PreAttack();
         yield return new WaitForSeconds(0.2f);
         // TODO attack hit and damage inflicting
-        Vector3 attackPoint = transform.position + attackFacing;
-        Collider2D[] attackHits = Physics2D.OverlapCircleAll(attackPoint, 0.1f, Global.LayerPawn());
-        foreach (Collider2D hit in attackHits)
+        if (weaponEquipped) weaponEquipped.AttackDamage(transform.position, attackFacing, attackRange);
+        else if (weaponUnarmed) weaponUnarmed.AttackDamage(transform.position, attackFacing, 1); // unarmed is always range 1
+        else
         {
-            PawnControllerBase hitPawn = hit.GetComponent<PawnControllerBase>();
-            if (hitPawn)
+            Debug.Log("<color=orange>WARNING</color> pawn " + gameObject + " does not have a WeaponUnarmed!");
+            Vector3 attackPoint = transform.position + attackFacing;
+            Collider2D[] attackHits = Physics2D.OverlapCircleAll(attackPoint, 0.1f, Global.LayerPawn());
+            foreach (Collider2D hit in attackHits)
             {
-                hitPawn.TakeDamage(1);
-                Debug.Log("HIT!");
+                PawnControllerBase hitPawn = hit.GetComponent<PawnControllerBase>();
+                if (hitPawn)
+                {
+                    hitPawn.TakeDamage(1);
+                    Debug.Log("HIT!");
+                }
             }
         }
-
         yield return new WaitForSeconds(0.2f);
+        if (weaponEquipped) weaponEquipped.AttackEnd();
         // TODO return weapon to ready position
         yield return new WaitForSeconds(0.2f);
         PostAttack();
@@ -146,5 +168,18 @@ public class PawnControllerBase : MonoBehaviour
     public bool IsAlive()
     {
         return (health > 0);
+    }
+
+    // this is called by a weapon which wants this pawn to unequip it
+    public virtual void UnequipWeapon(WeaponBase weaponUnequip)
+    {
+        Debug.Log(gameObject + " Unequip called");
+        if (weaponEquipped)
+        {
+            if (weaponEquipped == weaponUnequip)
+            {
+                weaponEquipped = null;
+            }
+        }
     }
 }
