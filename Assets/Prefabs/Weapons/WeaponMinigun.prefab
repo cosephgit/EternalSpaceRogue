@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 4764028498495111835}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.8, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3082847605144965431}
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+  m_Color: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -110,18 +110,18 @@ PrefabInstance:
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitEffectPrefab
       value: 
-      objectReference: {fileID: 1964195880454469233, guid: 51598f57c0f9fef44a272094f1274dbe, type: 3}
+      objectReference: {fileID: 1964195880454469233, guid: 7b55e7388da5ec644ac666a35aff1a4f, type: 3}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitDamage.Array.size
-      value: 4
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.size
-      value: 4
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <title>k__BackingField
-      value: SHOTGUN
+      value: MINIGUN
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitDamage.Array.data[0]
@@ -140,8 +140,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitDamage.Array.data[4]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitDamage.Array.data[5]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitDamage.Array.data[6]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <ammoMax>k__BackingField
-      value: 6
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <rangeMax>k__BackingField
@@ -160,16 +172,44 @@ PrefabInstance:
       value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitOffsets.Array.data[3].x
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[3].y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
-      propertyPath: <threatLevel>k__BackingField
+      propertyPath: hitOffsets.Array.data[4].x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitOffsets.Array.data[4].y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitOffsets.Array.data[5].x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitOffsets.Array.data[5].y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitOffsets.Array.data[6].x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitOffsets.Array.data[6].y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: <threatLevel>k__BackingField
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4550863030601280650, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: m_Name
-      value: WeaponShotgun
+      value: WeaponMinigun
       objectReference: {fileID: 0}
     - target: {fileID: 4550863030601280653, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: m_RootOrder

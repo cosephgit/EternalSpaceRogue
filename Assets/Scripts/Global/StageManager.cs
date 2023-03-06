@@ -32,6 +32,11 @@ public class StageManager : StateMachine
     [SerializeField]public int tilemapSizeMin = 10; // once this many tilemaps are placed avoid tilemaps with lots of branches (2-3 exits)
     [SerializeField]public int tilemapSizeGood = 15; // start reducing the number of branches once this many tilemaps are placed (1-3 exits)
     [SerializeField]public int tilemapSizeMax = 20; // always use closed segments when this many tilemaps are placed (1 exit)
+    [SerializeField]public int tilemapExitDistMin = 140; // if a tile is at least this far from the start it's eligible for early goal placement
+    [SerializeField]public float enemyStrengthBaseTotal = 50f; // the basic amount of enemy strength in a level
+    [SerializeField]public float enemyStrengthBaseIndividual = 1f; // the basic amount of strength per enemy in a level
+    [SerializeField]public float enemyStrengthAboveAverage = 3f; // the maximum amount of strength about the individual value that an enemy may be at most
+    [SerializeField]public float enemyShoutDistance = 3.5f; // distance enemies shout if they see the player
     // generated stage details
     [HideInInspector]public List<TilemapSegment> tilemapActive = new List<TilemapSegment>(); // a list of all the actual tilemaps in the level
     [HideInInspector]public List<NavNode> spawnPoints = new List<NavNode>();
@@ -83,10 +88,10 @@ public class StageManager : StateMachine
 
     // this is called by an enemy when it is spawned to have it de-listed and give the player xp
     // the enemy destroys itself after calling this
-    public void EnemyDead(EnemyPawn enemy, int xpGain)
+    public void EnemyDead(EnemyPawn enemy, float strength)
     {
         enemySpawns.Remove(enemy);
-        playerPawn.AddXP(xpGain);
+        playerPawn.AddXP(Mathf.CeilToInt(strength * Global.XPPERSTRENGTH));
     }
 
     void CleanNavNodes()
@@ -115,7 +120,7 @@ public class StageManager : StateMachine
         if (originNodeCollider) originNode = originNodeCollider.GetComponent<NavNode>();
         if (targetNodeCollider) targetNode = targetNodeCollider.GetComponent<NavNode>();
 
-        if (fullHDist > Global.PATHFINDMAX) // the shortest possible path is too long
+        if (fullHDist > distMax) // the shortest possible path is too long
         {
             return result;
         }
@@ -142,7 +147,7 @@ public class StageManager : StateMachine
             // so theoretically we have a route to the target created now
             // it is in reverse order from LAST move to FIRST move
 
-            if (result.Count > Global.PATHFINDMAX || result.Count == 0 || (acceptBlocked && resultDirect.Count * 4 < result.Count))
+            if (result.Count > distMax || result.Count == 0 || (acceptBlocked && resultDirect.Count * 4 < result.Count))
             {
                 // EITHER: the open route is too long, there is no open route, or the open route is over 4x the length of the direct route
                 // this will allow for enemies that try to wrap around the player in melee, but wont go on a massive diversion to find an open route
@@ -152,7 +157,7 @@ public class StageManager : StateMachine
                 if (acceptBlocked)
                 {
                     // then try to accept a path that is not clear
-                    if (resultDirect.Count > 0 && resultDirect.Count <= Global.PATHFINDMAX)
+                    if (resultDirect.Count > 0 && resultDirect.Count <= distMax)
                     {
                         result = resultDirect;
                     }

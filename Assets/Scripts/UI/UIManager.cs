@@ -12,7 +12,7 @@ public class UIManager : MonoBehaviour
     public UIHealthBar healthBar;
     public UIHealthBar actionBar;
     public UIHealthBar xpBar;
-    public UIHealthBar ammoBar;
+    public UIWeaponManager weaponManager;
     public UIInstructions instructions;
 
     void Awake()

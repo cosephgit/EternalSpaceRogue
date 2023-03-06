@@ -74,7 +74,7 @@ public class StageInit : BaseState
             {
                 if (!_sm.tilemapActive[tileCheck].exitsDone)
                 {
-                    // take the first active tile in the last that has an exit unplaced
+                    // take the first active tile in the list that has an exit unplaced
                     tilemapBase = _sm.tilemapActive[tileCheck];
                     startNeeded = false;
                 }
@@ -117,7 +117,7 @@ public class StageInit : BaseState
 
                     _sm.tilemapActive.Add(tilemapAdded);
 
-                    if (objectiveNeeded && _sm.tilemapActive.Count >= _sm.tilemapSizeMax)
+                    if (objectiveNeeded && _sm.tilemapActive.Count >= _sm.tilemapSizeMax && (Global.OrthogonalDist(tilemapAdded.transform.position, Vector3.zero) >= _sm.tilemapExitDistMin))
                     {
                         // place the objective
                         objectiveNeeded = false;
@@ -151,6 +151,7 @@ public class StageInit : BaseState
         {
             if (_sm.tilemapActive.Count > 1)
             {
+                // couldn't place it earlier, so just put it on the last placed tile
                 objectiveNeeded = false;
                 ObjectiveZone objective = GameObject.Instantiate(_sm.objectiveZone, _sm.tilemapActive[_sm.tilemapActive.Count - 1].transform.position, Quaternion.identity, _sm.tilemapActive[_sm.tilemapActive.Count - 1].transform);
             }
@@ -242,9 +243,9 @@ public class StageInit : BaseState
     void PopulateEnemies()
     {
         EnemyPawn enemySpawned;
-        float stageStrength = 100; // the number of strength points of enemies to spawn in the stage
-        float stageStrengthIndividual = 1; // the target strength of each individual enemy
-
+        float stageStrength = _sm.enemyStrengthBaseTotal; // the number of strength points of enemies to spawn in the stage
+        float stageStrengthIndividual = _sm.enemyStrengthBaseIndividual; // the target strength of each individual enemy
+        List<EnemyPawn> enemiesValid = new List<EnemyPawn>();
 
         if (_sm.enemySpawns.Count > 0)
         {
@@ -259,6 +260,15 @@ public class StageInit : BaseState
             _sm.enemySpawns.Clear();
         }
 
+        EnemyPawn enemyWeakest = _sm.enemyPrefabs[0];
+        for (int i = 0; i < _sm.enemyPrefabs.Length; i++)
+        {
+            if (_sm.enemyPrefabs[i].enemyStrength < enemyWeakest.enemyStrength) enemyWeakest = _sm.enemyPrefabs[i];
+            if (_sm.enemyPrefabs[i].enemyStrength <= stageStrength + _sm.enemyStrengthAboveAverage)
+                enemiesValid.Add(_sm.enemyPrefabs[i]);
+        }
+        if (!enemiesValid.Contains(enemyWeakest)) enemiesValid.Add(enemyWeakest); // ensure that at least the weakest enemy is added
+
         while (stageStrength > 0)
         {
             Vector3 pos = SelectSpawnPoint();
@@ -266,7 +276,7 @@ public class StageInit : BaseState
             if (pos.magnitude > 0)
             {
                 // place the enemy
-                enemySpawned = GameObject.Instantiate(_sm.enemyPrefabs[Random.Range(0, _sm.enemyPrefabs.Length)], pos, Quaternion.identity);
+                enemySpawned = GameObject.Instantiate(enemiesValid[Random.Range(0, enemiesValid.Count)], pos, Quaternion.identity);
                 _sm.enemySpawns.Add(enemySpawned);
                 // set the enemy strength based on stage difficulty, and adjust the remaining stage enemy strength total by the result
                 stageStrength -= enemySpawned.SetStrength(Mathf.Min(stageStrengthIndividual, stageStrength));

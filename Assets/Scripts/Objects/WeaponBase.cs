@@ -16,15 +16,17 @@ public class WeaponBase : MonoBehaviour
     [SerializeField]SpriteRenderer gun; // the sprite used to show this gun
     [SerializeField]EffectTimed hitEffectPrefab; // the effect placed on each impact location
     [field: Header("Weapon statistics")]
-    [field: SerializeField]public int ammoMax { get; private set; } // the ammo this weapon starts with
-    [field: SerializeField]public int rangeMin { get; private set; } // the shortest range this weapon can be targeted at (at least 1)
-    [field: SerializeField]public int rangeMax { get; private set; } // the maximum range this weapon can be targeted at
+    [field: SerializeField]public int ammoMax { get; private set; } = -1; // the ammo this weapon starts with
+    [field: SerializeField]public int rangeMin { get; private set; } = 1; // the shortest range this weapon can be targeted at (at least 1)
+    [field: SerializeField]public int rangeMax { get; private set; } = 1; // the maximum range this weapon can be targeted at
+    [field: SerializeField]public float threatLevel { get; private set; } = 0; // an estimate of how dangerous this is to the player (between damage and difficulty avoiding)
     [Header("These two arrays must have identical size")]
     [SerializeField]Vector3[] hitOffsets; // this is the array of all points the weapon hits, relative to the aim point when the attacker is facing up
     [SerializeField]int[] hitDamage; // this is the damage the weapon inflicts to the hit points above - MUST MATCH ARRAY SIZE ABOVE
     int hitPointCount;
     [HideInInspector]public int ammo { get; private set; }
     bool doInit = true;
+    public int rangeHitMax { get; private set; } // the furthest a target could actually be hit by this weapon in a straight line (used for AI calculation)
     PawnControllerBase weapOwner;
 
     void Awake()
@@ -44,6 +46,7 @@ public class WeaponBase : MonoBehaviour
             if (rangeMax > 6) rangeMax = 6;
             if (rangeMin > rangeMax) rangeMin = rangeMax;
             if (rangeMax < rangeMin) rangeMax = rangeMin;
+
             if (ammoMax < 1) ammoMax = -1;
             if (hitOffsets.Length != hitDamage.Length)
             {
@@ -52,10 +55,30 @@ public class WeaponBase : MonoBehaviour
             }
             else hitPointCount = hitOffsets.Length;
 
+            rangeHitMax = rangeMax;
             if (hitPointCount < 1)
             {
                 Debug.Log("<color=orange>WARNING</color> weapon has no valid target locations");
             }
+            else
+            {
+                int rangeMaxBonus = 0;
+                for (int i = 0; i < hitPointCount; i++)
+                {
+                    if (hitOffsets[i].x == 0)
+                    {
+                        if (hitOffsets[i].y > rangeMaxBonus)
+                        {
+                            if (hitDamage[i] > 0)
+                            {
+                                rangeMaxBonus = (int)hitOffsets[i].y;
+                            }
+                        }
+                    }
+                }
+                rangeHitMax += rangeMaxBonus;
+            }
+
 
             ammo = ammoMax;
 
@@ -85,6 +108,56 @@ public class WeaponBase : MonoBehaviour
         return true;
     }
 
+    // returns a list of all the spaces that the target space could be attacked from with this weapon
+    // n.b. NOT REALLY
+    // it only actually looks at straight line orthogonal attacks, because:
+    // 1) far less spaces to pathfind to
+    // 2) produces nicer enemy behaviour, where they always try to line the player up at the centre of a burst
+    // the only invalidation done here is if there's a wall in the way of the point or any space between the target and the point
+    // it doesn't check for obstructing pawns, that needs to be done in pathfinding next
+    public List<Vector3> GetAllPossibleAttackLocations(Vector3 target)
+    {
+        List<Vector3> targetList = new List<Vector3>();
+
+        for (int dir = 0; dir < 4; dir++)
+        {
+            Vector3 dirVector;
+            switch (dir)
+            {
+                default:
+                case 0:
+                    dirVector = Vector3.up;
+                    break;
+                case 1:
+                    dirVector = Vector3.right;
+                    break;
+                case 2:
+                    dirVector = Vector3.down;
+                    break;
+                case 3:
+                    dirVector = Vector3.left;
+                    break;
+            }
+
+            Vector3 pos = target;
+            for (int i = 0; i < rangeHitMax; i++)
+            {
+                pos += dirVector;
+                Collider2D wall = Physics2D.OverlapPoint(pos, Global.LayerWall());
+                Collider2D nav = Physics2D.OverlapPoint(pos, Global.LayerNav());
+                if (wall) i = rangeHitMax; // this point is blocked by a wall, so all further points must also be blocked
+                else if (nav)
+                {
+                    // there's no blocking wall and it's in the nav network, so this is a possible place to move to!
+                    targetList.Add(pos);
+                }
+            }
+        }
+
+        return targetList;
+    }
+
+    // returns an array of the spaces that will be hit by an attack from this origin, facing and range
     public Vector3[] GetHitLocations(Vector3 origin, Vector3 facing, int range)
     {
         Vector3 target = origin + (facing * range);

@@ -41,7 +41,6 @@ public class PawnControllerBase : MonoBehaviour
             {
                 weaponEquipped = Instantiate(weaponSelection);
                 weaponEquipped.EquipWeapon(this);
-                Debug.Log("<color=blue>INFO</color> weapon " + weaponEquipped + " equipped on " + gameObject + " has ammo " + weaponEquipped.ammo + " of " + weaponEquipped.ammoMax);
             }
         }
     }
@@ -53,6 +52,7 @@ public class PawnControllerBase : MonoBehaviour
     {
         movePoints = movePointsMax;
         moveActionDone = false;
+        attackRange = 1;
     }
 
     // this is the main action loop that is called during Update for as long as this pawn is the active pawn
@@ -119,34 +119,24 @@ public class PawnControllerBase : MonoBehaviour
         moving = false;
     }
 
+    protected virtual WeaponBase WeaponSelected()
+    {
+        if (weaponEquipped) return weaponEquipped;
+        return weaponUnarmed;
+    }
+
     // this coroutine manages performing the current attack
     // the attack direction, range and weapon are already stored in the class, this manages the timing and execution of those presets
     protected virtual IEnumerator Attack()
     {
         // TODO swing sound and animation
-        if (weaponEquipped) weaponEquipped.AttackStart(attackFacing);
+        WeaponSelected().AttackStart(attackFacing);
         PreAttack();
         yield return new WaitForSeconds(0.2f);
         // TODO attack hit and damage inflicting
-        if (weaponEquipped) weaponEquipped.AttackDamage(transform.position, attackFacing, attackRange);
-        else if (weaponUnarmed) weaponUnarmed.AttackDamage(transform.position, attackFacing, 1); // unarmed is always range 1
-        else
-        {
-            Debug.Log("<color=orange>WARNING</color> pawn " + gameObject + " does not have a WeaponUnarmed!");
-            Vector3 attackPoint = transform.position + attackFacing;
-            Collider2D[] attackHits = Physics2D.OverlapCircleAll(attackPoint, 0.1f, Global.LayerPawn());
-            foreach (Collider2D hit in attackHits)
-            {
-                PawnControllerBase hitPawn = hit.GetComponent<PawnControllerBase>();
-                if (hitPawn)
-                {
-                    hitPawn.TakeDamage(1);
-                    Debug.Log("<color=blue>INFO</color> HIT!");
-                }
-            }
-        }
+        WeaponSelected().AttackDamage(transform.position, attackFacing, attackRange);
         yield return new WaitForSeconds(0.2f);
-        if (weaponEquipped) weaponEquipped.AttackEnd();
+        WeaponSelected().AttackEnd();
         // TODO return weapon to ready position
         yield return new WaitForSeconds(0.2f);
         PostAttack();
@@ -188,6 +178,7 @@ public class PawnControllerBase : MonoBehaviour
                 weaponEquipped = null;
             }
         }
+        attackRange = 1;
     }
 
     public int DistanceTo(Vector3 targ)

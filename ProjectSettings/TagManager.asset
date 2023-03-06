@@ -47,6 +47,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Particles
+    uniqueID: 2624974041
+    locked: 0
   - name: SquareIndicator
     uniqueID: 1271484659
     locked: 0

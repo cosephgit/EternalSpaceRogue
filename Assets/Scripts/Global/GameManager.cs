@@ -12,8 +12,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public int screenCellWidth { get; private set; } = 10; // TODO actually calculate these later from the camera?
-    public int screenCellHeight { get; private set; } = 6;
+    public float screenCellWidth { get; private set; } = 10f;
+    public float screenCellHeight { get; private set; } = 6f;
 
     void Awake()
     {
@@ -28,5 +28,8 @@ public class GameManager : MonoBehaviour
         else instance = this;
 
         DontDestroyOnLoad(gameObject);
+
+        screenCellHeight = Camera.main.orthographicSize + 0.5f;
+        screenCellWidth = ((float)Camera.main.pixelWidth * (float)Camera.main.orthographicSize / (float)Camera.main.pixelHeight) + 0.5f;
     }
 }

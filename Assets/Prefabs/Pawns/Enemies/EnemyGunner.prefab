@@ -8,9 +8,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: weaponOptions
+      value: 
+      objectReference: {fileID: 4306916992115667484, guid: 927ba8ced5f95174e9794b74ba0c6d01, type: 3}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: weaponUnarmed
       value: 
       objectReference: {fileID: 8416169854839030391}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: <enemyStrength>k__BackingField
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7640384966893122044, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -57,7 +65,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7640384966893122046, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: m_Name
-      value: EnemySimple
+      value: EnemyGunner
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}

@@ -14,9 +14,13 @@ public class PlayerPawn : PawnControllerBase
     int experienceLevel = 10;
     int experience = 0;
     bool stageComplete = false;
+    bool weaponReady = false;
 
     void Start()
     {
+        if (weaponEquipped) weaponReady = true;
+        UIManager.instance.weaponManager.UpdateFist(weaponUnarmed.title);
+        UIManager.instance.weaponManager.ReadyFist(false);
         UpdateHealthBar();
         UpdateActionBar();
         UpdateXPBar();
@@ -45,18 +49,22 @@ public class PlayerPawn : PawnControllerBase
         int ammoNow = 0, ammoMax = 1;
         if (weaponEquipped)
         {
-            Debug.Log("<color=blue>INFO</color> weapon " + weaponEquipped + " equipped on " + gameObject + " has ammo " + weaponEquipped.ammo + " of " + weaponEquipped.ammoMax);
             if (weaponEquipped.ammoMax > 0)
             {
                 ammoNow = weaponEquipped.ammo;
                 ammoMax = weaponEquipped.ammoMax;
             }
 
-            UIManager.instance.ammoBar.UpdateTitle(weaponEquipped.title);
+            UIManager.instance.weaponManager.UpdateWeapon(weaponEquipped.title);
         }
         else
-            UIManager.instance.ammoBar.UpdateTitle(weaponUnarmed.title);
-        UIManager.instance.ammoBar.UpdateHealth(ammoNow, ammoMax);
+        {
+            if (weaponReady)
+                weaponReady = false;
+            UIManager.instance.weaponManager.UpdateWeapon("");
+        }
+        UIManager.instance.weaponManager.ReadyFist(!weaponReady);
+        UIManager.instance.weaponManager.UpdateAmmo(ammoNow, ammoMax);
     }
 
     public override void RoundPrep()
@@ -96,7 +104,6 @@ public class PlayerPawn : PawnControllerBase
 
         for (int i = 0; i < nodes.Length; i++)
         {
-            Debug.Log("node check " + i);
             int dist = Global.OrthogonalDist(transform.position, nodes[i].transform.position);
             bool clear = !Physics2D.OverlapPoint(nodes[i].transform.position, Global.LayerPawn());
             if (clear && dist > 0)
@@ -126,7 +133,7 @@ public class PlayerPawn : PawnControllerBase
         {
             Vector3[] indicatorPoints;
 
-            if (weaponEquipped) indicatorPoints = weaponEquipped.GetHitLocations(transform.position, attackFacing, attackRange);
+            if (weaponReady) indicatorPoints = weaponEquipped.GetHitLocations(transform.position, attackFacing, attackRange);
             else indicatorPoints = weaponUnarmed.GetHitLocations(transform.position, attackFacing, 1);
 
             for (int i = 0; i < indicatorPoints.Length; i++)
@@ -146,17 +153,25 @@ public class PlayerPawn : PawnControllerBase
         }
     }
 
+    protected override WeaponBase WeaponSelected()
+    {
+        if (weaponReady)
+            return weaponEquipped;
+        return weaponUnarmed;
+    }
+
     protected override void PreAttack()
     {
         base.PreAttack();
         FlashAttackIndicators();
-        UpdateAmmoBar();
+        if (weaponReady) UpdateAmmoBar(); // no need if using fist
     }
     protected override void PostAttack()
     {
         base.PostAttack();
         ClearIndicators();
     }
+
 
     public override bool PawnUpdate()
     {
@@ -247,7 +262,21 @@ public class PlayerPawn : PawnControllerBase
                 StartCoroutine(Attack());
                 return false;
             }
-            // TODO take inputs and move indicator
+            // switch between fist and weapon
+            else if (Input.GetButtonDown("Fire1"))
+            {
+                // only switch if either weapon is ready OR weapon is not ready and there is a weapon to ready
+                if (weaponReady || (!weaponReady && weaponEquipped))
+                {
+                    weaponReady = !weaponReady;
+                    attackRange = 1;
+                    ClearIndicators();
+                    StartCoroutine(AimDelay());
+                    PlaceAttackIndicators();
+                    UpdateAmmoBar();
+                }
+                return false;
+            }
             // cancel attack and run instead
             else if (Input.GetButtonDown("Fire3"))
             {
@@ -266,6 +295,12 @@ public class PlayerPawn : PawnControllerBase
                     // later this will allow you to adjust range
                     if (weaponEquipped && attackRange < weaponEquipped.rangeMax)
                     {
+                        Collider2D obstacle = Physics2D.OverlapPoint(transform.position + (attackRange * attackFacing), Global.LayerObstacle());
+                        if (obstacle)
+                        {
+                            // if the currently targeted space is blocked, that means all spaces behind the target are also blocked
+                            return false;
+                        }
                         ClearIndicators();
                         attackRange++;
                         PlaceAttackIndicators();
@@ -287,6 +322,7 @@ public class PlayerPawn : PawnControllerBase
                         // change the current facing to the entered direction
                         ClearIndicators();
                         attackFacing = tryAttack;
+                        attackRange = 1;
                         PlaceAttackIndicators();
                         StartCoroutine(AimDelay());
                     }
@@ -342,10 +378,31 @@ public class PlayerPawn : PawnControllerBase
         Debug.Log("<color=blue>INFO</color> STAGE COMPLETE!");
     }
 
+    // this is called when a player picks up a weapon
+    public bool PickupWeapon(WeaponBase weaponPick)
+    {
+        if (weaponEquipped)
+        {
+            return false;
+        }
+        else
+        {
+            weaponEquipped = weaponPick;
+            weaponEquipped.EquipWeapon(this);
+            weaponReady = true;
+            UpdateAmmoBar();
+            return true;
+        }
+    }
+
+    // this is called when a player unequips a weapon (either by choice or by the weapon requesting to be unequipped after running out of ammo)
     public override void UnequipWeapon(WeaponBase weaponUnequip)
     {
-        base.UnequipWeapon(weaponUnequip);
-        attackRange = 1;
-        UpdateAmmoBar();
+        if (weaponEquipped == weaponUnequip)
+        {
+            base.UnequipWeapon(weaponUnequip);
+            weaponReady = false;
+            UpdateAmmoBar();
+        }
     }
 }

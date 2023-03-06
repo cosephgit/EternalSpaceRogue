@@ -22,7 +22,10 @@ public class StageEnemyActive : BaseState
     {
         Vector3 playerPos = _sm.playerPawn.transform.position; // going to use this a lot here
 
-        enemyCurrent = 0;
+        // check the list of all enemies
+        // if they're not active, check if they can see the player and if so make them active
+        // add all active or newly active enemies to a list
+        // sort the list based on their proximity to the player
 
         enemyActive.Clear();
 
@@ -32,12 +35,11 @@ public class StageEnemyActive : BaseState
             if (_sm.enemySpawns[i].CheckAlert(playerPos))
             {
                 enemyActive.Add(_sm.enemySpawns[i]);
-                _sm.enemySpawns[i].RoundPrep();
             }
         }
         for (int i = 0; i < enemyActive.Count; i++)
         {
-            Collider2D[] enemyAdjacent = Physics2D.OverlapCircleAll(enemyActive[i].transform.position, 2.5f, Global.LayerPawn());
+            Collider2D[] enemyAdjacent = Physics2D.OverlapCircleAll(enemyActive[i].transform.position, _sm.enemyShoutDistance, Global.LayerPawn());
 
             for (int j = 0; j < enemyAdjacent.Length; j++)
             {
@@ -46,24 +48,27 @@ public class StageEnemyActive : BaseState
                 {
                     if (enemyPawn.MakeAlert()) // this returns true if the pawn wasn't alert, but is now made alert
                     {
-                        enemyActive.Add(enemyPawn);
+                        enemyActive.Add(enemyPawn); // so it can be added to the active list
                     }
                 }
             }
         }
         // TODO update the music volume with the number and strength of active enemies
-        //enemyActive.Sort((p1,p2)=>p1.score.CompareTo(p2.score));
-        enemyActive.Sort((p1,p2)=>p1.DistanceTo(playerPos).CompareTo(p2.DistanceTo(playerPos)));
+        enemyCurrent = 0;
+        if (enemyActive.Count > 0)
+        {
+            enemyActive.Sort((p1,p2)=>p1.DistanceTo(playerPos).CompareTo(p2.DistanceTo(playerPos)));
+
+            // get the first enemy in the que ready for the round
+            enemyActive[enemyCurrent].RoundPrep();
+        }
     }
     public override void UpdateLogic()
     {
+        bool enemyNext = false;
         base.UpdateLogic();
 
-        // create a list of all enemies
-        // if they're not active, check if they can see the player and if so make them active
-        // add all active or newly active enemies to a list
-        // sort the list based on their proximity to the player
-        // then iterate through the last activating enemies one at a time
+        // iterate through active enemies and move/attack each of them in turn
         // TODO add idle enemy wandering around behaviour
 
         if (enemyCurrent >= enemyActive.Count)
@@ -74,12 +79,18 @@ public class StageEnemyActive : BaseState
         else if (!enemyActive[enemyCurrent] || !enemyActive[enemyCurrent].IsAlive())
         {
             // the enemy has been deleted or died (possibly self-destructed), iterate
-            enemyCurrent++;
+            enemyNext = true;
         }
         else if (enemyActive[enemyCurrent].PawnUpdate())
         {
             // if returned true, the enemy has finished their go, iterate to the next one
+            enemyNext = true;
+        }
+        if (enemyNext)
+        {
             enemyCurrent++;
+            if (enemyCurrent < enemyActive.Count && enemyActive[enemyCurrent])
+                enemyActive[enemyCurrent].RoundPrep(); // prep the next enemy for their round, if they exist
         }
     }
     public override void Exit() { }

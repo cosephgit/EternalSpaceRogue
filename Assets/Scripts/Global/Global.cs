@@ -10,6 +10,10 @@ public static class Global
     public const int TILEMAPDIMS = 14; // this is the required x and y dimension for all tilemap segments
     // pathfinding limitations
     public const int PATHFINDMAX = 25; // the maximum number of cells to ever pathfind for
+    // xp variables
+    public const float XPPERSTRENGTH = 2f;
+    public const float XPPERLEVELBASE = 10f;
+    public const float XPPERLEVELEXPONENT = 1.2f;
     // collision layer index references
     private const string LAYERWALL = "Default";
     private const string LAYERPAWN = "Pawn";
@@ -64,16 +68,20 @@ public static class Global
 
         return Mathf.CeilToInt(Mathf.Abs(offset.x) + Mathf.Abs(offset.y));
     }
-    public static string VectorListToString(List<Vector3> route)
+    public static string VectorListToString(Vector3[] route)
     {
         string output = "";
 
-        for (int i = 0; i < route.Count; i++)
+        for (int i = 0; i < route.Length; i++)
         {
             output += route[i] + " ";
         }
 
         return output;
+    }
+    public static string VectorListToString(List<Vector3> route)
+    {
+        return VectorListToString(route.ToArray());
     }
     public static bool RandomBool()
     {

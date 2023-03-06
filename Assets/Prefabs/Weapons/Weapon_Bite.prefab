@@ -25,11 +25,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <title>k__BackingField
-      value: FIST
+      value: BITE
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitDamage.Array.data[0]
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <rangeMax>k__BackingField
@@ -41,7 +41,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4550863030601280650, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: m_Name
-      value: Weapon_Punch
+      value: Weapon_Bite
       objectReference: {fileID: 0}
     - target: {fileID: 4550863030601280653, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: m_RootOrder

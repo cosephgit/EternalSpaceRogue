@@ -102,7 +102,7 @@ MonoBehaviour:
   moveSpeed: 6
   movePointsMax: 4
   healthMax: 5
-  weaponOptions: {fileID: 4306916992115667484, guid: 197a146a09ba2194dad0728eff49a325, type: 3}
+  weaponOptions: {fileID: 4306916992115667484, guid: a65e8c7458a0c174f9e9d28f71961f23, type: 3}
   weaponUnarmed: {fileID: 5694609753565395471}
   damageEffect: {fileID: 1964195880454469233, guid: c137f120d6a577444b3ca32d30857d0e, type: 3}
   moveSensitivity: 0.1
