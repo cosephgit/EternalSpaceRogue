@@ -105,7 +105,19 @@ public class WeaponBase : MonoBehaviour
             weapOwner.UnequipWeapon(this);
         }
         transform.parent = null;
+        BounceAway();
         return true;
+    }
+
+    // this is called when a weapon is dropped by an enemy so that it can be picked up again by the player
+    // it will only have as much ammo as it did originally (the weapon instance is persistent)
+    public void DropToFloor()
+    {
+        PowerupWeapon weaponHolder = Instantiate(PrefabProvider.inst.weaponHolder, transform.position, Quaternion.identity);
+        // this takes care of parent/child relationships
+        ammo = Mathf.CeilToInt((float)ammo * 0.5f); // only get half ammo
+        weaponHolder.AcceptWeapon(this);
+        weapOwner = null;
     }
 
     // returns a list of all the spaces that the target space could be attacked from with this weapon
@@ -241,5 +253,11 @@ public class WeaponBase : MonoBehaviour
     {
         // TODO finish
         Destroy(gameObject);
+    }
+
+    // refills the weapon
+    public void Reload()
+    {
+        ammo = ammoMax;
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // this FSM state should be entered when the current stage is complete
 // a UI is shown indicating stage results
@@ -21,7 +22,7 @@ public class StageComplete : BaseState
     }
     public override void UpdateLogic()
     {
-        base.UpdateLogic();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     public override void Exit() { }
 }

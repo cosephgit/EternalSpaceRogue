@@ -173,6 +173,210 @@ public class PlayerPawn : PawnControllerBase
     }
 
 
+    bool PlayerMove()
+    {
+        Vector3 move = new Vector3();
+
+        if (Input.GetAxis("Horizontal") > moveSensitivity && CanMove(Vector3.right))
+        {
+            move.x = 1f;
+        }
+        else if (Input.GetAxis("Horizontal") < -moveSensitivity && CanMove(Vector3.left))
+        {
+            move.x = -1f;
+        }
+        else if (Input.GetAxis("Vertical") > moveSensitivity && CanMove(Vector3.up))
+        {
+            move.y = 1f;
+        }
+        else if (Input.GetAxis("Vertical") < -moveSensitivity && CanMove(Vector3.down))
+        {
+            move.y = -1f;
+        }
+        else if (Input.GetButtonDown("Fire3"))
+        {
+            // cancel remaining movement
+            movePoints = 0;
+            UpdateActionBar();
+            ClearIndicators();
+            return false;
+        }
+        else
+        {
+            // no move input
+            return false;
+        }
+
+        // check for powerups in the target space
+        Vector3 posCheck = transform.position + move;
+        Collider2D[] collisions = Physics2D.OverlapPointAll(posCheck, Global.LayerPower());
+        bool clear = true;
+        if (collisions.Length > 0)
+        {
+            for (int i = 0; i < collisions.Length; i++)
+            {
+                PowerupCrate powerCollision = collisions[i].GetComponent<PowerupCrate>();
+                if (powerCollision)
+                {
+                    // check for crates first as this could stop movement
+                    if (!powerCollision.TouchPowerup(this))
+                    {
+                        // an enemy has spawned in the target space!
+                        clear = false;
+                    }
+                }
+            }
+            if (clear)
+            {
+                // space is clear, now activate all powerups in the space
+                for (int i = 0; i < collisions.Length; i++)
+                {
+                    PowerUpBase powerCollision = collisions[i].GetComponent<PowerUpBase>();
+                    if (powerCollision)
+                    {
+                        powerCollision.TouchPowerup(this);
+                    }
+                }
+            }
+        }
+
+        // always spend a movement point even if the space is blocked
+        movePoints--;
+        UpdateActionBar();
+
+        if (clear)
+        {
+            // some sort of valid move input has been received, start moving
+            StartCoroutine(MovePosition(move));
+        }
+        else
+        {
+            StartCoroutine(AimDelay());
+            ClearIndicators();
+            PlaceMoveIndicators();
+        }
+        return false;
+    }
+
+    bool PlayerAttack()
+    {
+        Vector3 tryAttack = Vector3.zero;
+        UIManager.instance.instructions.ShowInstruction(Instruction.Attack);
+
+        // handle the player action
+        // attack
+        if (Input.GetAxis("Horizontal") > moveSensitivity)
+        {
+            tryAttack.x = 1f;
+        }
+        else if (Input.GetAxis("Horizontal") < -moveSensitivity)
+        {
+            tryAttack.x = -1f;
+        }
+        else if (Input.GetAxis("Vertical") > moveSensitivity)
+        {
+            tryAttack.y = 1f;
+        }
+        else if (Input.GetAxis("Vertical") < -moveSensitivity)
+        {
+            tryAttack.y = -1f;
+        }
+        else if (Input.GetButtonDown("Confirm"))
+        {
+            // player wants to attack!
+            moveActionDone = true;
+            StartCoroutine(Attack());
+            return false;
+        }
+        // switch between fist and weapon
+        else if (Input.GetButtonDown("Fire1"))
+        {
+            // only switch if either weapon is ready OR weapon is not ready and there is a weapon to ready
+            if (weaponReady || (!weaponReady && weaponEquipped))
+            {
+                weaponReady = !weaponReady;
+                attackRange = 1;
+                ClearIndicators();
+                StartCoroutine(AimDelay());
+                PlaceAttackIndicators();
+                UpdateAmmoBar();
+            }
+            return false;
+        }
+        else if (Input.GetButtonDown("Fire2"))
+        {
+            if (weaponEquipped)
+            {
+                weaponEquipped.DiscardWeapon();
+                weaponReady = false;
+            }
+            #if UNITY_EDITOR
+            else
+            {
+                // cheat!
+                weaponEquipped = Instantiate(weaponOptions.Select());
+                weaponEquipped.EquipWeapon(this);
+                weaponReady = true;
+            }
+            #endif
+            ClearIndicators();
+            UpdateAmmoBar();
+            PlaceAttackIndicators();
+        }
+        // cancel attack and run instead
+        else if (Input.GetButtonDown("Fire3"))
+        {
+            moveActionDone = true;
+            ClearIndicators();
+            ActionRun();
+            return false;
+        }
+
+        if (tryAttack.magnitude > 0)
+        {
+            // player has entered an attack direction preference!
+            if (attackFacing == tryAttack)
+            {
+                // player has selected the same direction as currently facing
+                // later this will allow you to adjust range
+                if (weaponEquipped && attackRange < weaponEquipped.rangeMax)
+                {
+                    Collider2D obstacle = Physics2D.OverlapPoint(transform.position + (attackRange * attackFacing), Global.LayerObstacle());
+                    if (obstacle)
+                    {
+                        // if the currently targeted space is blocked, that means all spaces behind the target are also blocked
+                        return false;
+                    }
+                    ClearIndicators();
+                    attackRange++;
+                    PlaceAttackIndicators();
+                    StartCoroutine(AimDelay());
+                }
+            }
+            else
+            {
+                if (attackFacing == -tryAttack && weaponEquipped && attackRange > weaponEquipped.rangeMin)
+                {
+                    // the desired facing is opposite to the current facing - instead of changing direction, reduce the range
+                    ClearIndicators();
+                    attackRange--;
+                    PlaceAttackIndicators();
+                    StartCoroutine(AimDelay());
+                }
+                else
+                {
+                    // change the current facing to the entered direction
+                    ClearIndicators();
+                    attackFacing = tryAttack;
+                    attackRange = 1;
+                    PlaceAttackIndicators();
+                    StartCoroutine(AimDelay());
+                }
+            }
+        }
+        return false;
+    }
+
     public override bool PawnUpdate()
     {
         if (moving) return false; // in the middle of a move, take no inputs
@@ -186,148 +390,17 @@ public class PlayerPawn : PawnControllerBase
 
         if (movePoints > 0)
         {
-            Vector3 move = new Vector3();
-
-            if (Input.GetAxis("Horizontal") > moveSensitivity && CanMove(Vector3.right))
-            {
-                move.x = 1f;
-            }
-            else if (Input.GetAxis("Horizontal") < -moveSensitivity && CanMove(Vector3.left))
-            {
-                move.x = -1f;
-            }
-            else if (Input.GetAxis("Vertical") > moveSensitivity && CanMove(Vector3.up))
-            {
-                move.y = 1f;
-            }
-            else if (Input.GetAxis("Vertical") < -moveSensitivity && CanMove(Vector3.down))
-            {
-                move.y = -1f;
-            }
-            else if (Input.GetButtonDown("Fire3"))
-            {
-                // cancel remaining movement
-                movePoints = 0;
-                UpdateActionBar();
-                ClearIndicators();
-                return false;
-            }
-            else
-            {
-                // no move input
-                // TODO check for cancel movement option
-                return false;
-            }
-
-            movePoints--;
-            UpdateActionBar();
-
-            // some sort of valid move input has been received, start moving
-            StartCoroutine(MovePosition(move));
+            return PlayerMove();
         }
         else if (!enteredActionState)
         {
             enteredActionState = true;
-            // place the player's current facing as the default attack direction
             ClearIndicators();
             PlaceAttackIndicators();
         }
         else
         {
-            Vector3 tryAttack = Vector3.zero;
-            UIManager.instance.instructions.ShowInstruction(Instruction.Attack);
-
-            // handle the player action
-            // attack
-            if (Input.GetAxis("Horizontal") > moveSensitivity)
-            {
-                tryAttack.x = 1f;
-            }
-            else if (Input.GetAxis("Horizontal") < -moveSensitivity)
-            {
-                tryAttack.x = -1f;
-            }
-            else if (Input.GetAxis("Vertical") > moveSensitivity)
-            {
-                tryAttack.y = 1f;
-            }
-            else if (Input.GetAxis("Vertical") < -moveSensitivity)
-            {
-                tryAttack.y = -1f;
-            }
-            else if (Input.GetButtonDown("Confirm"))
-            {
-                // player wants to attack!
-                moveActionDone = true;
-                StartCoroutine(Attack());
-                return false;
-            }
-            // switch between fist and weapon
-            else if (Input.GetButtonDown("Fire1"))
-            {
-                // only switch if either weapon is ready OR weapon is not ready and there is a weapon to ready
-                if (weaponReady || (!weaponReady && weaponEquipped))
-                {
-                    weaponReady = !weaponReady;
-                    attackRange = 1;
-                    ClearIndicators();
-                    StartCoroutine(AimDelay());
-                    PlaceAttackIndicators();
-                    UpdateAmmoBar();
-                }
-                return false;
-            }
-            // cancel attack and run instead
-            else if (Input.GetButtonDown("Fire3"))
-            {
-                moveActionDone = true;
-                ClearIndicators();
-                ActionRun();
-                return false;
-            }
-
-            if (tryAttack.magnitude > 0)
-            {
-                // player has entered an attack direction preference!
-                if (attackFacing == tryAttack)
-                {
-                    // player has selected the same direction as currently facing
-                    // later this will allow you to adjust range
-                    if (weaponEquipped && attackRange < weaponEquipped.rangeMax)
-                    {
-                        Collider2D obstacle = Physics2D.OverlapPoint(transform.position + (attackRange * attackFacing), Global.LayerObstacle());
-                        if (obstacle)
-                        {
-                            // if the currently targeted space is blocked, that means all spaces behind the target are also blocked
-                            return false;
-                        }
-                        ClearIndicators();
-                        attackRange++;
-                        PlaceAttackIndicators();
-                        StartCoroutine(AimDelay());
-                    }
-                }
-                else
-                {
-                    if (attackFacing == -tryAttack && weaponEquipped && attackRange > weaponEquipped.rangeMin)
-                    {
-                        // the desired facing is opposite to the current facing - instead of changing direction, reduce the range
-                        ClearIndicators();
-                        attackRange--;
-                        PlaceAttackIndicators();
-                        StartCoroutine(AimDelay());
-                    }
-                    else
-                    {
-                        // change the current facing to the entered direction
-                        ClearIndicators();
-                        attackFacing = tryAttack;
-                        attackRange = 1;
-                        PlaceAttackIndicators();
-                        StartCoroutine(AimDelay());
-                    }
-                }
-            }
+            return PlayerAttack();
         }
 
 
@@ -348,6 +421,31 @@ public class PlayerPawn : PawnControllerBase
         PlaceMoveIndicators();
     }
 
+    public bool Heal(int amount)
+    {
+        if (health < healthMax)
+        {
+            health = Mathf.Min(health + amount, healthMax);
+            UpdateHealthBar();
+            return true;
+        }
+        return false;
+    }
+
+    public bool Reload()
+    {
+        if (weaponEquipped)
+        {
+            if (weaponEquipped.ammoMax > 0 && weaponEquipped.ammo < weaponEquipped.ammoMax)
+            {
+                weaponEquipped.Reload();
+                UpdateAmmoBar();
+                return true;
+            }
+        }
+        return false;
+    }
+
     public override void TakeDamage(int amount)
     {
         base.TakeDamage(amount);
@@ -365,17 +463,25 @@ public class PlayerPawn : PawnControllerBase
         UpdateXPBar();
     }
 
+    public bool HasWeapon()
+    {
+        return weaponEquipped;
+    }
+
+    public bool LowHealth()
+    {
+        if (health < healthMax * 0.5f)
+        {
+            return true;
+        }
+        return false;
+    }
+
     protected override void Death()
     {
         base.Death();
         Debug.Log("<color=blue>INFO</color> YOU DIED!");
-    }
-
-    public void ObjectiveReached(int xp)
-    {
-        AddXP(xp);
-        stageComplete = true;
-        Debug.Log("<color=blue>INFO</color> STAGE COMPLETE!");
+        StageManager.instance.PlayerDefeated();
     }
 
     // this is called when a player picks up a weapon

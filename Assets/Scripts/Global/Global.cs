@@ -10,6 +10,9 @@ public static class Global
     public const int TILEMAPDIMS = 14; // this is the required x and y dimension for all tilemap segments
     // pathfinding limitations
     public const int PATHFINDMAX = 25; // the maximum number of cells to ever pathfind for
+    // loot chances
+    public const float DROPCHANCEBASE = 0; // the basic chance of a weapon being dropped by a dying enemy
+    public const float DROPCHANCEBYAMMO = 0.5f; // the chance of a 100% loaded weapon being dropped (scaling to 0 at 0% ammo)
     // xp variables
     public const float XPPERSTRENGTH = 2f;
     public const float XPPERLEVELBASE = 10f;
@@ -20,6 +23,7 @@ public static class Global
     private const string LAYERFLOOR = "Floor";
     private const string LAYERNAV = "NavNode";
     private const string LAYEROBJ = "Objective";
+    private const string LAYERPOWER = "Powerup";
     public static float scalePawnSpeed = 1f; // this can be used to adjust the rate at which pawns move from space to space
 
 
@@ -43,6 +47,11 @@ public static class Global
     public static LayerMask LayerPawn()
     {
         return LayerMask.GetMask(LAYERPAWN);
+    }
+    // used to check for powerups in a space
+    public static LayerMask LayerPower()
+    {
+        return LayerMask.GetMask(LAYERPOWER);
     }
     // used to check for anything at all (e.g. the presence of a tilemap)
     public static LayerMask LayerTerrain()

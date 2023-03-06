@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // this FSM state is entered when the player is defeated
 // it displays a UI showing the results of the stage
@@ -20,7 +21,17 @@ public class StageFailed : BaseState
     }
     public override void UpdateLogic()
     {
-        base.UpdateLogic();
+        if (Input.GetButtonDown("Fire1"))
+        {
+            // restart on Z
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+        else if (Input.GetButtonDown("Fire3"))
+        {
+            // revive player on C
+            _sm.playerPawn.Heal(1000);
+            _sm.ChangeState(_sm.playerActiveStage);
+        }
     }
     public override void Exit() { }
 }

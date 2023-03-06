@@ -1103,7 +1103,10 @@ MonoBehaviour:
     Z
     to switch weapon
 
-    C to run instead'
+    X to drop weapon (CHEAT: press again to get a random weapon)
+
+    C
+    to run instead'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1130,7 +1133,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 49.85
+  m_fontSize: 38.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2050,42 +2053,6 @@ PrefabInstance:
       value: StageManager
       objectReference: {fileID: 0}
     - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
-      propertyPath: objectiveZone
-      value: 
-      objectReference: {fileID: 7881591142541735636, guid: f2f9c7a5ed8e95c4793b9ee1087167d7, type: 3}
-    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
-      propertyPath: tilemapSizeMax
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
-      propertyPath: tilemapSizeMin
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
-      propertyPath: tilemapSizeGood
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
-      propertyPath: tilemapExitDistMin
-      value: 70
-      objectReference: {fileID: 0}
-    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
-      propertyPath: enemyPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
-      propertyPath: enemyPrefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 7982498343023290480, guid: faeda2f46296e1f418a6467db876c744, type: 3}
-    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
-      propertyPath: enemyPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 7982498343023290480, guid: 444233d4d3063fc46b61f7049b2dd50d, type: 3}
-    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
-      propertyPath: enemyPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 7982498343023290480, guid: 5914cdb5ee351b44ba173483c43ec6e5, type: 3}
-    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
       propertyPath: <playerPawn>k__BackingField
       value: 
       objectReference: {fileID: 4535915701661718547}
@@ -2098,6 +2065,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 362956738, guid: 1bf0053207c6d604480740b34a0ad7aa, type: 3}
+      propertyPath: <weaponHolder>k__BackingField
+      value: 
+      objectReference: {fileID: -3792410338894596860, guid: 12b5a5c92935aa24ca60aaf1e9a547e8, type: 3}
     - target: {fileID: 4032054042473925138, guid: 1bf0053207c6d604480740b34a0ad7aa, type: 3}
       propertyPath: m_Name
       value: PrefabProvider

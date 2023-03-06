@@ -93,3 +93,6 @@ fmod_editor.log
 
 # Apple auto-generated files
 *.DS_Store
+
+# Notepad++ auto backups
+*.bak

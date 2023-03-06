@@ -8,6 +8,7 @@ public class PrefabProvider : MonoBehaviour
 {
     public static PrefabProvider inst;
     [field: SerializeField]public SquareIndicator indicator { get; private set; }
+    [field: SerializeField]public PowerupWeapon weaponHolder { get; private set; }
 
     void Awake()
     {

@@ -26,8 +26,9 @@ public class ObjectiveZone : MonoBehaviour
 
                     if (Mathf.Abs(offset.x) <= touchWithinX && Mathf.Abs(offset.y) <= touchWithinY)
                     {
-                        StageManager.instance.playerPawn.ObjectiveReached(objectiveXP);
+                        StageManager.instance.ObjectiveReached(objectiveXP);
                         unTouched = false;
+                        Debug.Log("<color=blue>INFO</color> Stage complete!");
                     }
                 }
             }

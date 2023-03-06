@@ -16,7 +16,7 @@ public class PawnControllerBase : MonoBehaviour
     [SerializeField]protected float moveSpeed = 8f; // rate at which this pawn moves from space to space (units per second)
     [SerializeField]protected int movePointsMax = 4; // how many moves can this pawn make each round?
     [SerializeField]protected  int healthMax = 5; // how many points of damage this pawn can take before death
-    [SerializeField]WeaponList weaponOptions; // if this list is present the pawn will have one of this list as their equipped weapon
+    [SerializeField]protected WeaponList weaponOptions; // if this list is present the pawn will have one of this list as their equipped weapon
     [SerializeField]protected WeaponBase weaponUnarmed; // this is the unarmed weapon that this enemy uses when not carrying a weapon
     [SerializeField]EffectTimed damageEffect; // the timed effect which is created when this pawn is damaged
     protected bool moving = false; // is this pawn currently moving between cells?

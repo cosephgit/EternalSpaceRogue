@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <playerPawn>k__BackingField: {fileID: 0}
-  tilemapPrefabs:
+  <tilemapPrefabs>k__BackingField:
   - {fileID: 8250222444578292418, guid: 0188d7f522ab1cc4c8e6917fcceb8174, type: 3}
   - {fileID: 8250222444578292418, guid: 87fdb5d3a7fe00448b948f9c04410476, type: 3}
   - {fileID: 8250222444578292418, guid: 60ebd05f70c67b245909d1cee5c913e0, type: 3}
@@ -61,14 +61,28 @@ MonoBehaviour:
   - {fileID: 8250222444578292418, guid: e63cde60eec43c0458c0379f9e4887d4, type: 3}
   - {fileID: 8250222444578292418, guid: 67fb73cd45e7d284082841046500d5e2, type: 3}
   - {fileID: 8250222444578292418, guid: 1dff976da5b3cda489cf9bf0e5017eb3, type: 3}
-  tilemapPrefabEnd: {fileID: 8250222444578292418, guid: 204bd73946e2999499eb8d75a3b9828f, type: 3}
-  enemyPrefabs:
-  - {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
-  powerupPrefabs:
-  - {fileID: 3094163452365100935, guid: b59914dfe4a1d8541884b892b8c69b38, type: 3}
-  tilemapSizeMin: 10
-  tilemapSizeGood: 15
-  tilemapSizeMax: 20
+  <tilemapPrefabEnd>k__BackingField: {fileID: 8250222444578292418, guid: 204bd73946e2999499eb8d75a3b9828f, type: 3}
+  <enemyPrefabs>k__BackingField:
+  - {fileID: 7982498343023290480, guid: faeda2f46296e1f418a6467db876c744, type: 3}
+  - {fileID: 7982498343023290480, guid: 444233d4d3063fc46b61f7049b2dd50d, type: 3}
+  - {fileID: 7982498343023290480, guid: 5914cdb5ee351b44ba173483c43ec6e5, type: 3}
+  <powerupPrefabs>k__BackingField:
+  - {fileID: 8590855915084333110, guid: 230806c0b514d3a4da55c5fa9415b995, type: 3}
+  <objectiveZone>k__BackingField: {fileID: 7881591142541735636, guid: f2f9c7a5ed8e95c4793b9ee1087167d7, type: 3}
+  <tilemapSizeMin>k__BackingField: 6
+  <tilemapSizeGood>k__BackingField: 9
+  <tilemapSizeMax>k__BackingField: 12
+  <tilemapExitDistMin>k__BackingField: 140
+  <enemyStrengthBaseTotal>k__BackingField: 100
+  <enemyStrengthBaseIndividual>k__BackingField: 1
+  <enemyStrengthAboveAverage>k__BackingField: 3
+  <enemyShoutDistance>k__BackingField: 3.5
+  <powerStrengthBaseTotal>k__BackingField: 20
+  <powerStrengthBaseIndividual>k__BackingField: 1
   tilemapActive: []
   spawnPoints: []
   navNodeMap: []
+  navNodeDirty: []
+  enemiesValid: []
+  enemySpawns: []
+  powerPoints: 0

@@ -33,6 +33,22 @@ public class EnemyPawn : PawnControllerBase
     {
         base.Death();
         StageManager.instance.EnemyDead(this, actualStrength);
+        if (weaponEquipped)
+        {
+            float dropChance = Global.DROPCHANCEBASE;
+            if (weaponEquipped.ammoMax > 0)
+            {
+                dropChance += Global.DROPCHANCEBYAMMO * weaponEquipped.ammo / weaponEquipped.ammoMax;
+            }
+            if (Random.Range(0f, 1f) < dropChance)
+            {
+                weaponEquipped.DropToFloor();
+            }
+            else
+                weaponEquipped.DiscardWeapon();
+            weaponEquipped = null;
+        }
+
         Destroy(gameObject);
     }
 

@@ -22,36 +22,41 @@ using UnityEngine;
 public class StageManager : StateMachine
 {
     public static StageManager instance;
-    private List<EnemyPawn> enemyPawns; // enemy pawns are created during StageInit and stored in this list
-    [field: SerializeField]public PlayerPawn playerPawn  { get; private set; } // player pawn is placed in the scene in the editor and stored here
-    [SerializeField]public List<TilemapSegment> tilemapPrefabs; // these are used to generate the play area
-    [SerializeField]public TilemapSegment tilemapPrefabEnd; // an endcap that can fit anywhere
-    [SerializeField]public EnemyPawn[] enemyPrefabs; // enemies that may be spawned in a level
-    [SerializeField]public PowerUpBase[] powerupPrefabs; // powerups that may be spawned in a level
-    [SerializeField]public ObjectiveZone objectiveZone; // zone markers for objectives
-    [SerializeField]public int tilemapSizeMin = 10; // once this many tilemaps are placed avoid tilemaps with lots of branches (2-3 exits)
-    [SerializeField]public int tilemapSizeGood = 15; // start reducing the number of branches once this many tilemaps are placed (1-3 exits)
-    [SerializeField]public int tilemapSizeMax = 20; // always use closed segments when this many tilemaps are placed (1 exit)
-    [SerializeField]public int tilemapExitDistMin = 140; // if a tile is at least this far from the start it's eligible for early goal placement
-    [SerializeField]public float enemyStrengthBaseTotal = 50f; // the basic amount of enemy strength in a level
-    [SerializeField]public float enemyStrengthBaseIndividual = 1f; // the basic amount of strength per enemy in a level
-    [SerializeField]public float enemyStrengthAboveAverage = 3f; // the maximum amount of strength about the individual value that an enemy may be at most
-    [SerializeField]public float enemyShoutDistance = 3.5f; // distance enemies shout if they see the player
+    [field: SerializeField]public PlayerPawn playerPawn { get; private set; } // player pawn is placed in the scene in the editor and stored here
+    [field: SerializeField]public List<TilemapSegment> tilemapPrefabs { get; private set; } // these are used to generate the play area
+    [field: SerializeField]public TilemapSegment tilemapPrefabEnd { get; private set; } // an endcap that can fit anywhere
+    [field: SerializeField]public EnemyPawn[] enemyPrefabs { get; private set; } // enemies that may be spawned in a level
+    [field: SerializeField]public PowerUpBase[] powerupPrefabs { get; private set; } // powerups that may be spawned in a level
+    [field: SerializeField]public ObjectiveZone objectiveZone { get; private set; } // zone markers for objectives
+    [field: SerializeField]public int tilemapSizeMin { get; private set; } = 10; // once this many tilemaps are placed avoid tilemaps with lots of branches (2-3 exits)
+    [field: SerializeField]public int tilemapSizeGood { get; private set; } = 15; // start reducing the number of branches once this many tilemaps are placed (1-3 exits)
+    [field: SerializeField]public int tilemapSizeMax { get; private set; } = 20; // always use closed segments when this many tilemaps are placed (1 exit)
+    [field: SerializeField]public int tilemapExitDistMin { get; private set; } = 140; // if a tile is at least this far from the start it's eligible for early goal placement
+    [field: Header("Enemy parameters")]
+    [field: SerializeField]public float enemyStrengthBaseTotal { get; private set; } = 50f; // the basic amount of enemy strength in a level
+    [field: SerializeField]public float enemyStrengthBaseIndividual { get; private set; } = 1f; // the basic amount of strength per enemy in a level
+    [field: SerializeField]public float enemyStrengthAboveAverage { get; private set; } = 3f; // the maximum amount of strength about the individual value that an enemy may be at most
+    [field: SerializeField]public float enemyShoutDistance { get; private set; } = 3.5f; // distance enemies shout if they see the player
+    [field: Header("Powerup parameters")]
+    [field: SerializeField]public float powerStrengthBaseTotal { get; private set; } = 20f; // the basic amount of powerup strength in a level
+    [field: SerializeField]public float powerStrengthBaseIndividual { get; private set; } = 1f; // the basic amount of strength per powerup in a level
     // generated stage details
     [HideInInspector]public List<TilemapSegment> tilemapActive = new List<TilemapSegment>(); // a list of all the actual tilemaps in the level
     [HideInInspector]public List<NavNode> spawnPoints = new List<NavNode>();
     [HideInInspector]public NavNode[] navNodeMap;
     [HideInInspector]public List<NavNode> navNodeDirty = new List<NavNode>();
+    [HideInInspector]public List<EnemyPawn> enemiesValid = new List<EnemyPawn>(); // list if valid spawn types in this level
     [HideInInspector]public List<EnemyPawn> enemySpawns = new List<EnemyPawn>(); // actual list of spawned enemies in the stage
     // FSM states
-    [HideInInspector]public StageInit initStage; // initial state, sets up the stage
-    [HideInInspector]public StagePlayerActive playerActiveStage;
-    [HideInInspector]public StagePlayerWinCheck playerWinCheckStage;
-    [HideInInspector]public StageEnemyActive enemyActiveStage;
-    [HideInInspector]public StagePlayerLoseCheck playerLoseCheckStage; 
-    [HideInInspector]public StageEndRound roundEndStage;
-    [HideInInspector]public StageComplete stageCompleteStage;
-    [HideInInspector]public StageFailed stageFailedStage;
+    [HideInInspector]public StageInit initStage { get; private set; } // initial state, sets up the stage
+    [HideInInspector]public StagePlayerActive playerActiveStage { get; private set; }
+    [HideInInspector]public StagePlayerWinCheck playerWinCheckStage { get; private set; }
+    [HideInInspector]public StageEnemyActive enemyActiveStage { get; private set; }
+    [HideInInspector]public StagePlayerLoseCheck playerLoseCheckStage { get; private set; }
+    [HideInInspector]public StageEndRound roundEndStage { get; private set; }
+    [HideInInspector]public StageComplete stageCompleteStage { get; private set; }
+    [HideInInspector]public StageFailed stageFailedStage { get; private set; }
+    [HideInInspector]public float powerPoints; // unspent power points in the stage, updated with each power up
 
 
     // Awake
@@ -92,6 +97,33 @@ public class StageManager : StateMachine
     {
         enemySpawns.Remove(enemy);
         playerPawn.AddXP(Mathf.CeilToInt(strength * Global.XPPERSTRENGTH));
+    }
+
+
+    // returns a list of all enemies that are valid for the current difficulty
+    public List<EnemyPawn> EnemiesValid()
+    {
+        EnemyPawn enemyWeakest = enemyPrefabs[0];
+        for (int i = 0; i < enemyPrefabs.Length; i++)
+        {
+            if (enemyPrefabs[i].enemyStrength < enemyWeakest.enemyStrength) enemyWeakest = enemyPrefabs[i];
+            if (enemyPrefabs[i].enemyStrength <= enemyStrengthBaseIndividual + enemyStrengthAboveAverage)
+                enemiesValid.Add(enemyPrefabs[i]);
+        }
+        if (!enemiesValid.Contains(enemyWeakest)) enemiesValid.Add(enemyWeakest); // ensure that at least the weakest enemy is added
+
+        return enemiesValid;
+    }
+
+    // called when a trap triggers another enemy to spawn
+    public void EnemySpawn(Vector3 pos)
+    {
+        if (enemiesValid.Count > 0)
+        {
+            EnemyPawn spawn = Instantiate(enemiesValid[Random.Range(0, enemiesValid.Count)], pos, Quaternion.identity);
+            spawn.SetStrength(enemyStrengthBaseIndividual);
+            powerPoints += spawn.enemyStrength; // when a trap happens, the remaining powerups on the level get a little boost
+        }
     }
 
     void CleanNavNodes()
@@ -207,6 +239,19 @@ public class StageManager : StateMachine
         {
             return path;
         }
+    }
+
+    // the player has reached the objective zone! end the stage
+    public void ObjectiveReached(int xp)
+    {
+        playerPawn.AddXP(xp);
+        Debug.Log("<color=blue>INFO</color> STAGE COMPLETE!");
+        ChangeState(stageCompleteStage);
+    }
+
+    public void PlayerDefeated()
+    {
+        ChangeState(stageFailedStage);
     }
 
     #if UNITY_EDITOR

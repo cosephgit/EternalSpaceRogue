@@ -245,7 +245,7 @@ public class StageInit : BaseState
         EnemyPawn enemySpawned;
         float stageStrength = _sm.enemyStrengthBaseTotal; // the number of strength points of enemies to spawn in the stage
         float stageStrengthIndividual = _sm.enemyStrengthBaseIndividual; // the target strength of each individual enemy
-        List<EnemyPawn> enemiesValid = new List<EnemyPawn>();
+        List<EnemyPawn> enemiesValid = _sm.EnemiesValid(); // note this also GENERATES the valid enemies list for the stage difficulty
 
         if (_sm.enemySpawns.Count > 0)
         {
@@ -259,15 +259,6 @@ public class StageInit : BaseState
             }
             _sm.enemySpawns.Clear();
         }
-
-        EnemyPawn enemyWeakest = _sm.enemyPrefabs[0];
-        for (int i = 0; i < _sm.enemyPrefabs.Length; i++)
-        {
-            if (_sm.enemyPrefabs[i].enemyStrength < enemyWeakest.enemyStrength) enemyWeakest = _sm.enemyPrefabs[i];
-            if (_sm.enemyPrefabs[i].enemyStrength <= stageStrength + _sm.enemyStrengthAboveAverage)
-                enemiesValid.Add(_sm.enemyPrefabs[i]);
-        }
-        if (!enemiesValid.Contains(enemyWeakest)) enemiesValid.Add(enemyWeakest); // ensure that at least the weakest enemy is added
 
         while (stageStrength > 0)
         {
@@ -292,8 +283,10 @@ public class StageInit : BaseState
     void PopulateLoot()
     {
         PowerUpBase powerupSpawned;
-        float stagePower = 20; // the number of points of powerups to spawn in the stage
-        float stagePowerIndividual = 1; // the target power of each powerup
+        float stagePower = _sm.powerStrengthBaseTotal; // the number of points of powerups to spawn in the stage
+        float stagePowerIndividual = _sm.powerStrengthBaseIndividual; // the target power of each powerup
+
+        _sm.powerPoints = stagePower;
 
         while (stagePower > 0)
         {
