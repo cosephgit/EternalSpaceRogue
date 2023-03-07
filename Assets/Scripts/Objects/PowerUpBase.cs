@@ -29,6 +29,7 @@ if the player is low on health or has no weapon, those get extra weight
 
 public class PowerUpBase : MonoBehaviour
 {
+    [SerializeField]protected float quality = 1;
     protected bool ready = true;
 
     public virtual void PrepPowerup()
@@ -47,5 +48,10 @@ public class PowerUpBase : MonoBehaviour
     {
         ready = false;
         Destroy(gameObject);
+    }
+
+    public virtual float Quality()
+    {
+        return quality;
     }
 }

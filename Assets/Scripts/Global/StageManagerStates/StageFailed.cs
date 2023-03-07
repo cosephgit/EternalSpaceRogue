@@ -21,6 +21,7 @@ public class StageFailed : BaseState
     }
     public override void UpdateLogic()
     {
+        /*
         if (Input.GetButtonDown("Fire1"))
         {
             // restart on Z
@@ -29,9 +30,10 @@ public class StageFailed : BaseState
         else if (Input.GetButtonDown("Fire3"))
         {
             // revive player on C
-            _sm.playerPawn.Heal(1000);
+            _sm.playerPawn.PickupHeal(1000);
             _sm.ChangeState(_sm.playerActiveStage);
         }
+        */
     }
     public override void Exit() { }
 }

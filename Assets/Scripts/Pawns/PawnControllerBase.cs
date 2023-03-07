@@ -119,10 +119,17 @@ public class PawnControllerBase : MonoBehaviour
         moving = false;
     }
 
+    // returns the weapon that is currently actively used
     protected virtual WeaponBase WeaponSelected()
     {
         if (weaponEquipped) return weaponEquipped;
         return weaponUnarmed;
+    }
+
+    // this is called at the instant of inflicting an attack
+    public virtual int DamageBonus()
+    {
+        return 0;
     }
 
     // this coroutine manages performing the current attack
@@ -134,7 +141,7 @@ public class PawnControllerBase : MonoBehaviour
         PreAttack();
         yield return new WaitForSeconds(0.2f);
         // TODO attack hit and damage inflicting
-        WeaponSelected().AttackDamage(transform.position, attackFacing, attackRange);
+        WeaponSelected().AttackDamage(transform.position, attackFacing, attackRange, DamageBonus());
         yield return new WaitForSeconds(0.2f);
         WeaponSelected().AttackEnd();
         // TODO return weapon to ready position

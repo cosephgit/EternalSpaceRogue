@@ -10,6 +10,9 @@ using UnityEngine;
 public class StageInit : BaseState
 {
     protected StageManager _sm;
+    float initPower;
+    float initEnemyTotal;
+    float initEnemyIndividual;
 
     public StageInit(StageManager stateMachine) : base("StageInit", stateMachine) {
       _sm = stateMachine;
@@ -209,16 +212,12 @@ public class StageInit : BaseState
             {
                 if (_sm.spawnPoints.Count > 0)
                 {
-                    Vector3 offset;
-
                     spawnPoint = _sm.spawnPoints[Random.Range(0, _sm.spawnPoints.Count)];
-
-                    offset = _sm.playerPawn.transform.position - spawnPoint.transform.position;
 
                     _sm.spawnPoints.Remove(spawnPoint); // remove the entry from spawn points so nothing else is spawned there
 
-                    if (Mathf.Abs(offset.x) > GameManager.instance.screenCellWidth + 2
-                        || Mathf.Abs(offset.y) > GameManager.instance.screenCellHeight + 2)
+                    // make sure it's not on screen
+                    if (!_sm.PointOnScreen(spawnPoint.transform.position))
                     {
                         result = spawnPoint.transform.position;
                         needPoint  = false;
@@ -305,14 +304,16 @@ public class StageInit : BaseState
         }
     }
 
-    public override void Enter()
+    void SetDifficulty()
     {
+        initPower = _sm.powerPoints * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSLOOTEXPONENT);
+        initEnemyTotal = _sm.enemyStrengthTotal * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMIESEXPONENT);
+        initEnemyIndividual = _sm.EnemyStrengthIndividual * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMYEXPONENT);
 
     }
-    public override void UpdateLogic()
-    { 
-        base.UpdateLogic();
-        // TODO
+
+    public override void Enter()
+    {
         // set up the stage
         // procedurally place:
         // level structure
@@ -321,12 +322,19 @@ public class StageInit : BaseState
         // level exit
         // traps and puzzle elements
         // when complete, transition to PlayerActive
+        SetDifficulty();
         BuildTilemap();
         BuildNavmap();
         PopulateEnemies();
         PopulateLoot();
+    }
+    public override void UpdateLogic()
+    { 
+        base.UpdateLogic();
 
         _sm.ChangeState(_sm.playerActiveStage);
     }
-    public override void Exit() { }
+    public override void Exit()
+    {
+    }
 }

@@ -9,39 +9,62 @@ using UnityEngine;
 public class PlayerPawn : PawnControllerBase
 {
     [SerializeField]private float moveSensitivity = 0.1f; // how much input is needed to accept a move request
+    [SerializeField]private int armorMax = 10;
     List<SquareIndicator> indicators;
-    bool enteredActionState = false;
-    int experienceLevel = 10;
-    int experience = 0;
-    bool stageComplete = false;
-    bool weaponReady = false;
+    private bool enteredActionState = false;
+    private int experienceLevel = 10;
+    private int experience = 0;
+    private bool stageComplete = false;
+    private bool weaponReady = false;
+    private int armor = 0;
+    private int level = 1; // experience level/called RANK in the UI
+    // individual skill levels
+    public int upgradeStrength { get; private set; } = 0; // +1 punch damage per level
+    public int upgradeTough { get; private set; } = 0; // +5 health per level
+    public int upgradeAmmo { get; private set; } = 0; // +20% ammo picked up per level
+    public int upgradeSupply { get; private set; } = 0; // +20% supply crates per level
+    public int upgradeTerror { get; private set; } = 0; // -20% weak enemies per level
+    public int upgradeMedic { get; private set; } = 0; // +20% healing per level
 
     void Start()
     {
         if (weaponEquipped) weaponReady = true;
         UIManager.instance.weaponManager.UpdateFist(weaponUnarmed.title);
         UIManager.instance.weaponManager.ReadyFist(false);
+        experienceLevel = XPToLevel(level);
         UpdateHealthBar();
-        UpdateActionBar();
+        UpdateArmorBar();
         UpdateXPBar();
         UpdateAmmoBar();
         enteredActionState = false;
         indicators = new List<SquareIndicator>();
     }
 
+
     void UpdateHealthBar()
     {
         UIManager.instance.healthBar.UpdateHealth(health, healthMax);
     }
 
-    void UpdateActionBar()
+    void UpdateArmorBar()
     {
-        UIManager.instance.actionBar.UpdateHealth(movePoints, movePointsMax);
+        if (armor > 0)
+        {
+            UIManager.instance.armorBar.gameObject.SetActive(true);
+            UIManager.instance.armorBar.UpdateHealth(armor, armorMax);
+        }
+        else
+        {
+            UIManager.instance.armorBar.gameObject.SetActive(false); // hide the bar
+        }
     }
 
     void UpdateXPBar()
     {
-        UIManager.instance.xpBar.UpdateHealth(experience, experienceLevel);
+        int expLastLevel;
+        if (level == 0) expLastLevel = 0;
+        else expLastLevel = XPToLevel(level - 1);
+        UIManager.instance.xpBar.UpdateHealth(experience, experienceLevel, expLastLevel);
     }
 
     void UpdateAmmoBar()
@@ -72,7 +95,6 @@ public class PlayerPawn : PawnControllerBase
         base.RoundPrep();
         enteredActionState = false;
         stageComplete = false;
-        UpdateActionBar();
         PlaceMoveIndicators();
         UIManager.instance.instructions.ShowInstruction(Instruction.Move);
     }
@@ -81,7 +103,6 @@ public class PlayerPawn : PawnControllerBase
     void ActionRun()
     {
         movePoints = movePointsMax;
-        UpdateActionBar();
         PlaceMoveIndicators();
         UIManager.instance.instructions.ShowInstruction(Instruction.Run);
     }
@@ -197,7 +218,6 @@ public class PlayerPawn : PawnControllerBase
         {
             // cancel remaining movement
             movePoints = 0;
-            UpdateActionBar();
             ClearIndicators();
             return false;
         }
@@ -242,7 +262,6 @@ public class PlayerPawn : PawnControllerBase
 
         // always spend a movement point even if the space is blocked
         movePoints--;
-        UpdateActionBar();
 
         if (clear)
         {
@@ -310,15 +329,6 @@ public class PlayerPawn : PawnControllerBase
                 weaponEquipped.DiscardWeapon();
                 weaponReady = false;
             }
-            #if UNITY_EDITOR
-            else
-            {
-                // cheat!
-                weaponEquipped = Instantiate(weaponOptions.Select());
-                weaponEquipped.EquipWeapon(this);
-                weaponReady = true;
-            }
-            #endif
             ClearIndicators();
             UpdateAmmoBar();
             PlaceAttackIndicators();
@@ -421,12 +431,29 @@ public class PlayerPawn : PawnControllerBase
         PlaceMoveIndicators();
     }
 
-    public bool Heal(int amount)
+    public bool PickupHeal(int amount)
     {
         if (health < healthMax)
         {
+            int amountHealed = amount;
+            if (upgradeMedic > 0)
+            {
+                // 20% extra healing per rank
+                amountHealed = Mathf.CeilToInt((float)amount * (5f + (float)upgradeMedic) / 5f);
+            }
             health = Mathf.Min(health + amount, healthMax);
             UpdateHealthBar();
+            return true;
+        }
+        return false;
+    }
+
+    public bool PickupArmor(int amount)
+    {
+        if (armor < armorMax)
+        {
+            armor = Mathf.Min(armor + amount, armorMax);
+            UpdateArmorBar();
             return true;
         }
         return false;
@@ -448,19 +475,26 @@ public class PlayerPawn : PawnControllerBase
 
     public override void TakeDamage(int amount)
     {
-        base.TakeDamage(amount);
-        UpdateHealthBar();
-    }
-
-    public void AddXP(int amount)
-    {
-        experience += amount;
-        while (experience >= experienceLevel)
+        int amountPenetrates = amount;
+        if (armor > 0)
         {
-            Debug.Log("<color=blue>INFO</color> LEVEL UP!");
-            experience -= experienceLevel;
+            if (armor > amount)
+            {
+                armor -= amount;
+                amountPenetrates = 0;
+            }
+            else
+            {
+                amountPenetrates -= armor;
+                armor = 0;
+            }
+            UpdateArmorBar();
         }
-        UpdateXPBar();
+        if (amountPenetrates > 0)
+        {
+            base.TakeDamage(amount);
+            UpdateHealthBar();
+        }
     }
 
     public bool HasWeapon()
@@ -495,6 +529,10 @@ public class PlayerPawn : PawnControllerBase
         {
             weaponEquipped = weaponPick;
             weaponEquipped.EquipWeapon(this);
+            if (upgradeAmmo > 0)
+            {
+                weaponEquipped.ApplyAmmoUpgrade(upgradeAmmo);
+            }
             weaponReady = true;
             UpdateAmmoBar();
             return true;
@@ -510,5 +548,83 @@ public class PlayerPawn : PawnControllerBase
             weaponReady = false;
             UpdateAmmoBar();
         }
+    }
+
+    // this is called at the instant of inflicting an attack
+    public override int DamageBonus()
+    {
+        if (weaponEquipped && weaponReady) return 0; // using any carried away
+        return upgradeStrength; // therefore must be using the fist, get bonus damage!
+    }
+
+    public void AddXP(int amount)
+    {
+        experience += amount;
+        while (experience >= experienceLevel)
+        {
+            level++;
+            experienceLevel = XPToLevel(level);
+            StageManager.instance.LevelGain(); // the stage manager will implement the level up at the right time
+        }
+        UpdateXPBar();
+    }
+
+    int XPToLevel(int levelCheck)
+    {
+        return Mathf.CeilToInt(Global.XPPERLEVELBASE * Mathf.Pow(levelCheck, Global.XPPERLEVELEXPONENT));
+    }
+
+    public int GetRank()
+    {
+        return level;
+    }
+
+    public void UpgradeSkills(int newStrength, int newTough, int newAmmo, int newSupply, int newTerror, int newMedic)
+    {
+        if (newStrength > upgradeStrength)
+        {
+            // no further implementation needed here
+            upgradeStrength = newStrength;
+        }
+        if (newTough > upgradeTough)
+        {
+            // only needs to be implemented here
+            int delta = newTough - upgradeTough;
+            health += delta * 5;
+            healthMax += delta * 5;
+            UpdateHealthBar();
+            upgradeTough = newTough;
+        }
+        if (newAmmo > upgradeAmmo)
+        {
+            // no further implementation needed here
+            upgradeAmmo = newAmmo;
+        }
+        if (newSupply > upgradeSupply)
+        {
+            float increment = ((float)newSupply + 5f) / ((float)upgradeSupply + 5f); // the ratio between the old bonus and new one
+            // no further implementation needed here
+            StageManager.instance.UpgradeSupply(increment);
+            upgradeSupply = newSupply;
+        }
+        if (newTerror > upgradeTerror)
+        {
+            float increment = ((float)newTerror + 5f) / ((float)upgradeTerror + 5f); // the ratio between the old bonus and new one
+            // no further implementation needed here
+            StageManager.instance.UpgradeTerror(increment);
+            upgradeTerror = newTerror;
+        }
+        if (newMedic > upgradeMedic)
+        {
+            // no further implementation needed here
+            upgradeMedic = newMedic;
+        }
+    }
+
+    public void UpgradeRankSuperBonus(int bonusHealth)
+    {
+        healthMax += bonusHealth;
+        health += bonusHealth;
+        UpdateHealthBar();
     }
 }

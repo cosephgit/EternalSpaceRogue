@@ -52,6 +52,12 @@ public class EnemyPawn : PawnControllerBase
         Destroy(gameObject);
     }
 
+    // remove this enemy silently from the level
+    public void SilentRemove()
+    {
+        Destroy(gameObject);
+    }
+
     public override void RoundPrep()
     {
         if (!IsAlive()) return;
@@ -170,15 +176,9 @@ public class EnemyPawn : PawnControllerBase
                         }
                     }
                 }
-                if (pointFound)
-                {
-                    // great! we have a good point to move and attack from THIS round, so go with it
-                    Debug.Log("<color=blue>INFO</color> " + gameObject + " found a good attack point! at " + pointSelected + " dist " + Global.VectorListToString(route));
-                }
-                else
+                if (!pointFound)
                 {
                     // could not find a point that can be reached this round, just move to the player
-                    Debug.Log("<color=blue>INFO</color> " + gameObject + " could not find a route");
                     route = StageManager.instance.Pathfind(transform.position, playerPos);
                     // this should ALWAYS generate a route of at least 1 (the move into the player's space) unless it's impossible
                     if (route.Count > 0)

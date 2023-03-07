@@ -7,12 +7,11 @@ using UnityEngine.UI;
 public class UIWeaponManager : MonoBehaviour
 {
     [SerializeField]UIHealthBar weaponCurrent;
-    [SerializeField]TextMeshProUGUI fistText; // shows the fist equipped when the weapon is currently holstered
-    [SerializeField]float weaponIdleXShift = -0.1f;
+    [SerializeField]TextMeshProUGUI fistText; // shows the fist equipped when the weapon is currently holstered or absent
     [SerializeField]RectTransform rect;
+    [SerializeField]RectTransform fistReadyPlaceholder; // this is an empty UI object that marks the position the weapon manager should be in while the player is using fists
     bool fistActive;
     Vector3 weaponDefault;
-    Vector3 weaponOffset;
     bool getReady = true;
 
     void Start()
@@ -24,8 +23,6 @@ public class UIWeaponManager : MonoBehaviour
         if (getReady)
         {
             weaponDefault = rect.position;
-            weaponOffset = weaponDefault;
-            weaponOffset.x = weaponOffset.x * (1 + weaponIdleXShift);
             getReady = false;
             fistActive = false;
             fistText.enabled = false;
@@ -53,7 +50,7 @@ public class UIWeaponManager : MonoBehaviour
         if (fistActive)
         {
             fistText.enabled = true;
-            rect.position = weaponOffset;
+            rect.position = fistReadyPlaceholder.position;
         }
         else
         {

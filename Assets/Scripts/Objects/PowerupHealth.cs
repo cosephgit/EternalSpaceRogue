@@ -16,7 +16,7 @@ public class PowerupHealth : PowerUpBase
     {
         if (!ready) return true;
 
-        if (pawn.Heal(healAmount))
+        if (pawn.PickupHeal(healAmount))
         {
             Consume();
         }

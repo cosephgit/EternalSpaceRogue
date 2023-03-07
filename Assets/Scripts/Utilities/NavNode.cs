@@ -123,11 +123,6 @@ public class NavNode : MonoBehaviour
                 optimalNode.PathFind(target, this, avoidPawns, distMax);
             }
         }
-        else
-        {// there are no more nodes with pathStatus 1
-            Debug.Log("<color=blue>INFO</color> Pathfinding could not find path");
-            // return a null path list
-        }
     }
     // the pathing has now been created and is stored in the nodes, so the path does not need to be identified here
 

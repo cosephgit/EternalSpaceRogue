@@ -28,7 +28,6 @@ public class ObjectiveZone : MonoBehaviour
                     {
                         StageManager.instance.ObjectiveReached(objectiveXP);
                         unTouched = false;
-                        Debug.Log("<color=blue>INFO</color> Stage complete!");
                     }
                 }
             }

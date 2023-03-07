@@ -22,7 +22,8 @@ public class StageComplete : BaseState
     }
     public override void UpdateLogic()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        
     }
+    // don't want anything here as it transitions straight from this stage to new stage creation
     public override void Exit() { }
 }

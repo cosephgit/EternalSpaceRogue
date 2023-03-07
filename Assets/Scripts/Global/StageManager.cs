@@ -56,8 +56,15 @@ public class StageManager : StateMachine
     [HideInInspector]public StageEndRound roundEndStage { get; private set; }
     [HideInInspector]public StageComplete stageCompleteStage { get; private set; }
     [HideInInspector]public StageFailed stageFailedStage { get; private set; }
+    // persistent stage state factors
+    [HideInInspector]public float enemyStrengthTotal; // unspent power points in the stage, updated with each power up
+    [HideInInspector]public float EnemyStrengthIndividual; // unspent power points in the stage, updated with each power up
     [HideInInspector]public float powerPoints; // unspent power points in the stage, updated with each power up
-
+    [HideInInspector]public int gameState { get; private set; } = 0; // 0: normal, 1: victory, 2: defeat
+    [HideInInspector]public int levelUpPending { get; private set; } = 0;
+    [HideInInspector]public int stageCurrent { get; private set; } = 0;
+    bool menuOpen = false;
+    Vector3 playerPosInitial;
 
     // Awake
     // set up singleton
@@ -82,8 +89,53 @@ public class StageManager : StateMachine
         roundEndStage = new StageEndRound(this);
         stageCompleteStage = new StageComplete(this);
         stageFailedStage = new StageFailed(this);
-
+        playerPosInitial = playerPawn.transform.position;
+        menuOpen = false;
         base.Awake();
+    }
+
+
+    // clean up the stage and put the player back at the start point
+    public void NewStage()
+    {
+        for (int i = 0; i < enemySpawns.Count; i++)
+        {
+            if (enemySpawns[i])
+                enemySpawns[i].SilentRemove();
+        }
+        enemySpawns.Clear();
+        for (int i = 0; i < navNodeMap.Length; i++)
+        {
+            if (navNodeMap[i])
+                Destroy(navNodeMap[i].gameObject);
+        }
+        spawnPoints.Clear();
+        navNodeDirty.Clear();
+
+        //tilemapActive
+        for (int i = 0; i < tilemapActive.Count; i++)
+        {
+            if (tilemapActive[i])
+                Destroy(tilemapActive[i].gameObject);
+        }
+        tilemapActive.Clear();
+
+        // need to get ALL POWERUPS TOO!!!
+        PowerUpBase[] powerupsAll = (PowerUpBase[])GameObject.FindObjectsOfType(typeof(PowerUpBase));
+        for (int i = 0; i < powerupsAll.Length; i++)
+        {
+            Destroy(powerupsAll[i].gameObject);
+        }
+
+        playerPawn.transform.position = playerPosInitial;
+
+        // TODO increment difficulty
+        stageCurrent++;
+        Debug.Log("Stage cleared - new stage difficulty " + stageCurrent);
+        gameState = 0;
+        menuOpen = false;
+
+        ChangeState(GetInitialState());
     }
 
     protected override BaseState GetInitialState()
@@ -115,6 +167,17 @@ public class StageManager : StateMachine
         return enemiesValid;
     }
 
+    // returns true if there are still half of the power points left in the level
+    public bool PowerUpPlenty()
+    {
+        return (powerPoints > (powerStrengthBaseTotal * 0.5f));
+    }
+    // update the remaining power points in the level
+    public void PowerUpSpawned(float quality)
+    {
+        powerPoints -= quality;
+    }
+
     // called when a trap triggers another enemy to spawn
     public void EnemySpawn(Vector3 pos)
     {
@@ -123,6 +186,7 @@ public class StageManager : StateMachine
             EnemyPawn spawn = Instantiate(enemiesValid[Random.Range(0, enemiesValid.Count)], pos, Quaternion.identity);
             spawn.SetStrength(enemyStrengthBaseIndividual);
             powerPoints += spawn.enemyStrength; // when a trap happens, the remaining powerups on the level get a little boost
+            enemySpawns.Add(spawn); // add it to the active enemies
         }
     }
 
@@ -241,17 +305,117 @@ public class StageManager : StateMachine
         }
     }
 
+    protected override void Update()
+    {
+        if (menuOpen)
+        {
+            if (Input.GetButtonDown("Cancel"))
+            {
+                // close menu
+                UIManager.instance.pauseMenu.PressReturn();
+            }
+            return;
+        }
+        else if (Input.GetButtonDown("Cancel"))
+        {
+            // open menu
+            OpenMenu();
+            return;
+        }
+        base.Update();
+    }
+
+    void OpenMenu()
+    {
+        menuOpen = true;
+        UIManager.instance.pauseMenu.MenuOpen(gameState);
+    }
+
+    // called by the menu when the continue button is pressed and the menu closed
+    public void MenuClosed()
+    {
+        menuOpen = false;
+    }
+
     // the player has reached the objective zone! end the stage
     public void ObjectiveReached(int xp)
     {
         playerPawn.AddXP(xp);
-        Debug.Log("<color=blue>INFO</color> STAGE COMPLETE!");
         ChangeState(stageCompleteStage);
+        gameState = 1;
+        OpenMenu();
+    }
+
+    // do level up stuff - open the selection menu
+    // need to avoid interrupting the round order for this - make sure it is only triggered at the end of a round?
+    public void LevelGain()
+    {
+        levelUpPending++; // just in case the player gets multiple level ups before they get to the menu
+    }
+
+    // user by the level up menu to notify the stage manager that all level ups are completed and the menu has been closed, gameplay can continue
+    public void LevelUpsDone()
+    {
+        levelUpPending = 0;
+    }
+
+    // the player has upgraded their terror skill - increase the remaining supply
+    // this should ONLY EVER GET CALLED during StageEndRound()
+    public void UpgradeSupply(float increment)
+    {
+        if (increment > 1)
+        {
+            // increase the supply remaining by the increment, the player will get a little luckier for the rest of the level
+            powerPoints += (powerStrengthBaseTotal * (increment - 1));
+        }
+    }
+
+    // the player has upgraded their terror skill - remove some (invisible) enemies
+    // this should ONLY EVER GET CALLED during StageEndRound()
+    public void UpgradeTerror(float increment)
+    {
+        if (increment > 1)
+        {
+            float disappearChance = 1 / Mathf.Pow(increment, 2);
+            // remove any weaker spawns by the increment
+            for (int i = enemySpawns.Count - 1; i >= 0; i--)
+            {
+                // check all spawns in the level
+                // if they're not in view, and they're weak, remove them from the level (and all lists)
+                if (enemySpawns[i].actualStrength < enemyStrengthBaseIndividual)
+                {
+                    if (!PointOnScreen(enemySpawns[i].transform.position))
+                    {
+                        if (Random.Range(0, 1) < disappearChance)
+                        {
+                            enemySpawns[i].SilentRemove();
+                            enemySpawns.Remove(enemySpawns[i]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    // returns true if the indicated point is visible on the screen (with a bit of buffer to allow for sprite size)
+    public bool PointOnScreen(Vector3 point)
+    {
+        Vector3 offset = playerPawn.transform.position - point;
+
+        if (Mathf.Abs(offset.x) < GameManager.instance.screenCellWidth + 2
+            && Mathf.Abs(offset.y) < GameManager.instance.screenCellHeight + 2)
+        {
+            return true;
+        }
+        return false;
     }
 
     public void PlayerDefeated()
     {
         ChangeState(stageFailedStage);
+        gameState = 2;
+        OpenMenu();
     }
 
     #if UNITY_EDITOR

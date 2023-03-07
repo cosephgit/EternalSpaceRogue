@@ -7,6 +7,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2960611290407119718, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2967164805480727632, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -626126031, guid: 9bda93c56102a394fa76a43489c21a7e, type: 3}
     - target: {fileID: 5538609470978712661, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.y
       value: 0.5
@@ -37,7 +45,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7640384966893122044, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7640384966893122044, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: m_LocalPosition.x

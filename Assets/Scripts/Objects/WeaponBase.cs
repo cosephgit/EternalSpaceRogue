@@ -86,6 +86,13 @@ public class WeaponBase : MonoBehaviour
         }
     }
 
+    public void ApplyAmmoUpgrade(float upgradeAmmo)
+    {
+        float multiplier = (5f + upgradeAmmo) * 0.2f;
+        ammo = Mathf.RoundToInt((float)ammo * multiplier);
+        ammoMax = Mathf.RoundToInt((float)ammoMax * multiplier);
+    }
+
     // this equips the weapon to the passed owner pawn
     public bool EquipWeapon(PawnControllerBase owner)
     {
@@ -214,7 +221,7 @@ public class WeaponBase : MonoBehaviour
     }
 
     // this is called in the middle of a pawn's attack, it makes the weapon inflict damage on the target location with the orientation 
-    public void AttackDamage(Vector3 origin, Vector3 facing, int range)
+    public void AttackDamage(Vector3 origin, Vector3 facing, int range, int damageBonus = 0)
     {
         Vector3[] hitLocations = GetHitLocations(origin, facing, range);
 
@@ -226,8 +233,7 @@ public class WeaponBase : MonoBehaviour
                 PawnControllerBase hitPawn = hit.GetComponent<PawnControllerBase>();
                 if (hitPawn)
                 {
-                    hitPawn.TakeDamage(hitDamage[i]);
-                    Debug.Log("<color=blue>INFO</color> HIT");
+                    hitPawn.TakeDamage(hitDamage[i] + damageBonus);
                 }
             }
             if (hitEffectPrefab)
@@ -239,7 +245,7 @@ public class WeaponBase : MonoBehaviour
     }
 
     // this is called at the end of a pawn's attack
-    // ammo is consumed here and the weapon is discarded if needed
+    // the weapon is discarded if needed
     public void AttackEnd()
     {
         if (ammo == 0)

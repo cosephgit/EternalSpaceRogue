@@ -33,4 +33,9 @@ public class PowerupWeapon : PowerUpBase
         }
         return true;
     }
+
+    public override float Quality()
+    {
+        return (weaponActual.threatLevel + quality);
+    }
 }

@@ -46,8 +46,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d3474034da743c4dae8489427ce3464, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  quality: 1
   powerGun: {fileID: -3792410338894596860, guid: 12b5a5c92935aa24ca60aaf1e9a547e8, type: 3}
-  powerHealth: {fileID: 1489056362127539225, guid: 8801e3feefb62cb4da1369e2faa6c59e, type: 3}
+  powerHealth:
+  - {fileID: 1489056362127539225, guid: 8801e3feefb62cb4da1369e2faa6c59e, type: 3}
+  - {fileID: 1489056362127539225, guid: ad715964ac74d50419d567ce206742a2, type: 3}
+  powerArmor:
+  - {fileID: -5569375275399384084, guid: 0235fbf75c1019e468471a064096d06d, type: 3}
+  - {fileID: -5569375275399384084, guid: acddd8f9a9a79cd47bb5bf39f6ce29e2, type: 3}
   powerReload: {fileID: 7253889632551689141, guid: e098d9832df584a409d4962eda539099, type: 3}
 --- !u!58 &6466152658621386649
 CircleCollider2D:

@@ -10,10 +10,12 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
     public UIHealthBar healthBar;
-    public UIHealthBar actionBar;
+    public UIHealthBar armorBar;
     public UIHealthBar xpBar;
     public UIWeaponManager weaponManager;
     public UIInstructions instructions;
+    public UIInGameMenu pauseMenu;
+    public UILevelUp levelUpMenu;
 
     void Awake()
     {
