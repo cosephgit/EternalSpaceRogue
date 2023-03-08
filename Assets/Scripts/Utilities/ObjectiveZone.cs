@@ -9,7 +9,6 @@ public class ObjectiveZone : MonoBehaviour
 {
     [SerializeField]float touchWithinX = 1.1f;
     [SerializeField]float touchWithinY = 1.1f;
-    [SerializeField]int objectiveXP = 10;
     bool unTouched = true;
 
     // checks if the player has reached the objective and tells the player pawn if they do so
@@ -26,7 +25,7 @@ public class ObjectiveZone : MonoBehaviour
 
                     if (Mathf.Abs(offset.x) <= touchWithinX && Mathf.Abs(offset.y) <= touchWithinY)
                     {
-                        StageManager.instance.ObjectiveReached(objectiveXP);
+                        StageManager.instance.ObjectiveReached();
                         unTouched = false;
                     }
                 }

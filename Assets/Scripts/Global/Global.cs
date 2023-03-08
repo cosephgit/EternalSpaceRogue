@@ -19,6 +19,8 @@ public static class Global
     public const float BONUSENEMYEXPONENT = 1.1f; // base to raise by level for individual enemy strength calculation (10% more average enemy strength each level)
     public const float BONUSENEMIESEXPONENT = 1.2f; // base to raise by level for total enemy strength calculation (20% more total enemy strength each level)
     // xp constants
+    public const float XPPERSTAGEBASE = 10f;
+    public const float XPPERSTAGEEXPONENT = 1.4f;
     public const float XPPERSTRENGTH = 2f;
     public const float XPPERLEVELBASE = 10f;
     public const float XPPERLEVELEXPONENT = 1.4f;

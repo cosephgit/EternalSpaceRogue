@@ -108,7 +108,8 @@ public class PlayerPawn : PawnControllerBase
     }
 
     // clears all currently displayed indicators
-    void ClearIndicators()
+    // public so that the StageManager can call it at the end of a stage to make sure it's clear
+    public void ClearIndicators()
     {
         for (int i = indicators.Count - 1; i >= 0; i--)
         {

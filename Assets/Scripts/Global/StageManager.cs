@@ -58,7 +58,7 @@ public class StageManager : StateMachine
     [HideInInspector]public StageFailed stageFailedStage { get; private set; }
     // persistent stage state factors
     [HideInInspector]public float enemyStrengthTotal; // unspent power points in the stage, updated with each power up
-    [HideInInspector]public float EnemyStrengthIndividual; // unspent power points in the stage, updated with each power up
+    [HideInInspector]public float enemyStrengthIndividual; // unspent power points in the stage, updated with each power up
     [HideInInspector]public float powerPoints; // unspent power points in the stage, updated with each power up
     [HideInInspector]public int gameState { get; private set; } = 0; // 0: normal, 1: victory, 2: defeat
     [HideInInspector]public int levelUpPending { get; private set; } = 0;
@@ -128,10 +128,18 @@ public class StageManager : StateMachine
         }
 
         playerPawn.transform.position = playerPosInitial;
+        playerPawn.ClearIndicators();
 
-        // TODO increment difficulty
         stageCurrent++;
+        #if UNITY_EDITOR
+        EnemyPawn[] enemiesLeft = (EnemyPawn[])GameObject.FindObjectsOfType(typeof(EnemyPawn));
+        PowerUpBase[] powerupsLeft = (PowerUpBase[])GameObject.FindObjectsOfType(typeof(PowerUpBase));
+        NavNode[] navnodesLeft = (NavNode[])GameObject.FindObjectsOfType(typeof(NavNode));
+
+        Debug.Log("Stage has enemies: " + enemiesLeft.Length + " - powerups: " + powerupsLeft.Length + " - navnodes: " + navnodesLeft.Length);
+
         Debug.Log("Stage cleared - new stage difficulty " + stageCurrent);
+        #endif
         gameState = 0;
         menuOpen = false;
 
@@ -338,19 +346,21 @@ public class StageManager : StateMachine
     }
 
     // the player has reached the objective zone! end the stage
-    public void ObjectiveReached(int xp)
+    public void ObjectiveReached()
     {
-        playerPawn.AddXP(xp);
+        int xpGain = Mathf.CeilToInt(Global.XPPERSTAGEBASE * Mathf.Pow(Global.XPPERSTAGEEXPONENT, stageCurrent));
+
+        playerPawn.AddXP(xpGain);
         ChangeState(stageCompleteStage);
         gameState = 1;
         OpenMenu();
     }
 
     // do level up stuff - open the selection menu
-    // need to avoid interrupting the round order for this - make sure it is only triggered at the end of a round?
+    // need to avoid interrupting the round order for this - make sure it is only triggered at the end of a round
     public void LevelGain()
     {
-        levelUpPending++; // just in case the player gets multiple level ups before they get to the menu
+        levelUpPending++; // increment them just in case the player gets multiple level ups before they get to the menu
     }
 
     // user by the level up menu to notify the stage manager that all level ups are completed and the menu has been closed, gameplay can continue

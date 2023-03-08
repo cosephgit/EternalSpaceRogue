@@ -10,12 +10,37 @@ using UnityEngine;
 public class StageInit : BaseState
 {
     protected StageManager _sm;
+    // these values are set up at the start of stage creation and are only used during init
+    // they're copied into the stagemanager when they are set
     float initPower;
     float initEnemyTotal;
     float initEnemyIndividual;
 
     public StageInit(StageManager stateMachine) : base("StageInit", stateMachine) {
       _sm = stateMachine;
+    }
+
+    // calculate the power up and enemy strenghts for this stage
+    void SetDifficulty()
+    {
+        initPower = _sm.powerStrengthBaseTotal * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSLOOTEXPONENT);
+        if (_sm.playerPawn.upgradeSupply > 0)
+        {
+            initPower *= ((float)_sm.playerPawn.upgradeSupply + 5f) * 0.2f;
+        }
+        initEnemyTotal = _sm.enemyStrengthBaseTotal * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMIESEXPONENT);
+        initEnemyIndividual = _sm.enemyStrengthBaseIndividual * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMYEXPONENT);
+        if (_sm.playerPawn.upgradeTerror > 0)
+        {
+            // face less enemy strength overall BUT the basic group strength will be bigger
+            float factor = ((float)_sm.playerPawn.upgradeTerror + 5f) * 0.2f;
+            initEnemyTotal /= factor;
+            initEnemyIndividual *= factor;
+        }
+
+        _sm.powerPoints = initPower;
+        _sm.enemyStrengthTotal = initEnemyTotal;
+        _sm.enemyStrengthIndividual = initEnemyIndividual;
     }
 
     // removes any tilemaps in the stage
@@ -242,8 +267,6 @@ public class StageInit : BaseState
     void PopulateEnemies()
     {
         EnemyPawn enemySpawned;
-        float stageStrength = _sm.enemyStrengthBaseTotal; // the number of strength points of enemies to spawn in the stage
-        float stageStrengthIndividual = _sm.enemyStrengthBaseIndividual; // the target strength of each individual enemy
         List<EnemyPawn> enemiesValid = _sm.EnemiesValid(); // note this also GENERATES the valid enemies list for the stage difficulty
 
         if (_sm.enemySpawns.Count > 0)
@@ -259,7 +282,7 @@ public class StageInit : BaseState
             _sm.enemySpawns.Clear();
         }
 
-        while (stageStrength > 0)
+        while (initEnemyTotal > 0)
         {
             Vector3 pos = SelectSpawnPoint();
 
@@ -269,12 +292,12 @@ public class StageInit : BaseState
                 enemySpawned = GameObject.Instantiate(enemiesValid[Random.Range(0, enemiesValid.Count)], pos, Quaternion.identity);
                 _sm.enemySpawns.Add(enemySpawned);
                 // set the enemy strength based on stage difficulty, and adjust the remaining stage enemy strength total by the result
-                stageStrength -= enemySpawned.SetStrength(Mathf.Min(stageStrengthIndividual, stageStrength));
+                initEnemyTotal -= enemySpawned.SetStrength(Mathf.Min(initEnemyIndividual, initEnemyTotal));
             }
             else
             {
                 // else there are no valid spawn points so stop trying to spawn (this SHOULD NOT HAPPEN!)
-                stageStrength = 0;
+                initEnemyTotal = 0;
             }
         }
     }
@@ -282,34 +305,22 @@ public class StageInit : BaseState
     void PopulateLoot()
     {
         PowerUpBase powerupSpawned;
-        float stagePower = _sm.powerStrengthBaseTotal; // the number of points of powerups to spawn in the stage
-        float stagePowerIndividual = _sm.powerStrengthBaseIndividual; // the target power of each powerup
 
-        _sm.powerPoints = stagePower;
-
-        while (stagePower > 0)
+        while (initPower > 0)
         {
             Vector3 pos = SelectSpawnPoint();
 
             if (pos.magnitude > 0)
             {
                 powerupSpawned = GameObject.Instantiate(_sm.powerupPrefabs[Random.Range(0, _sm.powerupPrefabs.Length)], pos, Quaternion.identity);
-                stagePower -= stagePowerIndividual;
+                initPower -= _sm.powerStrengthBaseIndividual;
             }
             else
             {
                 // else there are no valid spawn points so stop trying to spawn (this SHOULD NOT HAPPEN!)
-                stagePower = 0;
+                initPower = 0;
             }
         }
-    }
-
-    void SetDifficulty()
-    {
-        initPower = _sm.powerPoints * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSLOOTEXPONENT);
-        initEnemyTotal = _sm.enemyStrengthTotal * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMIESEXPONENT);
-        initEnemyIndividual = _sm.EnemyStrengthIndividual * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMYEXPONENT);
-
     }
 
     public override void Enter()

@@ -6737,6 +6737,138 @@ PrefabInstance:
       propertyPath: <playerPawn>k__BackingField
       value: 
       objectReference: {fileID: 4535915701661718547}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <enemyStrengthBaseTotal>k__BackingField
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.size
+      value: 31
+      objectReference: {fileID: 0}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[0]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: c9f8a9e920fe15c4fa7004b34339e33a, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[1]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 19cf4c104e77ea54aa4b22ea5abf9c24, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[2]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 39c63be0b2fccab48b034c9a46fccee1, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[3]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 43edca297748e1847adb7d0248c0a9b8, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[4]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 74594b2ea0dd4684fa8c1ace76aaf76b, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[5]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 0f4a4e4ee63e58246a183b2a7ccddf03, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[6]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 2a3cd9c6981bbbe43978ca604f192ac4, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[7]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 2119ac0274781af49bdaf593426ffd08, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[8]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: b34567bc1dd963f4e91b6aabcaf0299e, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[9]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 0244b47927362bf47904441bdd209f95, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[10]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: da8c8afe607198048888304f262c17f1, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[11]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: fc8043b497dbc104ca48fde51667d0ec, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[12]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 7e0f1f93c9f3a6040aeb8912469ea16e, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[13]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 8d202ea83d5bb1a4b999f1c2eaad69c0, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[14]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: d4b8a452777aa31438fcfe85136d9534, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[15]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: d8ff82bd47cc93f4aac3b0f0089ff02b, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[16]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 13a1a474ebfa5fb40b778f03382e6367, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[17]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 417c43151c314324896f5d1f72be7587, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[18]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: ba997d33a603f194c9d464a8dbeb08cc, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[19]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 67de30cb885441344b2eba3e4a2d980b, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[20]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: eaa0a6d3cf560f24d9804e108c9ea705, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[21]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 832949b4e31442a49adf8c5e53fec1de, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[22]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 33ae0f695759bae48ad33c6d5674c1e3, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[23]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 08f755c2096d49f4d9b98a25f63b7f7e, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[24]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: ed222d298d8985646a5d1f5681dae23c, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[25]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: a6aa32c8af35bd74c9b001fccfcb5d3b, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[26]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: d59c1c8bb2f7fa54793f77b6e05a48eb, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[27]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 749540d14019c9949907c0ffa4e5cde0, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[28]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 366bbf9bcc04d1c419e8fed3049d2687, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[29]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 927ead1ad94893a45b34089939c205b3, type: 3}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <tilemapPrefabs>k__BackingField.Array.data[30]
+      value: 
+      objectReference: {fileID: 6277250800665863264, guid: 50b84fc7eba371443ab8d7a466a55933, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
 --- !u!1001 &3855028438555638751
