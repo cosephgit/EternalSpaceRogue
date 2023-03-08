@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8681720582224839392}
   - component: {fileID: 5202452686970387697}
-  m_Layer: 0
+  - component: {fileID: 596333050729275693}
+  m_Layer: 12
   m_Name: NavNode
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -44,3 +45,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f1f9eaf2703a744a4596c5b04db54c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!58 &596333050729275693
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5643860594053951603}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.1

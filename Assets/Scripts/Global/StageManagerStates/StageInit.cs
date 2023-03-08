@@ -10,9 +10,38 @@ using UnityEngine;
 public class StageInit : BaseState
 {
     protected StageManager _sm;
+    // these values are set up at the start of stage creation and are only used during init
+    // they're copied into the stagemanager when they are set
+    float initPower;
+    float initEnemyTotal;
+    float initEnemyIndividual;
 
     public StageInit(StageManager stateMachine) : base("StageInit", stateMachine) {
       _sm = stateMachine;
+    }
+
+    // calculate the power up and enemy strenghts for this stage
+    void SetDifficulty()
+    {
+        initPower = _sm.powerStrengthBaseTotal * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSLOOTEXPONENT);
+        if (_sm.playerPawn.upgradeSupply > 0)
+        {
+            initPower *= 1f + ((float)_sm.playerPawn.upgradeSupply * 0.2f);
+        }
+        initEnemyTotal = _sm.enemyStrengthBaseTotal * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMIESEXPONENT);
+        initEnemyIndividual = _sm.enemyStrengthBaseIndividual * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMYEXPONENT);
+        if (_sm.playerPawn.upgradeTerror > 0)
+        {
+            // face less enemy strength overall BUT the basic group strength will be bigger
+            // the 20% in the UI is just an approximation
+            float factor = 1f + ((float)_sm.playerPawn.upgradeTerror * 0.1f);
+            initEnemyTotal /= factor;
+            initEnemyIndividual *= factor;
+        }
+
+        _sm.powerPoints = initPower;
+        _sm.enemyStrengthTotal = initEnemyTotal;
+        _sm.enemyStrengthIndividual = initEnemyIndividual;
     }
 
     // removes any tilemaps in the stage
@@ -26,7 +55,7 @@ public class StageInit : BaseState
             _sm.tilemapActive.Remove(_sm.tilemapActive[i]);
             GameObject.Destroy(destroyThis);
         }
-        _sm.tilemapActive = new List<TilemapSegment>();
+        _sm.tilemapActive.Clear();
     }
 
     List<TilemapSegment> SelectTilemapsByExits(List<TilemapSegment> segmentList, int exitMin, int exitMax)
@@ -47,7 +76,9 @@ public class StageInit : BaseState
     // called at the start of a stage to populate it with tilemap segments
     void BuildTilemap()
     {
-        bool complete = false;
+        bool incomplete = true;
+        bool objectiveNeeded = true;
+
         int whileDump = 0; // paranoid infinite loop protection
         List<TilemapSegment> tilemapOptions = SelectTilemapsByExits(_sm.tilemapPrefabs, 3, 4);
 
@@ -57,29 +88,38 @@ public class StageInit : BaseState
         }
 
         // place the first tilemap segment at the origin
-        TilemapSegment tilemapHub = GameObject.Instantiate(tilemapOptions[Random.Range(0, tilemapOptions.Count)], Vector3.zero, Quaternion.identity);
+        TilemapSegment tilemapHub = GameObject.Instantiate(_sm.tilemapEntrance, Vector3.zero, Quaternion.identity);
         _sm.tilemapActive.Add(tilemapHub);
-        tilemapHub.BuildNavNodes();
 
-        while (complete == false && whileDump < 100)
+        while (incomplete && whileDump < 100)
         {
             List<TilemapSegment> tilemapIncomplete = new List<TilemapSegment>();
-            TilemapSegment tilemapBase; // the current tilemap segment which will be used to connect the next segment to
+            TilemapSegment tilemapBase = _sm.tilemapActive[0]; // the current tilemap segment which will be used to connect the next segment to
             Vector3 tilePlaceOffset = new Vector3(); // the offset from the current tilemap segment to place the new tilemap segment on
+            bool startNeeded = true;
+            int tileCheck = 0;
 
-            // make a list of all the tilemap sections that are not complete (not all exits have been closed)
-            for (int i = 0; i < _sm.tilemapActive.Count; i++)
+            while (startNeeded && tileCheck < _sm.tilemapActive.Count)
             {
-                if (!_sm.tilemapActive[i].exitsDone)
-                    tilemapIncomplete.Add(_sm.tilemapActive[i]);
+                if (!_sm.tilemapActive[tileCheck].exitsDone)
+                {
+                    // take the first active tile in the list that has an exit unplaced
+                    tilemapBase = _sm.tilemapActive[tileCheck];
+                    startNeeded = false;
+                }
+                tileCheck++;
             }
 
-            if (tilemapIncomplete.Count > 0)
+            if (startNeeded)
+            {
+                // all exits are closed
+                incomplete = false;
+            }
+            else
             {
                 // a list of all tilemap segments that are acceptable and can connect to the current tilemapBase
                 List<TilemapSegment> tilemapConnected = new List<TilemapSegment>();
 
-                tilemapBase = tilemapIncomplete[Random.Range(0, tilemapIncomplete.Count)]; // this is the base tile which the next tilemap is being placed from
                 tilePlaceOffset = tilemapBase.PickAdjacentDirection();
 
                 for (int i = 0; i < tilemapOptions.Count; i++)
@@ -105,7 +145,14 @@ public class StageInit : BaseState
                     TilemapSegment tilemapAdded = GameObject.Instantiate(tilemapConnected[Random.Range(0, tilemapConnected.Count)], tilePlacePos, Quaternion.identity);
 
                     _sm.tilemapActive.Add(tilemapAdded);
-                    tilemapAdded.BuildNavNodes();
+
+                    if (objectiveNeeded && _sm.tilemapActive.Count >= _sm.tilemapSizeMax && (Global.OrthogonalDist(tilemapAdded.transform.position, Vector3.zero) >= _sm.tilemapExitDistMin))
+                    {
+                        // place the objective
+                        objectiveNeeded = false;
+                        ObjectiveZone objective = GameObject.Instantiate(_sm.objectiveZone, tilemapAdded.transform.position, Quaternion.identity, tilemapAdded.transform);
+                    }
+
                     if (tilemapAdded.ExitCount() <= 1) tilemapAdded.ExitsDone(); // will always be done when placed
 
                     if (_sm.tilemapActive.Count == _sm.tilemapSizeMin)
@@ -125,26 +172,40 @@ public class StageInit : BaseState
                     }
                 }
             }
-            else
-            {
-                // all exits are closed
-                complete = true;
-            }
 
             whileDump++;
         }
 
-        if (!complete) Debug.Log("<color=red>ERROR</color> Dumped out of tilemap generation in BuildTilemap()");
+        if (objectiveNeeded)
+        {
+            if (_sm.tilemapActive.Count > 1)
+            {
+                // couldn't place it earlier, so just put it on the last placed tile
+                objectiveNeeded = false;
+                ObjectiveZone objective = GameObject.Instantiate(_sm.objectiveZone, _sm.tilemapActive[_sm.tilemapActive.Count - 1].transform.position, Quaternion.identity, _sm.tilemapActive[_sm.tilemapActive.Count - 1].transform);
+            }
+            else
+            {
+                Debug.Log("<color=red>ERROR</color> failed to place objective in BuildTilemap()");
+            }
+        }
+
+        if (incomplete) Debug.Log("<color=red>ERROR</color> Dumped out of tilemap generation in BuildTilemap()");
     }
 
     // this collects all instantiated navnodes and stores them in an array for pathfinding
     // it also copies this list into the spawnpoint list (used for placing enemies, loot, etc)
     void BuildNavmap()
     {
-        _sm.navNodeMap = (NavNode[])Object.FindObjectsOfType(typeof(NavNode));
-        // TODO build pathfindingdata? is this needed?
-        // I think it DOES need connection data, without that pathfinding will take longer and this data will never change so is ok
-        // but the pathing data may be redundant (as enemies will block movement)
+        List<NavNode> navNodeCollector = new List<NavNode>();
+
+        // place the navigation nodes
+        for (int i = 0; i < _sm.tilemapActive.Count; i++)
+        {
+            navNodeCollector.AddRange(_sm.tilemapActive[i].BuildNavNodes());
+        }
+
+        _sm.navNodeMap = navNodeCollector.ToArray();
 
         #if UNITY_EDITOR
         Debug.Log("BuildNavmap found " + _sm.navNodeMap.Length + " NavNode objects");
@@ -152,6 +213,12 @@ public class StageInit : BaseState
         // NOTE: this produces some 4000+ NavNodes in a typical stage build
         // so building full pathfinding data on each stage build is probably NOT viable
         // but pathfinding should never be needed between nodes more than (say) 20 nodes apart, so the pathfinding cost should be fairly low and will only be called every few seconds
+
+        for (int i = 0; i < _sm.navNodeMap.Length; i++)
+        {
+            // build connectivity between all nodes
+            _sm.navNodeMap[i].CheckConnection(i);
+        }
 
         // set up the spawn points
         _sm.spawnPoints.Clear();
@@ -169,31 +236,22 @@ public class StageInit : BaseState
         if (_sm.spawnPoints.Count > 0)
         {
             bool needPoint = true;
-            int whileDump = 0;
 
-            while (needPoint && whileDump < 100)
+            while (needPoint)
             {
                 if (_sm.spawnPoints.Count > 0)
                 {
-                    Vector3 offset;
-
                     spawnPoint = _sm.spawnPoints[Random.Range(0, _sm.spawnPoints.Count)];
 
-                    offset = _sm.playerPawn.transform.position - spawnPoint.transform.position;
+                    _sm.spawnPoints.Remove(spawnPoint); // remove the entry from spawn points so nothing else is spawned there
 
-                    _sm.spawnPoints.Remove(spawnPoint); // remove this entry from spawn points so nothing else is spawned there
-
-                    if (Mathf.Abs(offset.x) > GameManager.instance.screenCellWidth + 2
-                        || Mathf.Abs(offset.y) > GameManager.instance.screenCellHeight + 2)
+                    // make sure it's not on screen
+                    if (!_sm.PointOnScreen(spawnPoint.transform.position))
                     {
                         result = spawnPoint.transform.position;
                         needPoint  = false;
                     }
-                    else
-                    {
-                        // reject and try again
-                        whileDump++;
-                    }
+                    // else reject and try again (it's already been removed from the list so wont get picked again)
                 }
                 else
                 {
@@ -213,22 +271,38 @@ public class StageInit : BaseState
     void PopulateEnemies()
     {
         EnemyPawn enemySpawned;
-        float stageStrength = 100; // the number of strength points of enemies to spawn in the stage
-        float stageStrengthIndividual = 1; // the target strength of each individual enemy
+        List<EnemyPawn> enemiesValid = _sm.EnemiesValid(); // note this also GENERATES the valid enemies list for the stage difficulty
 
-        while (stageStrength > 0)
+        if (_sm.enemySpawns.Count > 0)
+        {
+            for (int i = _sm.enemySpawns.Count - 1; i >= 0; i--)
+            {
+                // if this has happened (which it shouldn't) we MIGHT have destroyed terrain tiles and taken the enemies with them already, so make sure they're valid first
+                if (_sm.enemySpawns[i])
+                {
+                    GameObject.Destroy(_sm.enemySpawns[i].gameObject);
+                }
+            }
+            _sm.enemySpawns.Clear();
+        }
+
+        while (initEnemyTotal > 0)
         {
             Vector3 pos = SelectSpawnPoint();
 
             if (pos.magnitude > 0)
             {
-                enemySpawned = GameObject.Instantiate(_sm.enemyPrefabs[Random.Range(0, _sm.enemyPrefabs.Length)], pos, Quaternion.identity);
-                stageStrength -= enemySpawned.SetStrength(Mathf.Min(stageStrengthIndividual, stageStrength));
+                // place the enemy
+                enemySpawned = GameObject.Instantiate(enemiesValid[Random.Range(0, enemiesValid.Count)], pos, Quaternion.identity);
+                _sm.enemySpawns.Add(enemySpawned);
+                // set the enemy strength based on stage difficulty, and adjust the remaining stage enemy strength total by the result
+                // TODO spawn "pods" of enemies if they're individually very weak on a later stage
+                initEnemyTotal -= enemySpawned.SetStrength(Mathf.Min(initEnemyIndividual, initEnemyTotal));
             }
             else
             {
                 // else there are no valid spawn points so stop trying to spawn (this SHOULD NOT HAPPEN!)
-                stageStrength = 0;
+                initEnemyTotal = 0;
             }
         }
     }
@@ -236,39 +310,26 @@ public class StageInit : BaseState
     void PopulateLoot()
     {
         PowerUpBase powerupSpawned;
-        float stagePower = 20; // the number of points of powerups to spawn in the stage
-        float stagePowerIndividual = 1; // the target power of each powerup
 
-        while (stagePower > 0)
+        while (initPower > 0)
         {
             Vector3 pos = SelectSpawnPoint();
 
             if (pos.magnitude > 0)
             {
                 powerupSpawned = GameObject.Instantiate(_sm.powerupPrefabs[Random.Range(0, _sm.powerupPrefabs.Length)], pos, Quaternion.identity);
-                stagePower -= stagePowerIndividual;
+                initPower -= _sm.powerStrengthBaseIndividual;
             }
             else
             {
                 // else there are no valid spawn points so stop trying to spawn (this SHOULD NOT HAPPEN!)
-                stagePower = 0;
+                initPower = 0;
             }
         }
     }
 
-    void PlaceObjective()
-    {
-        Debug.Log("<color=red>TODO</color> place objective");
-    }
-
     public override void Enter()
     {
-
-    }
-    public override void UpdateLogic()
-    { 
-        base.UpdateLogic();
-        // TODO
         // set up the stage
         // procedurally place:
         // level structure
@@ -277,13 +338,23 @@ public class StageInit : BaseState
         // level exit
         // traps and puzzle elements
         // when complete, transition to PlayerActive
+    }
+    public override void UpdateLogic()
+    { 
+        base.UpdateLogic();
+
+        SetDifficulty();
         BuildTilemap();
         BuildNavmap();
-        PopulateEnemies();
         PopulateLoot();
-        PlaceObjective();
+        PopulateEnemies();
 
-        _sm.ChangeState(_sm.playerActiveStage);
+        if (_sm.levelUpPending > 0)
+            _sm.ChangeState(_sm.roundEndStage);
+        else
+            _sm.ChangeState(_sm.playerActiveStage);
     }
-    public override void Exit() { }
+    public override void Exit()
+    {
+    }
 }

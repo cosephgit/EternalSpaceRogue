@@ -37,8 +37,9 @@ public class TilemapSegment : MonoBehaviour
 
     // this is called after a tilemap segment is instantiated to populate all passable tiles of the tilemap segment with NavNode objects
     // this is so these can be used by the AI later for path finding
-    public void BuildNavNodes()
+    public List<NavNode> BuildNavNodes()
     {
+        List<NavNode> nodeList = new List<NavNode>();
         for (int x = 0; x < Global.TILEMAPDIMS; x++)
         {
             for (int y = 0; y < Global.TILEMAPDIMS; y++)
@@ -51,10 +52,12 @@ public class TilemapSegment : MonoBehaviour
                 {
                     // if there IS a collision with floor (i.e. there is floor here) then this is a viable movement spot
                     // TODO possibly add a double-check to make sure there ISNT wall here too later on if there's any reason to doubt it
-                    Instantiate(navnodePrefab, pos, Quaternion.identity, transform);
+                    NavNode newNode = Instantiate(navnodePrefab, pos, Quaternion.identity, transform);
+                    nodeList.Add(newNode);
                 }
             }
         }
+        return nodeList;
     }
 
     // this picks a direction from this tilemap that another tilemap could be placed in (i.e. (1,0), (-1,0), (0,1) or (0,-1))
@@ -70,25 +73,25 @@ public class TilemapSegment : MonoBehaviour
 
         if (exitTop)
         {
-            if (!Physics2D.OverlapCircle(transform.position + Vector3.up * Global.TILEMAPDIMS, 1f, Global.LayerAll()))
+            if (!Physics2D.OverlapCircle(transform.position + Vector3.up * Global.TILEMAPDIMS, 1f, Global.LayerTerrain()))
                 directionOptions.Add(Vector3.up);
             //else Debug.Log("tilemap " + gameObject + " found obstacle at position " + (transform.position + Vector3.up * Global.TILEMAPDIMS));
         }
         if (exitRight)
         {
-            if (!Physics2D.OverlapCircle(transform.position + Vector3.right * Global.TILEMAPDIMS, 1f, Global.LayerAll()))
+            if (!Physics2D.OverlapCircle(transform.position + Vector3.right * Global.TILEMAPDIMS, 1f, Global.LayerTerrain()))
                 directionOptions.Add(Vector3.right);
             //else Debug.Log("tilemap " + gameObject + " found obstacle at position " + (transform.position + Vector3.up * Global.TILEMAPDIMS));
         }
         if (exitBottom)
         {
-            if (!Physics2D.OverlapCircle(transform.position + Vector3.down * Global.TILEMAPDIMS, 1f, Global.LayerAll()))
+            if (!Physics2D.OverlapCircle(transform.position + Vector3.down * Global.TILEMAPDIMS, 1f, Global.LayerTerrain()))
                 directionOptions.Add(Vector3.down);
             //else Debug.Log("tilemap " + gameObject + " found obstacle at position " + (transform.position + Vector3.up * Global.TILEMAPDIMS));
         }
         if (exitLeft)
         {
-            if (!Physics2D.OverlapCircle(transform.position + Vector3.left * Global.TILEMAPDIMS, 1f, Global.LayerAll()))
+            if (!Physics2D.OverlapCircle(transform.position + Vector3.left * Global.TILEMAPDIMS, 1f, Global.LayerTerrain()))
                 directionOptions.Add(Vector3.left);
             //else Debug.Log("tilemap " + gameObject + " found obstacle at position " + (transform.position + Vector3.up * Global.TILEMAPDIMS));
         }
