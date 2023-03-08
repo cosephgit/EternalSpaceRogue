@@ -17,6 +17,8 @@ public class UIManager : MonoBehaviour
     public UIInGameMenu pauseMenu;
     public UILevelUp levelUpMenu;
     public UIRankPopper rankPopper;
+    public UIRankCurrent rankBox;
+    public UIRankCurrent stageBox;
 
     void Awake()
     {

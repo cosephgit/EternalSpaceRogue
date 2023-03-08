@@ -132,6 +132,8 @@ public class StageManager : StateMachine
         playerPawn.ClearIndicators();
 
         stageCurrent++;
+        UIManager.instance.stageBox.UpdateNumber(stageCurrent + 1);
+
         #if UNITY_EDITOR
         Debug.Log("Stage cleared - new stage difficulty " + stageCurrent);
         #endif
@@ -364,6 +366,7 @@ public class StageManager : StateMachine
     public void LevelUpsDone()
     {
         levelUpPending = 0;
+        UIManager.instance.rankBox.UpdateNumber(playerPawn.GetRank());
     }
 
     // the player has upgraded their terror skill - increase the remaining supply
