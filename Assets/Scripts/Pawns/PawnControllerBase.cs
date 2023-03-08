@@ -32,11 +32,14 @@ public class PawnControllerBase : MonoBehaviour
         movePoints = movePointsMax;
         moveActionDone = false;
         health = healthMax;
+    }
 
+    public void WeaponStart(float maxStrength = 0)
+    {
         // equip one of the 
         if (weaponOptions)
         {
-            WeaponBase weaponSelection = weaponOptions.Select();
+            WeaponBase weaponSelection = weaponOptions.Select(maxStrength);
             if (weaponSelection)
             {
                 weaponEquipped = Instantiate(weaponSelection);

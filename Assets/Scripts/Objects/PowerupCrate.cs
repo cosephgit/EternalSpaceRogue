@@ -82,7 +82,7 @@ public class PowerupCrate : PowerUpBase
             return false; // block player entering the space
         }
 
-        dropped.PrepPowerup(); // set up the specific item of this type (e.g. which weapon)
+        dropped.PrepPowerup(StageManager.instance.stageCurrent); // set up the specific item of this type (e.g. which weapon)
 
         StageManager.instance.PowerUpSpawned(dropped.Quality()); // report the value of the powerup to the stage manager
 

@@ -28,6 +28,7 @@ public class PlayerPawn : PawnControllerBase
 
     void Start()
     {
+        WeaponStart(); // get a new weapon from the provided list
         if (weaponEquipped) weaponReady = true;
         UIManager.instance.weaponManager.UpdateFist(weaponUnarmed.title);
         UIManager.instance.weaponManager.ReadyFist(false);
@@ -192,6 +193,11 @@ public class PlayerPawn : PawnControllerBase
     {
         base.PostAttack();
         ClearIndicators();
+        if (IsAlive())
+        {
+            // if still alive (didn't suicide), try to pick up any ammo in the space
+            CheckPickups();
+        }
     }
 
 
@@ -325,12 +331,12 @@ public class PlayerPawn : PawnControllerBase
         }
         else if (Input.GetButtonDown("Fire2"))
         {
+            ClearIndicators();
             if (weaponEquipped)
             {
                 weaponEquipped.DiscardWeapon();
                 weaponReady = false;
             }
-            ClearIndicators();
             UpdateAmmoBar();
             PlaceAttackIndicators();
         }
@@ -496,6 +502,11 @@ public class PlayerPawn : PawnControllerBase
             base.TakeDamage(amount);
             UpdateHealthBar();
         }
+        if (IsAlive())
+        {
+            // if still alive, try to pick up any health/armour in the space
+            CheckPickups();
+        }
     }
 
     public bool HasWeapon()
@@ -540,6 +551,23 @@ public class PlayerPawn : PawnControllerBase
         }
     }
 
+    // this is to check for pickups when the player isn't moving - e.g. if they get hit by an attack or drop their weapon
+    void CheckPickups()
+    {
+        Collider2D[] collisions = Physics2D.OverlapPointAll(transform.position, Global.LayerPower());
+        if (collisions.Length > 0)
+        {
+            for (int i = 0; i < collisions.Length; i++)
+            {
+                PowerUpBase powerCollision = collisions[i].GetComponent<PowerUpBase>();
+                if (powerCollision)
+                {
+                    powerCollision.TouchPowerup(this);
+                }
+            }
+        }
+    }
+
     // this is called when a player unequips a weapon (either by choice or by the weapon requesting to be unequipped after running out of ammo)
     public override void UnequipWeapon(WeaponBase weaponUnequip)
     {
@@ -547,6 +575,7 @@ public class PlayerPawn : PawnControllerBase
         {
             base.UnequipWeapon(weaponUnequip);
             weaponReady = false;
+            CheckPickups();
             UpdateAmmoBar();
         }
     }

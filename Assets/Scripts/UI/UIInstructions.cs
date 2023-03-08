@@ -16,24 +16,27 @@ public enum Instruction
 public class UIInstructions : MonoBehaviour
 {
     [SerializeField]Image background;
-    [SerializeField]TextMeshProUGUI moveText;
-    [SerializeField]TextMeshProUGUI moveAttack;
-    [SerializeField]TextMeshProUGUI moveRun;
-    [SerializeField]TextMeshProUGUI textAny;
+    [SerializeField]GameObject moveText;
+    [SerializeField]GameObject moveAttack;
+    [SerializeField]GameObject moveRun;
+    [SerializeField]GameObject textAny;
+    [SerializeField]TextMeshProUGUI textAnyTitle;
+    [SerializeField]TextMeshProUGUI textAnyBody;
 
     void Awake()
     {
         HideInstructions();
     }
 
-    public void ShowInstruction(string any)
+    public void ShowInstruction(string anyTitle, string anyBody)
     {
         background.enabled = true;
-        moveText.enabled = false;
-        moveAttack.enabled = false;
-        moveRun.enabled = false;
-        textAny.enabled = true;
-        textAny.text = any;
+        moveText.SetActive(false);
+        moveAttack.SetActive(false);
+        moveRun.SetActive(false);
+        textAny.SetActive(true);
+        textAnyBody.text = anyBody;
+        textAnyBody.text = anyBody;
     }
 
     public void ShowInstruction(Instruction type)
@@ -44,26 +47,26 @@ public class UIInstructions : MonoBehaviour
             default:
             case Instruction.Move:
             {
-                moveText.enabled = true;
-                moveAttack.enabled = false;
-                moveRun.enabled = false;
-                textAny.enabled = true;
+                moveText.SetActive(true);
+                moveAttack.SetActive(false);
+                moveRun.SetActive(false);
+                textAny.SetActive(false);
                 break;
             }
             case Instruction.Attack:
             {
-                moveText.enabled = false;
-                moveAttack.enabled = true;
-                moveRun.enabled = false;
-                textAny.enabled = true;
+                moveText.SetActive(false);
+                moveAttack.SetActive(true);
+                moveRun.SetActive(false);
+                textAny.SetActive(false);
                 break;
             }
             case Instruction.Run:
             {
-                moveText.enabled = false;
-                moveAttack.enabled = false;
-                moveRun.enabled = true;
-                textAny.enabled = true;
+                moveText.SetActive(false);
+                moveAttack.SetActive(false);
+                moveRun.SetActive(true);
+                textAny.SetActive(false);
                 break;
             }
         }
@@ -72,9 +75,9 @@ public class UIInstructions : MonoBehaviour
     public void HideInstructions()
     {
         background.enabled = false;
-        moveText.enabled = false;
-        moveAttack.enabled = false;
-        moveRun.enabled = false;
-        textAny.enabled = false;
+        moveText.SetActive(false);
+        moveAttack.SetActive(false);
+        moveRun.SetActive(false);
+        textAny.SetActive(false);
     }
 }

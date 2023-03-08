@@ -121,7 +121,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <title>k__BackingField
-      value: CUTTER
+      value: PLASMATRON
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitDamage.Array.data[0]
@@ -165,7 +165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <ammoMax>k__BackingField
-      value: 8
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitDamage.Array.data[10]

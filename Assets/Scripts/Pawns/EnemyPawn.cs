@@ -15,7 +15,10 @@ public class EnemyPawn : PawnControllerBase
     // it returns the ACTUAL strength of the enemy (resulting from e.g. rounding) for the StageManager to adjust the total stage balancing
     public float SetStrength(float targetStrength)
     {
+        float extraStrength = Mathf.Max(targetStrength - enemyStrength, 0); // any extra stage strength is used to set the maximum weapon power
         actualStrength = enemyStrength;
+
+        WeaponStart(extraStrength);
 
         if (weaponEquipped) actualStrength += weaponEquipped.threatLevel; // add the threat of the selected weapon
 

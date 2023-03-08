@@ -281,6 +281,10 @@ MonoBehaviour:
   healthSlider: {fileID: 1456394568146604346}
   healthCount: {fileID: 7899644225616348168}
   sliderTitle: {fileID: 2044220132555797164}
+  popScale: 1.25
+  popDuration: 1
+  popColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  popColorSwitch: 0.1
 --- !u!1 &1456394568520804038
 GameObject:
   m_ObjectHideFlags: 0

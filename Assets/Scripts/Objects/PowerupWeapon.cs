@@ -8,9 +8,9 @@ public class PowerupWeapon : PowerUpBase
     [SerializeField]Vector3 weapOffset;
     WeaponBase weaponActual;
 
-    public override void PrepPowerup()
+    public override void PrepPowerup(float maxStrength)
     {
-        weaponActual = Instantiate(weapons.Select(), transform.position + weapOffset, Quaternion.identity);
+        weaponActual = Instantiate(weapons.Select(maxStrength), transform.position + weapOffset, Quaternion.identity);
         weaponActual.transform.parent = transform;
     }
 

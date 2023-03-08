@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class PowerupAmmo : PowerUpBase
 {
-    public override void PrepPowerup()
-    {
-        
-    }
-
     public override bool TouchPowerup(PlayerPawn pawn)
     {
         if (!ready) return true;

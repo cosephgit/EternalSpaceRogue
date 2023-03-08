@@ -23,6 +23,7 @@ public class StageManager : StateMachine
 {
     public static StageManager instance;
     [field: SerializeField]public PlayerPawn playerPawn { get; private set; } // player pawn is placed in the scene in the editor and stored here
+    [field: SerializeField]public TilemapSegment tilemapEntrance { get; private set; } // always start with this tile - makes sure the player fits!
     [field: SerializeField]public List<TilemapSegment> tilemapPrefabs { get; private set; } // these are used to generate the play area
     [field: SerializeField]public TilemapSegment tilemapPrefabEnd { get; private set; } // an endcap that can fit anywhere
     [field: SerializeField]public EnemyPawn[] enemyPrefabs { get; private set; } // enemies that may be spawned in a level
@@ -98,17 +99,7 @@ public class StageManager : StateMachine
     // clean up the stage and put the player back at the start point
     public void NewStage()
     {
-        for (int i = 0; i < enemySpawns.Count; i++)
-        {
-            if (enemySpawns[i])
-                enemySpawns[i].SilentRemove();
-        }
         enemySpawns.Clear();
-        for (int i = 0; i < navNodeMap.Length; i++)
-        {
-            if (navNodeMap[i])
-                Destroy(navNodeMap[i].gameObject);
-        }
         spawnPoints.Clear();
         navNodeDirty.Clear();
 
@@ -120,11 +111,21 @@ public class StageManager : StateMachine
         }
         tilemapActive.Clear();
 
-        // need to get ALL POWERUPS TOO!!!
+        // destroy the other elements
         PowerUpBase[] powerupsAll = (PowerUpBase[])GameObject.FindObjectsOfType(typeof(PowerUpBase));
         for (int i = 0; i < powerupsAll.Length; i++)
         {
             Destroy(powerupsAll[i].gameObject);
+        }
+        EnemyPawn[] enemiesLeft = (EnemyPawn[])GameObject.FindObjectsOfType(typeof(EnemyPawn));
+        for (int i = 0; i < enemiesLeft.Length; i++)
+        {
+            Destroy(enemiesLeft[i].gameObject);
+        }
+        NavNode[] navnodesLeft = (NavNode[])GameObject.FindObjectsOfType(typeof(NavNode));
+        for (int i = 0; i < navnodesLeft.Length; i++)
+        {
+            Destroy(navnodesLeft[i].gameObject);
         }
 
         playerPawn.transform.position = playerPosInitial;
@@ -132,12 +133,6 @@ public class StageManager : StateMachine
 
         stageCurrent++;
         #if UNITY_EDITOR
-        EnemyPawn[] enemiesLeft = (EnemyPawn[])GameObject.FindObjectsOfType(typeof(EnemyPawn));
-        PowerUpBase[] powerupsLeft = (PowerUpBase[])GameObject.FindObjectsOfType(typeof(PowerUpBase));
-        NavNode[] navnodesLeft = (NavNode[])GameObject.FindObjectsOfType(typeof(NavNode));
-
-        Debug.Log("Stage has enemies: " + enemiesLeft.Length + " - powerups: " + powerupsLeft.Length + " - navnodes: " + navnodesLeft.Length);
-
         Debug.Log("Stage cleared - new stage difficulty " + stageCurrent);
         #endif
         gameState = 0;
@@ -164,6 +159,7 @@ public class StageManager : StateMachine
     public List<EnemyPawn> EnemiesValid()
     {
         EnemyPawn enemyWeakest = enemyPrefabs[0];
+        enemiesValid.Clear();
         for (int i = 0; i < enemyPrefabs.Length; i++)
         {
             if (enemyPrefabs[i].enemyStrength < enemyWeakest.enemyStrength) enemyWeakest = enemyPrefabs[i];
@@ -361,6 +357,7 @@ public class StageManager : StateMachine
     public void LevelGain()
     {
         levelUpPending++; // increment them just in case the player gets multiple level ups before they get to the menu
+        UIManager.instance.rankPopper.PopRank();
     }
 
     // user by the level up menu to notify the stage manager that all level ups are completed and the menu has been closed, gameplay can continue

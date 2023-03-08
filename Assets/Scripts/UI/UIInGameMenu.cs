@@ -52,7 +52,7 @@ public class UIInGameMenu : MonoBehaviour
             }
             case 1: // victory
             {
-                menuTitle.text = "SUCCESS";
+                menuTitle.text = "SURVIVAL";
                 continueText.text = "NEXT SECTOR";
                 break;
             }

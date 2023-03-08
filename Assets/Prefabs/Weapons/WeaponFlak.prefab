@@ -165,7 +165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[1].y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[2].x
@@ -173,7 +173,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[2].y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[3].x
@@ -181,11 +181,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[3].y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[4].y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[5].x
@@ -193,7 +193,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[5].y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <threatLevel>k__BackingField

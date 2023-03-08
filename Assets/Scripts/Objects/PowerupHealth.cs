@@ -7,10 +7,6 @@ using UnityEngine;
 public class PowerupHealth : PowerUpBase
 {
     [SerializeField]int healAmount = 4;
-    public override void PrepPowerup()
-    {
-
-    }
 
     public override bool TouchPowerup(PlayerPawn pawn)
     {

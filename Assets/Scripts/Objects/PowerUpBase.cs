@@ -32,7 +32,7 @@ public class PowerUpBase : MonoBehaviour
     [SerializeField]protected float quality = 1;
     protected bool ready = true;
 
-    public virtual void PrepPowerup()
+    public virtual void PrepPowerup(float maxStrength)
     {
         // called when this powerup is instantiated (when a crate places it)
     }

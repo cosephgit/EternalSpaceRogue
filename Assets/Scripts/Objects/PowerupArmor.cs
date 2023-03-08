@@ -5,10 +5,6 @@ using UnityEngine;
 public class PowerupArmor : PowerUpBase
 {
     [SerializeField]int armorAmount = 4;
-    public override void PrepPowerup()
-    {
-
-    }
 
     public override bool TouchPowerup(PlayerPawn pawn)
     {
