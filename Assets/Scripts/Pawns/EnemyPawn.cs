@@ -305,7 +305,11 @@ public class EnemyPawn : PawnControllerBase
     {
         if (moving) return false;
 
-        if (movePoints == 0 && moveActionDone) return true;
+        if (movePoints == 0 && moveActionDone)
+        {
+            StopWalking();
+            return true;
+        }
 
         Vector3 playerPos = StageManager.instance.playerPawn.transform.position;
         Vector3 targetOffset = StageManager.instance.playerPawn.transform.position - transform.position;
@@ -344,6 +348,8 @@ public class EnemyPawn : PawnControllerBase
                 canAttack = true;
                 attackFacing = targetOffset;
                 attackRange = 1;
+                if (weaponEquipped)
+                    weaponEquipped.SetWeaponPosition(attackFacing);
             }
             else if (rangeCurrent <= rangeCurrentMax)
             {
@@ -407,6 +413,8 @@ public class EnemyPawn : PawnControllerBase
                     // TODO we could check the rangeOptimalFF value here and maybe reconsider if it hits a ton of our allies
                     canAttack = true;
                     attackFacing = attackDir;
+                    if (weaponEquipped)
+                        weaponEquipped.SetWeaponPosition(attackFacing);
                     attackRange = rangeOptimal;
                 }
             }

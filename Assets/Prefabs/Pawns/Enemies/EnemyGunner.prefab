@@ -69,7 +69,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: <enemyStrength>k__BackingField
-      value: 1.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7640384966893122044, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: m_RootOrder

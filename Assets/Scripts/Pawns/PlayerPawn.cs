@@ -392,6 +392,8 @@ public class PlayerPawn : PawnControllerBase
                     // change the current facing to the entered direction
                     ClearIndicators();
                     attackFacing = tryAttack;
+                    if (weaponEquipped)
+                        weaponEquipped.SetWeaponPosition(attackFacing);
                     attackRange = 1;
                     PlaceAttackIndicators();
                     StartCoroutine(AimDelay());
@@ -548,7 +550,7 @@ public class PlayerPawn : PawnControllerBase
         else
         {
             weaponEquipped = weaponPick;
-            weaponEquipped.EquipWeapon(this);
+            weaponEquipped.EquipWeapon(this, attackFacing);
             if (upgradeAmmo > 0)
             {
                 weaponEquipped.ApplyAmmoUpgrade(upgradeAmmo);

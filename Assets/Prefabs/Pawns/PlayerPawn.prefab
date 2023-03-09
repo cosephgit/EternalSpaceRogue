@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8111216045431077887
+--- !u!1 &6948378213873558667
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 394372488268220988}
-  - component: {fileID: 4480175362746122808}
-  - component: {fileID: 4535915701661718547}
-  - component: {fileID: -7605921204502077150}
+  - component: {fileID: 7911633908998872774}
+  - component: {fileID: 7996272491200302430}
   m_Layer: 11
-  m_Name: PlayerPawn
+  m_Name: Character (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &394372488268220988
+--- !u!4 &7911633908998872774
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8111216045431077887}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GameObject: {fileID: 6948378213873558667}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 9051459071733010727}
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_Children: []
+  m_Father: {fileID: 394372488268220988}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &4480175362746122808
+--- !u!212 &7996272491200302430
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8111216045431077887}
+  m_GameObject: {fileID: 6948378213873558667}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -76,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
+  m_Sprite: {fileID: 2102568914, guid: 7821e16e6178e824e965d37ac1f10e82, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -87,6 +84,41 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &8111216045431077887
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 394372488268220988}
+  - component: {fileID: 4535915701661718547}
+  - component: {fileID: -7605921204502077150}
+  m_Layer: 11
+  m_Name: PlayerPawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &394372488268220988
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8111216045431077887}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 9051459071733010727}
+  - {fileID: 7911633908998872774}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4535915701661718547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,7 +137,7 @@ MonoBehaviour:
   weaponOptions: {fileID: 4306916992115667484, guid: 9a8446e560289794ca6750c091d8a169, type: 3}
   weaponUnarmed: {fileID: 5694609753565395471}
   damageEffect: {fileID: 1964195880454469233, guid: c137f120d6a577444b3ca32d30857d0e, type: 3}
-  sprite: {fileID: 0}
+  sprite: {fileID: 7996272491200302430}
   deathSound:
     Guid:
       Data1: -1176031037
@@ -120,6 +152,7 @@ MonoBehaviour:
       Data3: 1790914952
       Data4: -1141989528
     Path: event:/SFX/WalkLoop
+  animator: {fileID: 0}
   moveSensitivity: 0.1
   armorMax: 10
 --- !u!61 &-7605921204502077150

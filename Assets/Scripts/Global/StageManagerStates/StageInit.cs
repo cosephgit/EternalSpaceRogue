@@ -28,8 +28,8 @@ public class StageInit : BaseState
         {
             initPower *= 1f + ((float)_sm.playerPawn.upgradeSupply * 0.2f);
         }
-        initEnemyTotal = _sm.enemyStrengthBaseTotal * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMIESEXPONENT);
-        initEnemyIndividual = _sm.enemyStrengthBaseIndividual * Mathf.Pow(_sm.stageCurrent + 1, Global.BONUSENEMYEXPONENT);
+        initEnemyTotal = _sm.enemyStrengthBaseTotal * Mathf.Pow(Global.BONUSENEMIESEXPONENT, _sm.stageCurrent);
+        initEnemyIndividual = _sm.enemyStrengthBaseIndividual * (1f + (_sm.stageCurrent * Global.BONUSENEMYSCALE));
         if (_sm.playerPawn.upgradeTerror > 0)
         {
             // face less enemy strength overall BUT the basic group strength will be bigger
@@ -271,7 +271,7 @@ public class StageInit : BaseState
     void PopulateEnemies()
     {
         EnemyPawn enemySpawned;
-        List<EnemyPawn> enemiesValid = _sm.EnemiesValid(); // note this also GENERATES the valid enemies list for the stage difficulty
+        List<EnemyPawn> enemiesValid = _sm.EnemiesValid(initEnemyIndividual); // note this also GENERATES the valid enemies list for the stage difficulty
 
         if (_sm.enemySpawns.Count > 0)
         {

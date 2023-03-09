@@ -91,10 +91,13 @@ public class StageManager : StateMachine
         stageCompleteStage = new StageComplete(this);
         stageFailedStage = new StageFailed(this);
         playerPosInitial = playerPawn.transform.position;
-        MenuClosed();
         base.Awake();
     }
 
+    void Start()
+    {
+        MenuClosed();
+    }
 
     // clean up the stage and put the player back at the start point
     public void NewStage()
@@ -158,17 +161,17 @@ public class StageManager : StateMachine
 
 
     // returns a list of all enemies that are valid for the current difficulty
-    public List<EnemyPawn> EnemiesValid()
+    public List<EnemyPawn> EnemiesValid(float maxStrength)
     {
         EnemyPawn enemyWeakest = enemyPrefabs[0];
         enemiesValid.Clear();
         for (int i = 0; i < enemyPrefabs.Length; i++)
         {
             if (enemyPrefabs[i].enemyStrength < enemyWeakest.enemyStrength) enemyWeakest = enemyPrefabs[i];
-            if (enemyPrefabs[i].enemyStrength <= enemyStrengthBaseIndividual + enemyStrengthAboveAverage)
+            if (enemyPrefabs[i].enemyStrength <= maxStrength)
                 enemiesValid.Add(enemyPrefabs[i]);
         }
-        if (!enemiesValid.Contains(enemyWeakest)) enemiesValid.Add(enemyWeakest); // ensure that at least the weakest enemy is added
+        if (enemiesValid.Count == 0) enemiesValid.Add(enemyWeakest); // ensure that at least the weakest enemy is added
 
         return enemiesValid;
     }

@@ -9,13 +9,13 @@ public class WeaponList : MonoBehaviour
 {
     [SerializeField]WeaponBase[] weaponOptions;
 
-    public WeaponBase Select(float maxStrength = 0)
+    public WeaponBase Select(float maxStrength = -1)
     {
         if (weaponOptions.Length > 0)
         {
             List<WeaponBase> weaponsLimited = new List<WeaponBase>();
 
-            if (maxStrength > 0)
+            if (maxStrength >= 0)
             {
                 WeaponBase weaponWeakest = weaponOptions[0];
                 // if strength is provided, this means there's a limit on how powerful a weapon can spawn

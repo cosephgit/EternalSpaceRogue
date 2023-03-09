@@ -30,6 +30,7 @@ public static class Global
     // difficulty constants
     public const float BONUSLOOTEXPONENT = 1.05f; // base to raise by level for loot calculation (5% more loot each level)
     public const float BONUSENEMYEXPONENT = 1.1f; // base to raise by level for individual enemy strength calculation (10% more average enemy strength each level)
+    public const float BONUSENEMYSCALE = 0.5f; // increase to maximum energy strength each level
     public const float BONUSENEMIESEXPONENT = 1.2f; // base to raise by level for total enemy strength calculation (20% more total enemy strength each level)
     // xp constants
     public const float XPPERSTAGEBASE = 10f; // XP reward for reaching a stage exit

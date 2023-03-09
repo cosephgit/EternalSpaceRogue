@@ -34,11 +34,15 @@ public class WeaponBase : MonoBehaviour
     public int rangeHitMax { get; private set; } // the furthest a target could actually be hit by this weapon in a straight line (used for AI calculation)
     PawnControllerBase weapOwner;
     List<Vector3> hitLocations;
+    bool freeMoving = true;
+    Vector3 holdPosition;
+    float holdAngle;
 
     void Awake()
     {
         Initialise();
         hitLocations = new List<Vector3>();
+        holdPosition = Vector3.zero;
     }
 
     // initialise and validate values
@@ -101,12 +105,13 @@ public class WeaponBase : MonoBehaviour
     }
 
     // this equips the weapon to the passed owner pawn
-    public bool EquipWeapon(PawnControllerBase owner)
+    public bool EquipWeapon(PawnControllerBase owner, Vector3 dir)
     {
         Initialise();
         weapOwner = owner;
         transform.parent = owner.transform;
         transform.position = owner.transform.position;
+        SetWeaponPosition(dir);
         return true;
     }
 
@@ -132,6 +137,28 @@ public class WeaponBase : MonoBehaviour
         ammo = Mathf.CeilToInt((float)ammo * 0.5f); // only get half ammo
         weaponHolder.AcceptWeapon(this);
         weapOwner = null;
+    }
+
+    // works out where this weapon should be positioned relative to the holder
+    public void SetWeaponPosition(Vector3 dir)
+    {
+        holdPosition = (new Vector3(dir.y, -dir.x) * 0.5f) + (dir * 0.25f) + (Vector3.up * 0.25f);
+        if (dir.x == 1)
+        {
+            holdAngle = 180f;
+        }
+        else if (dir.y == -1)
+        {
+            holdAngle = 90f;
+        }
+        else if (dir.y == 1)
+        {
+            holdAngle = -90;
+        }
+        else
+        {
+            holdAngle = 0f;
+        }
     }
 
     // returns a list of all the spaces that the target space could be attacked from with this weapon
@@ -220,6 +247,7 @@ public class WeaponBase : MonoBehaviour
     // it makes the weapon animate
     public void AttackStart(Vector3 origin, Vector3 facing, int range)
     {
+        SetWeaponPosition(facing);
         hitLocations.Clear();
         hitLocations.AddRange(GetHitLocations(origin, facing, range));
         if (ammo > 0)
@@ -233,8 +261,51 @@ public class WeaponBase : MonoBehaviour
         }
         if (hitEffectPrefab && animsIncrement && hitLocations.Count > 0)
         {
+            // place the impact points one at a time instead of all at once
             StartCoroutine(AnimEffectsIncremented());
         }
+        if (replaceRecoilWithLunge)
+        {
+            // make weapon do a swinging arc
+            StartCoroutine(AnimWeaponLunge(facing));
+        }
+        else if (animsIncrement)
+        {
+            // make weapon recoil backwards slightly - could make it a staccato effect if "animsincrement" too?
+            StartCoroutine(AnimWeaponRecoilBurst(facing));
+        }
+        else
+        {
+            // make weapon recoil backwards slightly - could make it a staccato effect if "animsincrement" too?
+            StartCoroutine(AnimWeaponRecoil(facing));
+        }
+    }
+
+    IEnumerator AnimWeaponLunge(Vector3 dir)
+    {
+        Vector3 posStart;
+        float animTime = 0;
+        freeMoving = false;
+        while (animTime < Global.combatStepDelay)
+        {
+            animTime += Time.deltaTime;
+        }
+
+        yield return new WaitForEndOfFrame();
+
+        freeMoving = true;
+    }
+
+    IEnumerator AnimWeaponRecoil(Vector3 dir)
+    {
+        yield return new WaitForSeconds(0.1f);
+    }
+
+    IEnumerator AnimWeaponRecoilBurst(Vector3 dir)
+    {
+        freeMoving = false;
+        yield return new WaitForSeconds(0.1f);
+        freeMoving = true;
     }
 
     // this coroutine causes the impact points to be triggered one by one rather than all at once
@@ -294,5 +365,16 @@ public class WeaponBase : MonoBehaviour
     public void Reload()
     {
         ammo = ammoMax;
+    }
+
+    void Update()
+    {
+        if (weapOwner && freeMoving)
+        {
+            // gradually move back to default position
+            Vector3 pos = Vector3.Lerp(transform.localPosition, holdPosition, Time.deltaTime);
+            transform.localPosition = pos;
+            transform.rotation = Quaternion.Euler(0, 0, holdAngle);
+        }
     }
 }
