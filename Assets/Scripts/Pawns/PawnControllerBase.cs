@@ -102,6 +102,10 @@ public class PawnControllerBase : MonoBehaviour
     protected virtual IEnumerator MovePosition(Vector3 direction)
     {
         Vector3 target = transform.position + direction;
+        float moveTime = 1f / MoveSpeedScalar(); // the time it will take to complete the move
+        float moveAnim = 0;
+        float moveRotate = 0;
+        Vector3 moveOffset = Vector3.zero;
 
         UpdateSpriteFlip(direction);
 
@@ -114,7 +118,7 @@ public class PawnControllerBase : MonoBehaviour
         while (moving)
         {
             bool lastMove = false;
-            Vector3 moveStep = target - transform.position; // the actual movement for this frame
+            Vector3 moveStep = target - transform.position; // the actual movement remaining
             float moveDistanceFrame = MoveSpeedScalar() * Time.deltaTime; // the maximum movement allowed for this Update frame
 
             if (moveStep.magnitude > moveDistanceFrame)
@@ -123,10 +127,23 @@ public class PawnControllerBase : MonoBehaviour
                 lastMove = true; // allow it to leave the loop and finish the coroutine
 
             transform.Translate(moveStep);
+
+            moveAnim += Time.deltaTime;
+            float moveCycle = moveAnim * Mathf.PI * 2 / moveTime;
+            moveRotate = Mathf.Cos(moveCycle) * -10f; // so the pawn oscillates back and forth once for each frame
+            moveOffset.x = Mathf.Cos(moveCycle) * 0.2f;
+            moveOffset.y = Mathf.Abs(Mathf.Sin(moveCycle) * 0.2f);
+
+            sprite.transform.localPosition = moveOffset;
+            sprite.transform.localRotation = Quaternion.Euler(0, 0, moveRotate);
+
             yield return new WaitForEndOfFrame();
 
             if (lastMove) moving = false;
         }
+
+        sprite.transform.localPosition = Vector3.zero;;
+        sprite.transform.localRotation = Quaternion.identity;
 
         // animator: set "not moving" flag
 

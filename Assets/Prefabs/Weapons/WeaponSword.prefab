@@ -201,7 +201,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <threatLevel>k__BackingField
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <animsIncrement>k__BackingField
