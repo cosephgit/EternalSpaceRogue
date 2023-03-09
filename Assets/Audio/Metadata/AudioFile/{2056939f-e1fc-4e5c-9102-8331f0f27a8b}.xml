@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{2056939f-e1fc-4e5c-9102-8331f0f27a8b}">
+		<property name="assetPath">
+			<value>467300__xfixy8__pistol-cock.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>2.9721541950113379</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f95c799a-5fc6-498b-aad8-ce38ee283c6a}</destination>
+		</relationship>
+	</object>
+</objects>

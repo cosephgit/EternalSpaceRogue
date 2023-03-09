@@ -255,7 +255,7 @@ public class WeaponBase : MonoBehaviour
             // if ammo is not already positive, then this is an infinite weapon (typically: an unarmed strike)
             ammo--;
         }
-        if (shootSound.Path.Length > 0)
+        if (!shootSound.IsNull)
         {
             AudioManager.instance.PlayOneShot(shootSound, transform.position);
         }

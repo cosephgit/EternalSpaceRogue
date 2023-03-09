@@ -43,7 +43,7 @@ public class PawnControllerBase : MonoBehaviour
 
     protected virtual void Start()
     {
-        if (walkLoop.Path.Length > 0)
+        if (!walkLoop.IsNull)
             walkEvent = AudioManager.instance.CreateEventInstance(walkLoop);
     }
 
@@ -231,7 +231,7 @@ public class PawnControllerBase : MonoBehaviour
 
     protected virtual void Death()
     {
-        if (deathSound.Path.Length > 0)
+        if (!deathSound.IsNull)
         {
             AudioManager.instance.PlayOneShot(deathSound, transform.position);
         }
@@ -264,7 +264,7 @@ public class PawnControllerBase : MonoBehaviour
 
     public void StopWalking() // public in case we need to silence movement for some reason
     {
-        if (walkLoop.Path.Length > 0)
+        if (!walkLoop.IsNull)
         {
             //PLAYBACK_STATE playBackState;
             //walkEvent.getPlaybackState(out playBackState);
@@ -277,7 +277,7 @@ public class PawnControllerBase : MonoBehaviour
 
     protected void StartWalking()
     {
-        if (walkLoop.Path.Length > 0)
+        if (!walkLoop.IsNull)
         {
             PLAYBACK_STATE playBackState;
             walkEvent.getPlaybackState(out playBackState);
