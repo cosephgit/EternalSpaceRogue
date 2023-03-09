@@ -312,6 +312,7 @@ public class EnemyPawn : PawnControllerBase
 
         if (movePoints > 0)
         {
+            StartWalking();
             if (route.Count > 0)
             {
                 if (CanMove(route[route.Count - 1]))
@@ -328,6 +329,7 @@ public class EnemyPawn : PawnControllerBase
         }
         else
         {
+            StopWalking();
             // check for attack
             int rangeCurrentMax = 1;
             int rangeCurrent = Global.OrthogonalDist(targetOffset, Vector3.zero);

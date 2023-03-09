@@ -91,7 +91,7 @@ public class StageManager : StateMachine
         stageCompleteStage = new StageComplete(this);
         stageFailedStage = new StageFailed(this);
         playerPosInitial = playerPawn.transform.position;
-        menuOpen = false;
+        MenuClosed();
         base.Awake();
     }
 
@@ -138,7 +138,7 @@ public class StageManager : StateMachine
         Debug.Log("Stage cleared - new stage difficulty " + stageCurrent);
         #endif
         gameState = 0;
-        menuOpen = false;
+        MenuClosed();
 
         ChangeState(GetInitialState());
     }
@@ -334,12 +334,17 @@ public class StageManager : StateMachine
     void OpenMenu()
     {
         menuOpen = true;
-        UIManager.instance.pauseMenu.MenuOpen(gameState);
+        AudioManager.instance.UpdateHealth(0);
+        UIManager.instance.pauseMenu.MenuOpen(gameState, PlayerScore());
     }
 
     // called by the menu when the continue button is pressed and the menu closed
     public void MenuClosed()
     {
+        if (playerPawn.LowHealth())
+            AudioManager.instance.UpdateHealth(0);
+        else
+            AudioManager.instance.UpdateHealth(1);
         menuOpen = false;
     }
 
@@ -349,6 +354,7 @@ public class StageManager : StateMachine
         int xpGain = Mathf.CeilToInt(Global.XPPERSTAGEBASE * Mathf.Pow(Global.XPPERSTAGEEXPONENT, stageCurrent));
 
         playerPawn.AddXP(xpGain);
+        playerPawn.StopWalking();
         ChangeState(stageCompleteStage);
         gameState = 1;
         OpenMenu();
@@ -426,6 +432,15 @@ public class StageManager : StateMachine
         ChangeState(stageFailedStage);
         gameState = 2;
         OpenMenu();
+    }
+
+    // works out the current player score
+    int PlayerScore()
+    {
+        int score = (Mathf.CeilToInt(Mathf.Pow((playerPawn.GetRank() - 1), Global.SCORERANKEXP) * Global.SCORERANKSCALE));
+        score += (Mathf.CeilToInt(Mathf.Pow(stageCurrent, Global.SCORESTAGEEXP) * Global.SCORESTAGESCALE));
+        score += playerPawn.GetXP() * Global.SCOREXPSCALE;
+        return score;
     }
 
     #if UNITY_EDITOR

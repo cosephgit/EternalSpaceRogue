@@ -25,8 +25,9 @@ public class PlayerPawn : PawnControllerBase
     public int upgradeTerror { get; private set; } = 0; // -20% weak enemies per level
     public int upgradeMedic { get; private set; } = 0; // +20% healing per level
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         WeaponStart(); // get a new weapon from the provided list
         if (weaponEquipped) weaponReady = true;
         UIManager.instance.weaponManager.UpdateFist(weaponUnarmed.title);
@@ -44,7 +45,7 @@ public class PlayerPawn : PawnControllerBase
     void UpdateHealthBar()
     {
         UIManager.instance.healthBar.UpdateHealth(health, healthMax);
-        if (health < Global.HEALTHFORHEARTBEAT)
+        if (LowHealth())
             AudioManager.instance.UpdateHealth(0);
         else
             AudioManager.instance.UpdateHealth(1);
@@ -88,7 +89,7 @@ public class PlayerPawn : PawnControllerBase
         {
             if (weaponReady)
                 weaponReady = false;
-            UIManager.instance.weaponManager.UpdateWeapon("");
+            UIManager.instance.weaponManager.UpdateWeapon("-none-");
         }
         UIManager.instance.weaponManager.ReadyFist(!weaponReady);
         UIManager.instance.weaponManager.UpdateAmmo(ammoNow, ammoMax);
@@ -228,11 +229,13 @@ public class PlayerPawn : PawnControllerBase
             // cancel remaining movement
             movePoints = 0;
             ClearIndicators();
+            StopWalking();
             return false;
         }
         else
         {
             // no move input
+            StopWalking();
             return false;
         }
 
@@ -275,6 +278,7 @@ public class PlayerPawn : PawnControllerBase
         if (clear)
         {
             // some sort of valid move input has been received, start moving
+            StartWalking();
             StartCoroutine(MovePosition(move));
         }
         else
@@ -282,6 +286,7 @@ public class PlayerPawn : PawnControllerBase
             StartCoroutine(AimDelay());
             ClearIndicators();
             PlaceMoveIndicators();
+            StopWalking();
         }
         return false;
     }
@@ -333,14 +338,14 @@ public class PlayerPawn : PawnControllerBase
         }
         else if (Input.GetButtonDown("Fire2"))
         {
-            ClearIndicators();
             if (weaponEquipped)
             {
+                ClearIndicators();
                 weaponReady = false;
                 weaponEquipped.DiscardWeapon();
+                UpdateAmmoBar();
+                PlaceAttackIndicators();
             }
-            UpdateAmmoBar();
-            PlaceAttackIndicators();
         }
         // cancel attack and run instead
         else if (Input.GetButtonDown("Fire3"))
@@ -413,6 +418,7 @@ public class PlayerPawn : PawnControllerBase
         }
         else if (!enteredActionState)
         {
+            StopWalking();
             enteredActionState = true;
             ClearIndicators();
             PlaceAttackIndicators();
@@ -518,7 +524,7 @@ public class PlayerPawn : PawnControllerBase
 
     public bool LowHealth()
     {
-        if (health < healthMax * 0.5f)
+        if (health < Global.HEALTHFORHEARTBEAT)
         {
             return true;
         }
@@ -577,8 +583,8 @@ public class PlayerPawn : PawnControllerBase
         {
             base.UnequipWeapon(weaponUnequip);
             weaponReady = false;
-            CheckPickups();
             UpdateAmmoBar();
+            CheckPickups();
         }
     }
 
@@ -609,6 +615,10 @@ public class PlayerPawn : PawnControllerBase
     public int GetRank()
     {
         return level;
+    }
+    public int GetXP()
+    {
+        return experience;
     }
 
     public void UpgradeSkills(int newStrength, int newTough, int newAmmo, int newSupply, int newTerror, int newMedic)

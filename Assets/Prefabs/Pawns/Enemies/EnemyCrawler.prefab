@@ -104,9 +104,49 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: walkLoop.Path
+      value: event:/SFX/SkitterLoop
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: weaponUnarmed
       value: 
       objectReference: {fileID: 2579581500726668039}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: deathSound.Path
+      value: event:/SFX/EnemyDeathSmall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: walkLoop.Guid.Data1
+      value: 796536005
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: walkLoop.Guid.Data2
+      value: 1268584390
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: walkLoop.Guid.Data3
+      value: -437612919
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: walkLoop.Guid.Data4
+      value: -1060877576
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: deathSound.Guid.Data1
+      value: 1887519603
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: deathSound.Guid.Data2
+      value: 1190875922
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: deathSound.Guid.Data3
+      value: -665667913
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: deathSound.Guid.Data4
+      value: 1237097029
+      objectReference: {fileID: 0}
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: <enemyStrength>k__BackingField
       value: 1

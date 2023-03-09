@@ -20,6 +20,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1964195880454469233, guid: dfb1f2cf4f80d284cbc6328cab8def45, type: 3}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Path
+      value: event:/SFX/MeleePunch
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitDamage.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -28,8 +32,28 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data1
+      value: 635913624
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data2
+      value: 1240472862
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data3
+      value: -886633588
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data4
+      value: -1190326875
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <title>k__BackingField
       value: FIST
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: replaceRecoilWithLunge
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitDamage.Array.data[0]

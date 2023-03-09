@@ -7,7 +7,16 @@ using UnityEngine;
 
 public static class Global
 {
+    // movement/animation speed incrementors which can be adjusted from the menu
     public static float scalePawnSpeed = 1f; // this can be used to adjust the rate at which pawns move from space to space
+    public static float combatStepDelay = 0.3f; // the time between preattack, attack and postattack combat steps
+    // scoring constants
+    public const int SCORESTAGESCALE = 10;
+    public const float SCORESTAGEEXP = 2f;
+    public const int SCORERANKSCALE = 5;
+    public const float SCORERANKEXP = 1.5f;
+    public const int SCOREXPSCALE = 1;
+    // tilemap segment parameters
     public const int TILEMAPDIMS = 14; // this is the required x and y dimension for all tilemap segments
     // pathfinding limitations
     public const int PATHFINDMAX = 25; // the maximum number of cells to ever pathfind for

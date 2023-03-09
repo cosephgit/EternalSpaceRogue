@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FMODUnity;
+using FMOD.Studio;
 
 // the basic class for any pawn (player or enemy)
 // behaviour:
@@ -20,6 +22,9 @@ public class PawnControllerBase : MonoBehaviour
     [SerializeField]protected WeaponBase weaponUnarmed; // this is the unarmed weapon that this enemy uses when not carrying a weapon
     [SerializeField]EffectTimed damageEffect; // the timed effect which is created when this pawn is damaged
     [SerializeField]SpriteRenderer sprite;
+    [SerializeField]EventReference deathSound;
+    [SerializeField]EventReference walkLoop;
+    private EventInstance walkEvent;
     protected bool moving = false; // is this pawn currently moving between cells?
     protected int movePoints;
     protected bool moveActionDone;
@@ -33,6 +38,12 @@ public class PawnControllerBase : MonoBehaviour
         movePoints = movePointsMax;
         moveActionDone = false;
         health = healthMax;
+    }
+
+    protected virtual void Start()
+    {
+        if (walkLoop.Path.Length > 0)
+            walkEvent = AudioManager.instance.CreateEventInstance(walkLoop);
     }
 
     public void WeaponStart(float maxStrength = 0)
@@ -141,15 +152,15 @@ public class PawnControllerBase : MonoBehaviour
     protected virtual IEnumerator Attack()
     {
         // TODO swing sound and animation
-        WeaponSelected().AttackStart(attackFacing);
+        WeaponSelected().AttackStart(transform.position, attackFacing, attackRange);
         PreAttack();
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(Global.combatStepDelay);
         // TODO attack hit and damage inflicting
-        WeaponSelected().AttackDamage(transform.position, attackFacing, attackRange, DamageBonus());
-        yield return new WaitForSeconds(0.2f);
+        WeaponSelected().AttackDamage(DamageBonus());
+        yield return new WaitForSeconds(Global.combatStepDelay);
         WeaponSelected().AttackEnd();
         // TODO return weapon to ready position
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(Global.combatStepDelay);
         PostAttack();
     }
 
@@ -170,7 +181,11 @@ public class PawnControllerBase : MonoBehaviour
 
     protected virtual void Death()
     {
-
+        if (deathSound.Path.Length > 0)
+        {
+            AudioManager.instance.PlayOneShot(deathSound, transform.position);
+        }
+        StopWalking();
     }
 
     public bool IsAlive()
@@ -195,5 +210,31 @@ public class PawnControllerBase : MonoBehaviour
     public int DistanceTo(Vector3 targ)
     {
         return Global.OrthogonalDist(transform.position, targ);
+    }
+
+    public void StopWalking() // public in case we need to silence movement for some reason
+    {
+        if (walkLoop.Path.Length > 0)
+        {
+            PLAYBACK_STATE playBackState;
+            walkEvent.getPlaybackState(out playBackState);
+            if (playBackState.Equals(PLAYBACK_STATE.PLAYING))
+            {
+                walkEvent.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            }
+        }
+    }
+
+    protected void StartWalking()
+    {
+        if (walkLoop.Path.Length > 0)
+        {
+            PLAYBACK_STATE playBackState;
+            walkEvent.getPlaybackState(out playBackState);
+            if (playBackState.Equals(PLAYBACK_STATE.STOPPED))
+            {
+                walkEvent.start();
+            }
+        }
     }
 }

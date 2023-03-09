@@ -61,7 +61,7 @@ public class UIWeaponManager : MonoBehaviour
         else
         {
             fistText.enabled = false;
-            weaponCurrent.UpdateTitle();// pop the weapon title
+            weaponCurrent.UpdateTitle("");// pop the weapon title
             rect.position = weaponDefault;
         }
     }

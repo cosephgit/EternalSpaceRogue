@@ -16,11 +16,11 @@ public class UIHealthBar : MonoBehaviour
     float healthValue = -1; // make sure it's updated on level load
 
     // takes the maximum and current values of health and updates the bar and counter
-    public void UpdateHealth(float health, float healthMax, int showOffset = 0)
+    public void UpdateHealth(float health, float healthMax, int showOffset = -1)
     {
         float healthView = Mathf.Ceil(health * 10) * 0.1f; // round to 1 d.p
         float healthNew;
-        if (showOffset > 0)
+        if (showOffset > -1)
         {
             // this is used just for the xp bar
             // it adjusts the scale of the bar from just amount out of max to amount out of max for just the current level
@@ -33,6 +33,16 @@ public class UIHealthBar : MonoBehaviour
         }
         if (healthNew < 0) healthNew = 0;
 
+        if (healthView < 0) healthView = 0;
+
+        if (showOffset > 0)
+        {
+            healthCount.text = "" + healthView + "/" + healthMax;
+        }
+        else
+        {
+            healthCount.text = "" + healthView;
+        }
 
         if (healthValue != healthNew)
         {
@@ -40,16 +50,6 @@ public class UIHealthBar : MonoBehaviour
             StopCoroutine(PopBar());
             StartCoroutine(PopBar());
             healthSlider.value = healthNew;
-            if (healthView < 0) healthView = 0;
-
-            if (showOffset > 0)
-            {
-                healthCount.text = "" + healthView + "/" + healthMax;
-            }
-            else
-            {
-                healthCount.text = "" + healthView;
-            }
         }
     }
 
@@ -60,7 +60,6 @@ public class UIHealthBar : MonoBehaviour
         StopCoroutine(PopTitle());
         StartCoroutine(PopTitle());
     }
-
 
     // what needs to happen here? make the text flash, make the box pop?
     IEnumerator PopBar()

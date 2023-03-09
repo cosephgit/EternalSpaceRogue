@@ -108,9 +108,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1964195880454469233, guid: 9fd4cac849cc4ca41a415058a021ea3b, type: 3}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: animsIncrement
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitEffectPrefab
       value: 
       objectReference: {fileID: 1964195880454469233, guid: 7b55e7388da5ec644ac666a35aff1a4f, type: 3}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Path
+      value: event:/SFX/ShootMinigun
+      objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitDamage.Array.size
       value: 7
@@ -118,6 +126,22 @@ PrefabInstance:
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.size
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data1
+      value: -270725843
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data2
+      value: 1238491801
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data3
+      value: -347638372
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data4
+      value: 220713447
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <title>k__BackingField
@@ -164,7 +188,19 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitOffsets.Array.data[0].x
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitOffsets.Array.data[0].y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[1].x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: hitOffsets.Array.data[1].y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
@@ -173,19 +209,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[3].x
-      value: -2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[3].y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[4].x
-      value: -1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[4].y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.data[5].x

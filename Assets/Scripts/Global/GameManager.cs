@@ -107,8 +107,6 @@ public class GameManager : MonoBehaviour
     public void SetVolumeMaster(float volume)
     {
         volumeMaster = volume;
-        // TODO set FMOD volume to this
-        Debug.Log("Master volume is " + volumeMaster);
         Global.VolToDecibelsScaled(volumeMaster);
         PlayerPrefs.SetFloat(Global.KEYVOLMASTER, volumeMaster);
     }
@@ -116,8 +114,6 @@ public class GameManager : MonoBehaviour
     public void SetVolumeSFX(float volume)
     {
         volumeSFX = volume;
-        // TODO set FMOD volume to this
-        Debug.Log("SFX volume is " + volumeSFX);
         Global.VolToDecibelsScaled(volumeSFX);
         PlayerPrefs.SetFloat(Global.KEYVOLMASTER, volumeSFX);
     }
@@ -125,8 +121,6 @@ public class GameManager : MonoBehaviour
     public void SetVolumeMusic(float volume)
     {
         volumeMusic = volume;
-        // TODO set FMOD volume to this
-        Debug.Log("Music volume is " + volumeMusic);
         Global.VolToDecibelsScaled(volumeMusic);
         PlayerPrefs.SetFloat(Global.KEYVOLMASTER, volumeMusic);
     }

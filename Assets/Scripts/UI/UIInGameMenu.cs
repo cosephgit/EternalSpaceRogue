@@ -15,25 +15,28 @@ public class UIInGameMenu : MonoBehaviour
 {
     [SerializeField]TextMeshProUGUI menuTitle;
     [SerializeField]TextMeshProUGUI continueText;
+    [SerializeField]TextMeshProUGUI scoreCurrent;
     [SerializeField]GameObject menuMainHolder;
     [SerializeField]GameObject menuInstructHolder;
     [SerializeField]GameObject menuOptionsHolder;
-    [SerializeField]GameObject scoreBoard;
+    [SerializeField]UIScoreBoard scoreBoard;
     [SerializeField]Slider sliderMasterVol;
     [SerializeField]Slider sliderSFXVol;
     [SerializeField]Slider sliderMusicVol;
     int state = 0; // 0: paused, 1: victory, 2: defeat
     int menu = 0; // 0: main, 1: instructions, 2: options
+    int score = 0;
 
     void Start()
     {
         sliderMasterVol.value = GameManager.instance.GetVolumeMaster();
         sliderSFXVol.value = GameManager.instance.GetVolumeSFX();
         sliderMusicVol.value = GameManager.instance.GetVolumeMusic();
+        scoreBoard.UpdateScores();
     }
 
     // called when the menu opens
-    public void MenuOpen(int gameState)
+    public void MenuOpen(int gameState, int playerScore)
     {
         gameObject.SetActive(true);
         state = gameState;
@@ -41,6 +44,8 @@ public class UIInGameMenu : MonoBehaviour
         menuInstructHolder.SetActive(false);
         menuOptionsHolder.SetActive(false);
         menu = 0;
+        score = playerScore;
+        scoreCurrent.text = "" + score;
         switch (state)
         {
             default:
@@ -58,6 +63,8 @@ public class UIInGameMenu : MonoBehaviour
             }
             case 2: // defeat
             {
+                // since the player is dead, add their score to the scoreboard!
+                AddNewScore(playerScore);
                 menuTitle.text = "DEATH";
                 continueText.text = "START AGAIN";
                 break;
@@ -120,6 +127,7 @@ public class UIInGameMenu : MonoBehaviour
     // button hook, return to main menu
     public void PressQuit()
     {
+        AddNewScore(score);
         SceneManager.LoadScene(0);
     }
 
@@ -157,5 +165,15 @@ public class UIInGameMenu : MonoBehaviour
     public void SliderSFXVolume(System.Single vol)
     {
         GameManager.instance.SetVolumeSFX(vol);
+    }
+
+    public void AddNewScore(int score)
+    {
+        int ranking = GameManager.instance.NewScore(score);
+        if (ranking >= 0)
+        {
+            // made it to the scoreboard!
+            scoreBoard.UpdateScores(ranking);
+        }
     }
 }

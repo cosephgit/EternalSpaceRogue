@@ -112,12 +112,32 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1964195880454469233, guid: 91ae79115eb3caa40a28a12e26a91450, type: 3}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Path
+      value: event:/SFX/ShootRocket
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitDamage.Array.size
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: hitOffsets.Array.size
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data1
+      value: -699335247
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data2
+      value: 1099083433
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data3
+      value: -1050573656
+      objectReference: {fileID: 0}
+    - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
+      propertyPath: shootSound.Guid.Data4
+      value: 977205824
       objectReference: {fileID: 0}
     - target: {fileID: 990095546828785573, guid: 3ebcf670d6881c249ad9ee5d16e9a5ab, type: 3}
       propertyPath: <title>k__BackingField

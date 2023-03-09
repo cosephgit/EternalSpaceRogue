@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FMODUnity;
 
 // this manages the weapon and contains what the weapon can do
 // any weapon animations/effects are handled here
@@ -15,6 +16,9 @@ public class WeaponBase : MonoBehaviour
     [field: SerializeField]public string title { get; private set; } = "GUN";
     [SerializeField]SpriteRenderer gun; // the sprite used to show this gun
     [SerializeField]EffectTimed hitEffectPrefab; // the effect placed on each impact location
+    [field: Header("Animation settings")]
+    [SerializeField]bool replaceRecoilWithLunge; // does the owner "lunge" with this weapon and swing it when they attack, instead of using a recoil animation?
+    [SerializeField]bool animsIncrement; // do the impact effects trigger incrementally rather than all at once? (e.g. automatic fire vs shotgun)
     [field: Header("Weapon statistics")]
     [field: SerializeField]public int ammoMax { get; private set; } = -1; // the ammo this weapon starts with
     [field: SerializeField]public int rangeMin { get; private set; } = 1; // the shortest range this weapon can be targeted at (at least 1)
@@ -23,15 +27,18 @@ public class WeaponBase : MonoBehaviour
     [Header("These two arrays must have identical size")]
     [SerializeField]Vector3[] hitOffsets; // this is the array of all points the weapon hits, relative to the aim point when the attacker is facing up
     [SerializeField]int[] hitDamage; // this is the damage the weapon inflicts to the hit points above - MUST MATCH ARRAY SIZE ABOVE
+    [SerializeField]EventReference shootSound; // FMOD event reference
     int hitPointCount;
     [HideInInspector]public int ammo { get; private set; }
     bool doInit = true;
     public int rangeHitMax { get; private set; } // the furthest a target could actually be hit by this weapon in a straight line (used for AI calculation)
     PawnControllerBase weapOwner;
+    List<Vector3> hitLocations;
 
     void Awake()
     {
         Initialise();
+        hitLocations = new List<Vector3>();
     }
 
     // initialise and validate values
@@ -211,21 +218,43 @@ public class WeaponBase : MonoBehaviour
 
     // this is called at the start of a pawn's attack
     // it makes the weapon animate
-    public void AttackStart(Vector3 facing)
+    public void AttackStart(Vector3 origin, Vector3 facing, int range)
     {
+        hitLocations.Clear();
+        hitLocations.AddRange(GetHitLocations(origin, facing, range));
         if (ammo > 0)
         {
             // if ammo is not already positive, then this is an infinite weapon (typically: an unarmed strike)
             ammo--;
         }
+        if (shootSound.Path.Length > 0)
+        {
+            AudioManager.instance.PlayOneShot(shootSound, transform.position);
+        }
+        if (hitEffectPrefab && animsIncrement && hitLocations.Count > 0)
+        {
+            StartCoroutine(AnimEffectsIncremented());
+        }
+    }
+
+    // this coroutine causes the impact points to be triggered one by one rather than all at once
+    IEnumerator AnimEffectsIncremented()
+    {
+        float effectDelay = Global.combatStepDelay / (float)hitPointCount;
+
+        for (int i = 0; i < hitLocations.Count; i++)
+        {
+            EffectTimed impact = Instantiate(hitEffectPrefab, hitLocations[i], hitEffectPrefab.transform.rotation);
+            impact.PlayEffect();
+
+            yield return new WaitForSeconds(effectDelay);
+        }
     }
 
     // this is called in the middle of a pawn's attack, it makes the weapon inflict damage on the target location with the orientation 
-    public void AttackDamage(Vector3 origin, Vector3 facing, int range, int damageBonus = 0)
+    public void AttackDamage(int damageBonus = 0)
     {
-        Vector3[] hitLocations = GetHitLocations(origin, facing, range);
-
-        for (int i = 0; i < hitLocations.Length; i++)
+        for (int i = 0; i < hitLocations.Count; i++)
         {
             Collider2D[] attackHits = Physics2D.OverlapCircleAll(hitLocations[i], 0.1f, Global.LayerPawn());
             foreach (Collider2D hit in attackHits)
@@ -236,7 +265,7 @@ public class WeaponBase : MonoBehaviour
                     hitPawn.TakeDamage(hitDamage[i] + damageBonus);
                 }
             }
-            if (hitEffectPrefab)
+            if (hitEffectPrefab && !animsIncrement)
             {
                 EffectTimed impact = Instantiate(hitEffectPrefab, hitLocations[i], hitEffectPrefab.transform.rotation);
                 impact.PlayEffect();
