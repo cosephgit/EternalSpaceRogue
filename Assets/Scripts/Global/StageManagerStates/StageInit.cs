@@ -15,6 +15,7 @@ public class StageInit : BaseState
     float initPower;
     float initEnemyTotal;
     float initEnemyIndividual;
+    int initState = 0;
 
     public StageInit(StageManager stateMachine) : base("StageInit", stateMachine) {
       _sm = stateMachine;
@@ -338,21 +339,51 @@ public class StageInit : BaseState
         // level exit
         // traps and puzzle elements
         // when complete, transition to PlayerActive
+        initState = 0;
     }
     public override void UpdateLogic()
     { 
         base.UpdateLogic();
 
-        SetDifficulty();
-        BuildTilemap();
-        BuildNavmap();
-        PopulateLoot();
-        PopulateEnemies();
-
-        if (_sm.levelUpPending > 0)
-            _sm.ChangeState(_sm.roundEndStage);
-        else
-            _sm.ChangeState(_sm.playerActiveStage);
+        // init spread over multiple frames to be more compatible with WebGL and FMOD frame rate requirements
+        switch (initState)
+        {
+            default:
+            case 0:
+            {
+                SetDifficulty();
+                break;
+            }
+            case 1:
+            {
+                BuildTilemap();
+                break;
+            }
+            case 2:
+            {
+                BuildNavmap();
+                break;
+            }
+            case 3:
+            {
+                PopulateLoot();
+                break;
+            }
+            case 4:
+            {
+                PopulateEnemies();
+                break;
+            }
+            case 5:
+            {
+                if (_sm.levelUpPending > 0)
+                    _sm.ChangeState(_sm.roundEndStage);
+                else
+                    _sm.ChangeState(_sm.playerActiveStage);
+                break;
+            }
+        }
+        initState++;
     }
     public override void Exit()
     {

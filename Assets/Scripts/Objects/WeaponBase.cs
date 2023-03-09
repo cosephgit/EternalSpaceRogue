@@ -137,11 +137,20 @@ public class WeaponBase : MonoBehaviour
         ammo = Mathf.CeilToInt((float)ammo * 0.5f); // only get half ammo
         weaponHolder.AcceptWeapon(this);
         weapOwner = null;
+        freeMoving = true;
+        SetWeaponPosition(Vector3.zero);
     }
 
     // works out where this weapon should be positioned relative to the holder
     public void SetWeaponPosition(Vector3 dir)
     {
+        if (dir == Vector3.zero)
+        {
+            // reset back to normal (has been dropped)
+            holdPosition = dir;
+            holdAngle = 0;
+            return;
+        }
         holdPosition = (new Vector3(dir.y, -dir.x) * 0.5f) + (dir * 0.25f) + (Vector3.up * 0.25f);
         if (dir.x == 1)
         {
@@ -369,11 +378,19 @@ public class WeaponBase : MonoBehaviour
 
     void Update()
     {
-        if (weapOwner && freeMoving)
+        if (freeMoving)
         {
-            // gradually move back to default position
-            Vector3 pos = Vector3.Lerp(transform.localPosition, holdPosition, Time.deltaTime);
-            transform.localPosition = pos;
+            if (!Global.ApproxVector(holdPosition, transform.localPosition))
+            {
+                // gradually move back to default position
+                Vector3 pos = holdPosition - transform.localPosition;
+                if (pos.magnitude > Time.deltaTime)
+                {
+                    pos = pos.normalized * Time.deltaTime;
+                }
+                pos += transform.localPosition;
+                transform.localPosition = pos;
+            }
             transform.rotation = Quaternion.Euler(0, 0, holdAngle);
         }
     }

@@ -398,6 +398,7 @@ public class PlayerPawn : PawnControllerBase
                     PlaceAttackIndicators();
                     StartCoroutine(AimDelay());
                 }
+                UpdateSpriteFlip(attackFacing);
             }
         }
         return false;
@@ -409,6 +410,7 @@ public class PlayerPawn : PawnControllerBase
 
         if (movePoints == 0 && moveActionDone)
         {
+            StopWalking();
             ClearIndicators();
             UIManager.instance.instructions.HideInstructions();
             return true;

@@ -45,6 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c21aa5022a162a4d9b2ccfd2ee1b7e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  quality: 1
+  pickupSound:
+    Guid:
+      Data1: -1448061395
+      Data2: 1286750634
+      Data3: 1175027365
+      Data4: 312766168
+    Path: event:/SFX/PickupWeapon
   weapons: {fileID: 4306916992115667484, guid: a65e8c7458a0c174f9e9d28f71961f23, type: 3}
   weapOffset: {x: 0, y: 0, z: 0}
 --- !u!58 &-7678990495011270838

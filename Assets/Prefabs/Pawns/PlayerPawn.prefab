@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7911633908998872774}
   - component: {fileID: 7996272491200302430}
+  - component: {fileID: 329860723102987434}
   m_Layer: 11
-  m_Name: Character (1)
+  m_Name: PlayerSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,6 +85,26 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &329860723102987434
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6948378213873558667}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c53538024e9f8924290382f6916c771f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &8111216045431077887
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,7 +173,9 @@ MonoBehaviour:
       Data3: 665584307
       Data4: 186532521
     Path: event:/SFX/WalkLoop
-  animator: {fileID: 0}
+  animator: {fileID: 329860723102987434}
+  animatorBreathReduction: 20
+  animatorBreathRate: 2
   moveSensitivity: 0.1
   armorMax: 10
 --- !u!61 &-7605921204502077150

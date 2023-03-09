@@ -37,7 +37,7 @@ public class StageManager : StateMachine
     [field: SerializeField]public float enemyStrengthBaseTotal { get; private set; } = 50f; // the basic amount of enemy strength in a level
     [field: SerializeField]public float enemyStrengthBaseIndividual { get; private set; } = 1f; // the basic amount of strength per enemy in a level
     [field: SerializeField]public float enemyStrengthAboveAverage { get; private set; } = 3f; // the maximum amount of strength about the individual value that an enemy may be at most
-    [field: SerializeField]public float enemyShoutDistance { get; private set; } = 3.5f; // distance enemies shout if they see the player
+    [field: SerializeField]public float enemyShoutDistance { get; private set; } = 2.5f; // distance enemies shout if they see the player
     [field: Header("Powerup parameters")]
     [field: SerializeField]public float powerStrengthBaseTotal { get; private set; } = 20f; // the basic amount of powerup strength in a level
     [field: SerializeField]public float powerStrengthBaseIndividual { get; private set; } = 1f; // the basic amount of strength per powerup in a level

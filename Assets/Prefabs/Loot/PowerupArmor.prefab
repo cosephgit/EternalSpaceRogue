@@ -63,6 +63,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quality: 1
+  pickupSound:
+    Guid:
+      Data1: -1787126433
+      Data2: 1078107665
+      Data3: -1480112987
+      Data4: 1577391594
+    Path: event:/SFX/PickupArmor
   armorAmount: 3
 --- !u!1 &3359278963155171122
 GameObject:

@@ -80,6 +80,10 @@ PrefabInstance:
       value: -2004231686
       objectReference: {fileID: 0}
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: animatorBreathReduction
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: <enemyStrength>k__BackingField
       value: 3
       objectReference: {fileID: 0}

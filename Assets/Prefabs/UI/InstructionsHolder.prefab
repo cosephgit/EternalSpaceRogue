@@ -158,14 +158,16 @@ MonoBehaviour:
     You
     can carry one weapon at a time.
 
+    Enter the green squares to finish the stage.
+
 
     Movement
 
 
-    Arrows/WASD - MOVE
+    Arrows/WASD
+    - MOVE
 
-    C
-    - end move
+    C - end move
 
 
     Combat
@@ -175,8 +177,8 @@ MonoBehaviour:
 
     SPACE - attack
 
-    Z -
-    switch weapons
+    Z
+    - switch weapons
 
     X - discard weapon
 
@@ -207,11 +209,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18.15
+  m_fontSize: 16.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
+  m_fontSizeMin: 12
   m_fontSizeMax: 30
   m_fontStyle: 0
   m_HorizontalAlignment: 2

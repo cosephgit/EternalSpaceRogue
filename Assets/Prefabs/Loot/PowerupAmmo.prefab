@@ -47,6 +47,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quality: 1
+  pickupSound:
+    Guid:
+      Data1: -1448061395
+      Data2: 1286750634
+      Data3: 1175027365
+      Data4: 312766168
+    Path: event:/SFX/PickupWeapon
 --- !u!58 &-7294799918271428771
 CircleCollider2D:
   m_ObjectHideFlags: 0

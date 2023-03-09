@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FMODUnity;
 
 // this is the parent class for all powerup objects
 /*
@@ -30,6 +31,7 @@ if the player is low on health or has no weapon, those get extra weight
 public class PowerUpBase : MonoBehaviour
 {
     [SerializeField]protected float quality = 1;
+    [SerializeField]EventReference pickupSound;
     protected bool ready = true;
 
     public virtual void PrepPowerup(float maxStrength)
@@ -40,6 +42,9 @@ public class PowerUpBase : MonoBehaviour
     public virtual bool TouchPowerup(PlayerPawn pawn)
     {
         if (!ready) return true;
+
+        if (!pickupSound.IsNull)
+            AudioManager.instance.PlayOneShot(pickupSound, transform.position);
         Consume();
         return true;
     }

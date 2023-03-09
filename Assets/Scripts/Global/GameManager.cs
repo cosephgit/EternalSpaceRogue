@@ -107,22 +107,22 @@ public class GameManager : MonoBehaviour
     public void SetVolumeMaster(float volume)
     {
         volumeMaster = volume;
-        Global.VolToDecibelsScaled(volumeMaster);
-        PlayerPrefs.SetFloat(Global.KEYVOLMASTER, volumeMaster);
+        PlayerPrefs.SetFloat(Global.KEYVOLMASTER, volume); // store the Unity-scaled value
+        AudioManager.instance.SetMasterVolume(Global.VolToDecibelsScaled(volume)); // the actual volume change to FMOD with the log scale adjustment
     }
 
     public void SetVolumeSFX(float volume)
     {
         volumeSFX = volume;
-        Global.VolToDecibelsScaled(volumeSFX);
-        PlayerPrefs.SetFloat(Global.KEYVOLMASTER, volumeSFX);
+        PlayerPrefs.SetFloat(Global.KEYVOLSFX, volume);
+        AudioManager.instance.SetSFXVolume(Global.VolToDecibelsScaled(volume));
     }
 
     public void SetVolumeMusic(float volume)
     {
         volumeMusic = volume;
-        Global.VolToDecibelsScaled(volumeMusic);
-        PlayerPrefs.SetFloat(Global.KEYVOLMASTER, volumeMusic);
+        PlayerPrefs.SetFloat(Global.KEYVOLMUSIC, volume);
+        AudioManager.instance.SetMusicVolume(Global.VolToDecibelsScaled(volume));
     }
 
     public float GetVolumeMaster()

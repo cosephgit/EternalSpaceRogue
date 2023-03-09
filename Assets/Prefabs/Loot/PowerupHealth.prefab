@@ -47,6 +47,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quality: 1
+  pickupSound:
+    Guid:
+      Data1: -1977272613
+      Data2: 1244195492
+      Data3: 1097121973
+      Data4: -1652521685
+    Path: event:/SFX/PickupHealth
   healAmount: 3
 --- !u!58 &-3905970351539689918
 CircleCollider2D:

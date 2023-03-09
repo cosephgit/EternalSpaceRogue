@@ -25,6 +25,8 @@ public class PawnControllerBase : MonoBehaviour
     [SerializeField]EventReference deathSound;
     [SerializeField]EventReference walkLoop;
     [SerializeField]Animator animator;
+    [SerializeField]float animatorBreathReduction = 4f;
+    [SerializeField]float animatorBreathRate = 2f;
     private EventInstance walkEvent;
     protected bool moving = false; // is this pawn currently moving between cells?
     protected int movePoints;
@@ -45,6 +47,7 @@ public class PawnControllerBase : MonoBehaviour
     {
         if (!walkLoop.IsNull)
             walkEvent = AudioManager.instance.CreateEventInstance(walkLoop);
+        StartCoroutine(Breathing());
     }
 
     public void WeaponStart(float maxStrength = 0)
@@ -100,8 +103,7 @@ public class PawnControllerBase : MonoBehaviour
     {
         Vector3 target = transform.position + direction;
 
-        // TODO
-        // animator: set direction and "moving" flag here
+        UpdateSpriteFlip(direction);
 
         moving = true;
         attackFacing = direction;
@@ -131,10 +133,22 @@ public class PawnControllerBase : MonoBehaviour
         PostMove();
     }
 
+    protected void UpdateSpriteFlip(Vector3 facing)
+    {
+        if (facing.x == 1 || facing.y == -1)
+        {
+            // if facing right or down, flip the sprite (face to the right)
+            sprite.flipX = true;
+        }
+        else
+            sprite.flipX = false;
+    }
+
     // this is called at the start of an attack for any pawn-specific handling
     protected virtual void PreAttack()
     {
         moving = true;
+        UpdateSpriteFlip(attackFacing);
     }
     // this is called at the end of an attack for any pawn-specific handling
     protected virtual void PostAttack()
@@ -273,6 +287,10 @@ public class PawnControllerBase : MonoBehaviour
                 walkEvent.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
             //}
         }
+        if (animator)
+        {
+            animator.SetBool("Walking", false);
+        }
     }
 
     protected void StartWalking()
@@ -285,6 +303,25 @@ public class PawnControllerBase : MonoBehaviour
             {
                 walkEvent.start();
             }
+        }
+        if (animator)
+        {
+            animator.SetBool("Walking", true);
+        }
+    }
+
+    // fake breathing in sprite
+    IEnumerator Breathing()
+    {
+        float breathTime = 0;
+        Vector3 scale = Vector3.zero;
+        while (IsAlive())
+        {
+            breathTime += Time.deltaTime * animatorBreathRate;
+            scale.x = (animatorBreathReduction + Mathf.Sin(breathTime)) / animatorBreathReduction;
+            scale.y = (animatorBreathReduction - Mathf.Sin(breathTime)) / animatorBreathReduction;
+            sprite.transform.localScale = scale;
+            yield return new WaitForEndOfFrame();
         }
     }
 }

@@ -116,6 +116,10 @@ PrefabInstance:
       value: event:/SFX/EnemyDeathSmall
       objectReference: {fileID: 0}
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: animatorBreathRate
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: walkLoop.Guid.Data1
       value: -1240731517
       objectReference: {fileID: 0}
@@ -146,6 +150,10 @@ PrefabInstance:
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: deathSound.Guid.Data4
       value: -161049537
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: animatorBreathReduction
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: <enemyStrength>k__BackingField
