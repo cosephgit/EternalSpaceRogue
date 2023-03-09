@@ -39,13 +39,11 @@ public class AudioManager : MonoBehaviour
 
     public void UpdateIntensity(float intensity)
     {
-        Debug.Log("New intensity: " + intensity);
         RuntimeManager.StudioSystem.setParameterByName("Intensity", Mathf.Clamp(intensity, 0f, 1f));
     }
 
     public void UpdateHealth(float health)
     {
-        Debug.Log("New health: " + health);
         RuntimeManager.StudioSystem.setParameterByName("Health", Mathf.Clamp(health, 0f, 1f));
     }
 

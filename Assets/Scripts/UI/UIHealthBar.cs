@@ -35,7 +35,7 @@ public class UIHealthBar : MonoBehaviour
 
         if (healthView < 0) healthView = 0;
 
-        if (showOffset > 0)
+        if (showOffset > -1)
         {
             healthCount.text = "" + healthView + "/" + healthMax;
         }

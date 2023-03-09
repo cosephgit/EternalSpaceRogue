@@ -127,7 +127,7 @@ public class UIInGameMenu : MonoBehaviour
     // button hook, return to main menu
     public void PressQuit()
     {
-        AddNewScore(score);
+        if (state != 2) AddNewScore(score); // the player has quit on a game they're still alive in, so save their score
         SceneManager.LoadScene(0);
     }
 

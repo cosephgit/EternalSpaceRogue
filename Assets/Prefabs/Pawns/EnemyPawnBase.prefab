@@ -136,6 +136,21 @@ MonoBehaviour:
   weaponOptions: {fileID: 0}
   weaponUnarmed: {fileID: 0}
   damageEffect: {fileID: 1964195880454469233, guid: c137f120d6a577444b3ca32d30857d0e, type: 3}
+  sprite: {fileID: 2967164805480727632}
+  deathSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  walkLoop:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   <enemyStrength>k__BackingField: 1
 --- !u!61 &5538609470978712661
 BoxCollider2D:

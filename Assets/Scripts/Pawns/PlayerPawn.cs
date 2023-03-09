@@ -392,6 +392,8 @@ public class PlayerPawn : PawnControllerBase
                     // change the current facing to the entered direction
                     ClearIndicators();
                     attackFacing = tryAttack;
+                    if (weaponEquipped)
+                        weaponEquipped.SetWeaponPosition(attackFacing);
                     attackRange = 1;
                     PlaceAttackIndicators();
                     StartCoroutine(AimDelay());

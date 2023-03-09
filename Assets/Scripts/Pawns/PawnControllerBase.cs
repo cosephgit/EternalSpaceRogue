@@ -24,6 +24,7 @@ public class PawnControllerBase : MonoBehaviour
     [SerializeField]SpriteRenderer sprite;
     [SerializeField]EventReference deathSound;
     [SerializeField]EventReference walkLoop;
+    [SerializeField]Animator animator;
     private EventInstance walkEvent;
     protected bool moving = false; // is this pawn currently moving between cells?
     protected int movePoints;
@@ -99,8 +100,13 @@ public class PawnControllerBase : MonoBehaviour
     {
         Vector3 target = transform.position + direction;
 
+        // TODO
+        // animator: set direction and "moving" flag here
+
         moving = true;
         attackFacing = direction;
+        if (weaponEquipped)
+            weaponEquipped.SetWeaponPosition(attackFacing);
         attackRange = 1;
 
         while (moving)
@@ -119,6 +125,8 @@ public class PawnControllerBase : MonoBehaviour
 
             if (lastMove) moving = false;
         }
+
+        // animator: set "not moving" flag
 
         PostMove();
     }
@@ -151,9 +159,12 @@ public class PawnControllerBase : MonoBehaviour
     // the attack direction, range and weapon are already stored in the class, this manages the timing and execution of those presets
     protected virtual IEnumerator Attack()
     {
-        float moveIncrement;
+        float moveIncrement = 0;
         Vector3 lungePoint = attackFacing * 0.5f; // lunge halfway towards the target point
-        // TODO swing sound and animation
+
+        // TODO
+        // animator: set direction here
+
         WeaponSelected().AttackStart(transform.position, attackFacing, attackRange);
         PreAttack();
         if (WeaponSelected().replaceRecoilWithLunge)
@@ -169,7 +180,7 @@ public class PawnControllerBase : MonoBehaviour
         }
         else
             yield return new WaitForSeconds(Global.combatStepDelay);
-        // TODO attack hit and damage inflicting
+
         WeaponSelected().AttackDamage(DamageBonus());
         if (WeaponSelected().replaceRecoilWithLunge)
         {
@@ -188,7 +199,6 @@ public class PawnControllerBase : MonoBehaviour
         // TODO return weapon to ready position
         if (WeaponSelected().replaceRecoilWithLunge)
         {
-            moveIncrement = Global.combatStepDelay = 0.5f;
             while (moveIncrement > 0)
             {
                 Vector3 offset = lungePoint * moveIncrement / Global.combatStepDelay;
@@ -196,6 +206,7 @@ public class PawnControllerBase : MonoBehaviour
                 moveIncrement -= Time.deltaTime * 0.5f; // return at half speed
                 yield return new WaitForEndOfFrame();
             }
+            // back to start
             sprite.transform.localPosition = Vector3.zero;
         }
         else
@@ -255,12 +266,12 @@ public class PawnControllerBase : MonoBehaviour
     {
         if (walkLoop.Path.Length > 0)
         {
-            PLAYBACK_STATE playBackState;
-            walkEvent.getPlaybackState(out playBackState);
-            if (playBackState.Equals(PLAYBACK_STATE.PLAYING))
-            {
+            //PLAYBACK_STATE playBackState;
+            //walkEvent.getPlaybackState(out playBackState);
+            //if (playBackState.Equals(PLAYBACK_STATE.PLAYING))
+            //{
                 walkEvent.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-            }
+            //}
         }
     }
 
