@@ -105,12 +105,13 @@ public class WeaponBase : MonoBehaviour
     }
 
     // this equips the weapon to the passed owner pawn
-    public bool EquipWeapon(PawnControllerBase owner)
+    public bool EquipWeapon(PawnControllerBase owner, Vector3 dir)
     {
         Initialise();
         weapOwner = owner;
         transform.parent = owner.transform;
         transform.position = owner.transform.position;
+        SetWeaponPosition(dir);
         return true;
     }
 
@@ -141,22 +142,22 @@ public class WeaponBase : MonoBehaviour
     // works out where this weapon should be positioned relative to the holder
     public void SetWeaponPosition(Vector3 dir)
     {
-        holdPosition = new Vector3(dir.y, -dir.x) * 0.5f;
+        holdPosition = new Vector3(dir.y, -dir.x) * 0.6f;
         if (dir.x == 1)
-        {
-            holdAngle = -90f;
-        }
-        else if (dir.y == -1)
         {
             holdAngle = 180f;
         }
-        else if (dir.x == -1)
+        else if (dir.y == -1)
         {
             holdAngle = 90f;
         }
+        else if (dir.y == 1)
+        {
+            holdAngle = -90;
+        }
         else
         {
-            holdAngle = 0;
+            holdAngle = 0f;
         }
     }
 

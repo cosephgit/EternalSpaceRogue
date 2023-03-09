@@ -56,7 +56,7 @@ public class PawnControllerBase : MonoBehaviour
             if (weaponSelection)
             {
                 weaponEquipped = Instantiate(weaponSelection);
-                weaponEquipped.EquipWeapon(this);
+                weaponEquipped.EquipWeapon(this, attackFacing);
             }
         }
     }

@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 6948378213873558667}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 394372488268220988}
@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 2102568914, guid: 7821e16e6178e824e965d37ac1f10e82, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -152,6 +152,7 @@ MonoBehaviour:
       Data3: 1790914952
       Data4: -1141989528
     Path: event:/SFX/WalkLoop
+  animator: {fileID: 0}
   moveSensitivity: 0.1
   armorMax: 10
 --- !u!61 &-7605921204502077150

@@ -550,7 +550,7 @@ public class PlayerPawn : PawnControllerBase
         else
         {
             weaponEquipped = weaponPick;
-            weaponEquipped.EquipWeapon(this);
+            weaponEquipped.EquipWeapon(this, attackFacing);
             if (upgradeAmmo > 0)
             {
                 weaponEquipped.ApplyAmmoUpgrade(upgradeAmmo);
