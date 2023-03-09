@@ -292,10 +292,8 @@ MonoBehaviour:
   switchSettingsMigration: 1
   HasSourceProject: 1
   HasPlatforms: 1
-  sourceProjectPath: C:/Users/UKGC/OneDrive/Games/Game Design/_Video games/VG JAM
-    7DRL 2023/Test/Test.fspro
-  sourceBankPath: C:/Users/UKGC/OneDrive/Games/Game Design/_Video games/VG JAM 7DRL
-    2023/Test/Build
+  sourceProjectPath: Assets/Audio/Eternal Space Audio.fspro
+  sourceBankPath: Assets/Audio/Build
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1
@@ -318,7 +316,9 @@ MonoBehaviour:
   Plugins: []
   MasterBanks:
   - Master
-  Banks: []
+  Banks:
+  - Music
+  - SFX
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0

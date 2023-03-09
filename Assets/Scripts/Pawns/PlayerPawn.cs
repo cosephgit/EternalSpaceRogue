@@ -14,7 +14,6 @@ public class PlayerPawn : PawnControllerBase
     private bool enteredActionState = false;
     private int experienceLevel = 10;
     private int experience = 0;
-    private bool stageComplete = false;
     private bool weaponReady = false;
     private int armor = 0;
     private int level = 1; // experience level/called RANK in the UI
@@ -45,6 +44,10 @@ public class PlayerPawn : PawnControllerBase
     void UpdateHealthBar()
     {
         UIManager.instance.healthBar.UpdateHealth(health, healthMax);
+        if (health < Global.HEALTHFORHEARTBEAT)
+            AudioManager.instance.UpdateHealth(0);
+        else
+            AudioManager.instance.UpdateHealth(1);
     }
 
     void UpdateArmorBar()
@@ -95,7 +98,6 @@ public class PlayerPawn : PawnControllerBase
     {
         base.RoundPrep();
         enteredActionState = false;
-        stageComplete = false;
         PlaceMoveIndicators();
         UIManager.instance.instructions.ShowInstruction(Instruction.Move);
     }
@@ -334,8 +336,8 @@ public class PlayerPawn : PawnControllerBase
             ClearIndicators();
             if (weaponEquipped)
             {
-                weaponEquipped.DiscardWeapon();
                 weaponReady = false;
+                weaponEquipped.DiscardWeapon();
             }
             UpdateAmmoBar();
             PlaceAttackIndicators();

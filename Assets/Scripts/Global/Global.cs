@@ -11,6 +11,9 @@ public static class Global
     public const int TILEMAPDIMS = 14; // this is the required x and y dimension for all tilemap segments
     // pathfinding limitations
     public const int PATHFINDMAX = 25; // the maximum number of cells to ever pathfind for
+    // volume tweaks
+    public const float ENEMIESFORINTENSITY = 10f; // minimum number of enemies for the soundtrack to be at max intensity
+    public const float HEALTHFORHEARTBEAT = 5f; // maximum health value for the heartbeat audio to play
     // loot chances
     public const float DROPCHANCEBASE = 0; // the basic chance of a weapon being dropped by a dying enemy
     public const float DROPCHANCEBYAMMO = 0.5f; // the chance of a 100% loaded weapon being dropped (scaling to 0 at 0% ammo)
@@ -25,9 +28,10 @@ public static class Global
     public const float XPPERLEVELBASE = 20f; // base XP needed per level
     public const float XPPERLEVELEXPONENT = 1.4f;
     // save data keys
-    public const string VOLMASTER = "VolumeMaster";
-    public const string VOLSFX = "VolumeSFX";
-    public const string VOLMUSIC = "VolumeMusic";
+    public const string KEYVOLMASTER = "VolumeMaster";
+    public const string KEYVOLSFX = "VolumeSFX";
+    public const string KEYVOLMUSIC = "VolumeMusic";
+    public const string KEYSCORE = "Score";
     // collision layer index references
     private const string LAYERWALL = "Default";
     private const string LAYERPAWN = "Pawn";

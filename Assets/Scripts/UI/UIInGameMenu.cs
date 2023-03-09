@@ -152,7 +152,7 @@ public class UIInGameMenu : MonoBehaviour
     }
     public void SliderMusicVolume(System.Single vol)
     {
-        GameManager.instance.SetVolumeMaster(vol);
+        GameManager.instance.SetVolumeMusic(vol);
     }
     public void SliderSFXVolume(System.Single vol)
     {

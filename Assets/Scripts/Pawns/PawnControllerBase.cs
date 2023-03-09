@@ -19,6 +19,7 @@ public class PawnControllerBase : MonoBehaviour
     [SerializeField]protected WeaponList weaponOptions; // if this list is present the pawn will have one of this list as their equipped weapon
     [SerializeField]protected WeaponBase weaponUnarmed; // this is the unarmed weapon that this enemy uses when not carrying a weapon
     [SerializeField]EffectTimed damageEffect; // the timed effect which is created when this pawn is damaged
+    [SerializeField]SpriteRenderer sprite;
     protected bool moving = false; // is this pawn currently moving between cells?
     protected int movePoints;
     protected bool moveActionDone;

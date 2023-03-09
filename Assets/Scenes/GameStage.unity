@@ -1061,6 +1061,34 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1478710549}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SliderMusicVolume
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIInGameMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 1456394568146604347, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1222,6 +1250,10 @@ MonoBehaviour:
   fistText: {fileID: 183759267}
   rect: {fileID: 224309813}
   fistReadyPlaceholder: {fileID: 717572889}
+  popScale: 1.25
+  popDuration: 1
+  popColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  popColorSwitch: 0.1
 --- !u!1 &283530985
 GameObject:
   m_ObjectHideFlags: 0
@@ -3045,6 +3077,82 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 845873472}
   m_CullTransparentMesh: 1
+--- !u!1 &930956357
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 930956358}
+  - component: {fileID: 930956359}
+  - component: {fileID: 930956360}
+  m_Layer: 0
+  m_Name: FMODManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &930956358
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930956357}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &930956359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930956357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -804257386
+      Data2: 1076656764
+      Data3: 760137604
+      Data4: -1449321931
+    Path: event:/Music/Background Music
+  Event: 
+  PlayEvent: 1
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &930956360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930956357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4b840d4a0e137e46afd9740b5edeb6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioMusic: {fileID: 930956359}
 --- !u!1 &969789034
 GameObject:
   m_ObjectHideFlags: 0
@@ -5707,6 +5815,34 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1478710549}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SliderMasterVolume
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIInGameMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 1456394568146604347, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -7082,6 +7218,34 @@ PrefabInstance:
     - target: {fileID: 624421651, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1478710549}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SliderSFXVolume
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIInGameMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456394568146604346, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1456394568146604347, guid: d3e70df531fe19e4b887702ad5836bb2, type: 3}
       propertyPath: m_Pivot.x

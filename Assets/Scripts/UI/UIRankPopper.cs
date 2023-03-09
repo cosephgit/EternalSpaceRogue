@@ -9,7 +9,7 @@ public class UIRankPopper : MonoBehaviour
 {
     [SerializeField]GameObject rankBox;
     [SerializeField]TextMeshProUGUI rankText;
-    [SerializeField]float popScale = 2f; // how much does the rank pop box scale up?
+    [SerializeField]float popScale = 1.5f; // how much does the rank pop box scale up?
     [SerializeField]float popDuration = 1f; // how long does the rank pop box take to pop?
     [SerializeField]float popLoiter = 2f; // how long does the rank pop box loiter after popping?
     [SerializeField]Color popColor = Color.yellow;

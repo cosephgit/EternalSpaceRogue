@@ -62,6 +62,9 @@ public class StageEnemyActive : BaseState
             // get the first enemy in the que ready for the round
             enemyActive[enemyCurrent].RoundPrep();
         }
+
+        float intensity = Mathf.Clamp((float)enemyActive.Count / Global.ENEMIESFORINTENSITY, 0f, 1f);
+        AudioManager.instance.UpdateIntensity(intensity);
     }
     public override void UpdateLogic()
     {

@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2960611290407119718, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2967164805480727632, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: m_Sprite
       value: 
