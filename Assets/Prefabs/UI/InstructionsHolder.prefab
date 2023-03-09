@@ -143,38 +143,44 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Explore the hostile space station looking for the vital data cache.
+  m_text: 'Trapped in a space station full of dangerous hostile beings, you must
+    fight to survive.
 
 
     Instructions
 
 
-    Each
-    turn you can either move and attack, or move twice.
+    Each turn you can either move and
+    attack, or move twice.
 
-    Move over crates and
-    weapons to pick them up.
+    Move over crates and weapons to pick them up.
 
-    You can carry one weapon at a time.
-
-
-    Controls
+    You
+    can carry one weapon at a time.
 
 
-    Arrows/WASD
-    - MOVE/AIM
+    Movement
 
-    C - skip move/attack
 
+    Arrows/WASD - MOVE
+
+    C
+    - end move
+
+
+    Combat
+
+
+    Arrows/WASD - Aim
 
     SPACE - attack
 
-    Z - switch weapons
+    Z -
+    switch weapons
 
-    X
-    - discard weapon
+    X - discard weapon
 
-'
+    C - move instead of attacking'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 221baf0845c0adb4d9add287e45811c6, type: 2}
   m_sharedMaterial: {fileID: -2025793068360382577, guid: 221baf0845c0adb4d9add287e45811c6, type: 2}
@@ -201,7 +207,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 21.05
+  m_fontSize: 18.15
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -258,7 +264,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8225854882276567037
 RectTransform:
   m_ObjectHideFlags: 0

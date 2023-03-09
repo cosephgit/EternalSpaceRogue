@@ -17,8 +17,8 @@ public class WeaponBase : MonoBehaviour
     [SerializeField]SpriteRenderer gun; // the sprite used to show this gun
     [SerializeField]EffectTimed hitEffectPrefab; // the effect placed on each impact location
     [field: Header("Animation settings")]
-    [SerializeField]bool replaceRecoilWithLunge; // does the owner "lunge" with this weapon and swing it when they attack, instead of using a recoil animation?
-    [SerializeField]bool animsIncrement; // do the impact effects trigger incrementally rather than all at once? (e.g. automatic fire vs shotgun)
+    [field: SerializeField]public bool replaceRecoilWithLunge { get; private set; } // does the owner "lunge" with this weapon and swing it when they attack, instead of using a recoil animation?
+    [field: SerializeField]public bool animsIncrement { get; private set; } // do the impact effects trigger incrementally rather than all at once? (e.g. automatic fire vs shotgun)
     [field: Header("Weapon statistics")]
     [field: SerializeField]public int ammoMax { get; private set; } = -1; // the ammo this weapon starts with
     [field: SerializeField]public int rangeMin { get; private set; } = 1; // the shortest range this weapon can be targeted at (at least 1)

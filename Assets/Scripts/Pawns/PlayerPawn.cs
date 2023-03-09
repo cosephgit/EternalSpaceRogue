@@ -436,7 +436,7 @@ public class PlayerPawn : PawnControllerBase
     IEnumerator AimDelay()
     {
         moving = true;
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(Global.actionRepeatDelay);
         moving = false;
     }
 

@@ -151,16 +151,55 @@ public class PawnControllerBase : MonoBehaviour
     // the attack direction, range and weapon are already stored in the class, this manages the timing and execution of those presets
     protected virtual IEnumerator Attack()
     {
+        float moveIncrement;
+        Vector3 lungePoint = attackFacing * 0.5f; // lunge halfway towards the target point
         // TODO swing sound and animation
         WeaponSelected().AttackStart(transform.position, attackFacing, attackRange);
         PreAttack();
-        yield return new WaitForSeconds(Global.combatStepDelay);
+        if (WeaponSelected().replaceRecoilWithLunge)
+        {
+            moveIncrement = 0;
+            while (moveIncrement < Global.combatStepDelay)
+            {
+                Vector3 offset = lungePoint * moveIncrement / Global.combatStepDelay;
+                sprite.transform.localPosition = offset; // move the character sprite towards the target
+                moveIncrement += Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
+        }
+        else
+            yield return new WaitForSeconds(Global.combatStepDelay);
         // TODO attack hit and damage inflicting
         WeaponSelected().AttackDamage(DamageBonus());
-        yield return new WaitForSeconds(Global.combatStepDelay);
+        if (WeaponSelected().replaceRecoilWithLunge)
+        {
+            moveIncrement = Global.combatStepDelay;
+            while (moveIncrement > Global.combatStepDelay * 0.5f)
+            {
+                Vector3 offset = lungePoint * moveIncrement / Global.combatStepDelay;
+                sprite.transform.localPosition = offset; // move the character sprite towards the target
+                moveIncrement -= Time.deltaTime * 0.5f; // return at half speed
+                yield return new WaitForEndOfFrame();
+            }
+        }
+        else
+            yield return new WaitForSeconds(Global.combatStepDelay);
         WeaponSelected().AttackEnd();
         // TODO return weapon to ready position
-        yield return new WaitForSeconds(Global.combatStepDelay);
+        if (WeaponSelected().replaceRecoilWithLunge)
+        {
+            moveIncrement = Global.combatStepDelay = 0.5f;
+            while (moveIncrement > 0)
+            {
+                Vector3 offset = lungePoint * moveIncrement / Global.combatStepDelay;
+                sprite.transform.localPosition = offset; // move the character sprite towards the target
+                moveIncrement -= Time.deltaTime * 0.5f; // return at half speed
+                yield return new WaitForEndOfFrame();
+            }
+            sprite.transform.localPosition = Vector3.zero;
+        }
+        else
+            yield return new WaitForSeconds(Global.combatStepDelay);
         PostAttack();
     }
 
