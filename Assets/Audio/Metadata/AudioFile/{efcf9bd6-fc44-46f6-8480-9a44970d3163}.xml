@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{efcf9bd6-fc44-46f6-8480-9a44970d3163}">
 		<property name="assetPath">
-			<value>topper.wav</value>
+			<value>old_topper.wav</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>
