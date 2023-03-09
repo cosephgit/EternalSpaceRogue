@@ -97,11 +97,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: moveSpeed
-      value: 8
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: movePointsMax
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5773481264370350384, guid: 51f01273dc80fbe48880aaeba83acc7a, type: 3}
       propertyPath: walkLoop.Path

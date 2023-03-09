@@ -6628,7 +6628,11 @@ PrefabInstance:
       objectReference: {fileID: 6277250800665863264, guid: 2a0de311ec6af27458b6af8b73e0b056, type: 3}
     - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
       propertyPath: <enemyStrengthBaseTotal>k__BackingField
-      value: 50
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
+      propertyPath: <powerStrengthBaseTotal>k__BackingField
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3786866533808386871, guid: 119816eea243ffb4cbd6a2fff6dd3bb8, type: 3}
       propertyPath: <tilemapPrefabs>k__BackingField.Array.size

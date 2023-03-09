@@ -29,7 +29,7 @@ public class StageInit : BaseState
             initPower *= 1f + ((float)_sm.playerPawn.upgradeSupply * 0.2f);
         }
         initEnemyTotal = _sm.enemyStrengthBaseTotal * Mathf.Pow(Global.BONUSENEMIESEXPONENT, _sm.stageCurrent);
-        initEnemyIndividual = _sm.enemyStrengthBaseIndividual * Mathf.Pow(Global.BONUSENEMYEXPONENT, _sm.stageCurrent);
+        initEnemyIndividual = _sm.enemyStrengthBaseIndividual * (1f + (_sm.stageCurrent * Global.BONUSENEMYSCALE));
         if (_sm.playerPawn.upgradeTerror > 0)
         {
             // face less enemy strength overall BUT the basic group strength will be bigger

@@ -142,7 +142,7 @@ public class WeaponBase : MonoBehaviour
     // works out where this weapon should be positioned relative to the holder
     public void SetWeaponPosition(Vector3 dir)
     {
-        holdPosition = new Vector3(dir.y, -dir.x) * 0.6f;
+        holdPosition = (new Vector3(dir.y, -dir.x) * 0.5f) + (dir * 0.25f) + (Vector3.up * 0.25f);
         if (dir.x == 1)
         {
             holdAngle = 180f;
