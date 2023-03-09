@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{a05fe9e5-cc24-4f5d-8421-d61d60c860ef}">
+		<property name="assetPath">
+			<value>pickuparmor.ogg</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>2.0397505668934239</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f95c799a-5fc6-498b-aad8-ce38ee283c6a}</destination>
+		</relationship>
+	</object>
+</objects>
