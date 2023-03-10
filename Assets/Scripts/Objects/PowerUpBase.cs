@@ -33,6 +33,7 @@ public class PowerUpBase : MonoBehaviour
     [SerializeField]protected float quality = 1;
     [SerializeField]EventReference pickupSound;
     [SerializeField]Animator pickupAnim;
+    [SerializeField]SpriteRenderer pickupSprite;
     protected bool ready = true;
 
     public virtual void PrepPowerup(float maxStrength)
@@ -54,14 +55,29 @@ public class PowerUpBase : MonoBehaviour
         if (!pickupSound.IsNull)
             AudioManager.instance.PlayOneShot(pickupSound, transform.position);
 
-        if (pickupAnim) StartCoroutine(ConsumeAnim());
-        else Destroy(gameObject);
+        StartCoroutine(ConsumeAnim());
     }
 
     IEnumerator ConsumeAnim()
     {
-        pickupAnim.SetBool("Used", true);
-        yield return new WaitForSeconds(0.5f);
+        if (pickupAnim)
+        {
+            pickupAnim.SetBool("Used", true);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        if (pickupSprite)
+        {
+            // flash and disappear
+            for (int i = 0; i < 10; i++)
+            {
+                if (i % 2 == 0) pickupSprite.enabled = false;
+                else pickupSprite.enabled = true;
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+
+        yield return new WaitForEndOfFrame();
         Destroy(gameObject);
     }
 

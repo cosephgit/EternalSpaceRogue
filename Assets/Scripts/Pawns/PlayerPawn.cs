@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FMODUnity;
 
 // Player Pawn
 // DO NOT DELETE (carries the camera as a child)
@@ -10,6 +11,9 @@ public class PlayerPawn : PawnControllerBase
 {
     [SerializeField]private float moveSensitivity = 0.1f; // how much input is needed to accept a move request
     [SerializeField]private int armorMax = 10;
+    [SerializeField]private EventReference voicePain;
+    [SerializeField]private EventReference voiceTaunt;
+    [SerializeField]private EventReference voiceLoot;
     List<SquareIndicator> indicators;
     private bool enteredActionState = false;
     private int experienceLevel = 10;
@@ -24,6 +28,7 @@ public class PlayerPawn : PawnControllerBase
     public int upgradeSupply { get; private set; } = 0; // +20% supply crates per level
     public int upgradeTerror { get; private set; } = 0; // -20% weak enemies per level
     public int upgradeMedic { get; private set; } = 0; // +20% healing per level
+    private bool roundTaunt;
 
     protected override void Start()
     {
@@ -99,6 +104,7 @@ public class PlayerPawn : PawnControllerBase
     {
         base.RoundPrep();
         enteredActionState = false;
+        roundTaunt = true;
         PlaceMoveIndicators();
         UIManager.instance.instructions.ShowInstruction(Instruction.Move);
     }
@@ -258,18 +264,22 @@ public class PlayerPawn : PawnControllerBase
                     }
                 }
             }
+
             if (clear)
             {
-                // space is clear, now activate all powerups in the space
                 for (int i = 0; i < collisions.Length; i++)
                 {
-                    PowerUpBase powerCollision = collisions[i].GetComponent<PowerUpBase>();
-                    if (powerCollision)
+                    if (collisions[i])
                     {
-                        powerCollision.TouchPowerup(this);
+                        PowerUpBase powerCollision = collisions[i].GetComponent<PowerUpBase>();
+                        if (powerCollision)
+                        {
+                            powerCollision.TouchPowerup(this);
+                        }
                     }
                 }
             }
+
         }
 
         // always spend a movement point even if the space is blocked
@@ -412,6 +422,7 @@ public class PlayerPawn : PawnControllerBase
         {
             StopWalking();
             ClearIndicators();
+            roundTaunt = false; // avoid taunting while out of turn
             UIManager.instance.instructions.HideInstructions();
             return true;
         }
@@ -462,6 +473,7 @@ public class PlayerPawn : PawnControllerBase
             }
             health = Mathf.Min(health + amount, healthMax);
             UpdateHealthBar();
+            AudioManager.instance.PlayOneShot(voiceLoot, transform.position);
             return true;
         }
         return false;
@@ -473,6 +485,7 @@ public class PlayerPawn : PawnControllerBase
         {
             armor = Mathf.Min(armor + amount, armorMax);
             UpdateArmorBar();
+            AudioManager.instance.PlayOneShot(voiceLoot, transform.position);
             return true;
         }
         return false;
@@ -486,6 +499,7 @@ public class PlayerPawn : PawnControllerBase
             {
                 weaponEquipped.Reload();
                 UpdateAmmoBar();
+                AudioManager.instance.PlayOneShot(voiceLoot, transform.position);
                 return true;
             }
         }
@@ -516,8 +530,22 @@ public class PlayerPawn : PawnControllerBase
         }
         if (IsAlive())
         {
+            AudioManager.instance.PlayOneShot(voicePain, transform.position);
             // if still alive, try to pick up any health/armour in the space
             CheckPickups();
+        }
+    }
+
+    // called every time an enemy takes damage
+    // will not taunt more than once per round
+    public void SayTaunt()
+    {
+        if (roundTaunt)
+        {
+            if (Global.RandomBool())
+                AudioManager.instance.PlayOneShot(voiceTaunt, transform.position);
+
+            roundTaunt = false;
         }
     }
 
@@ -559,6 +587,7 @@ public class PlayerPawn : PawnControllerBase
             }
             weaponReady = true;
             UpdateAmmoBar();
+            AudioManager.instance.PlayOneShot(voiceLoot, transform.position);
             return true;
         }
     }
@@ -567,14 +596,18 @@ public class PlayerPawn : PawnControllerBase
     void CheckPickups()
     {
         Collider2D[] collisions = Physics2D.OverlapPointAll(transform.position, Global.LayerPower());
+
         if (collisions.Length > 0)
         {
             for (int i = 0; i < collisions.Length; i++)
             {
-                PowerUpBase powerCollision = collisions[i].GetComponent<PowerUpBase>();
-                if (powerCollision)
+                if (collisions[i])
                 {
-                    powerCollision.TouchPowerup(this);
+                    PowerUpBase powerCollision = collisions[i].GetComponent<PowerUpBase>();
+                    if (powerCollision)
+                    {
+                        powerCollision.TouchPowerup(this);
+                    }
                 }
             }
         }

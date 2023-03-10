@@ -32,6 +32,12 @@ public class EnemyPawn : PawnControllerBase
         return actualStrength;
     }
 
+    public override void TakeDamage(int amount)
+    {
+        base.TakeDamage(amount);
+        StageManager.instance.playerPawn.SayTaunt();
+    }
+
     protected override void Death()
     {
         base.Death();
@@ -214,7 +220,7 @@ public class EnemyPawn : PawnControllerBase
         else
         {
             base.RoundPrep();
-            if (route.Count - movePoints > 8)
+            if (movePoints > 0 && route.Count - movePoints > 8)
                 movePoints += 2; // enemies that are a long way away get a little movement boost rather than paying the cost of pathfinding for a double move
         }
     }

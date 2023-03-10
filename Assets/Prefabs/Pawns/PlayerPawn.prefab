@@ -179,6 +179,27 @@ MonoBehaviour:
   animatorMoveJiggle: 0.25
   moveSensitivity: 0.1
   armorMax: 10
+  voicePain:
+    Guid:
+      Data1: 1863992730
+      Data2: 1122659686
+      Data3: -1811062888
+      Data4: 1613488881
+    Path: event:/SFX/PlayerPain
+  voiceTaunt:
+    Guid:
+      Data1: -2093850207
+      Data2: 1138075954
+      Data3: 191975066
+      Data4: -1450940798
+    Path: event:/SFX/PlayerTaunt
+  voiceLoot:
+    Guid:
+      Data1: 1758705325
+      Data2: 1242477283
+      Data3: 2109141918
+      Data4: -582352867
+    Path: event:/SFX/PlayerPickup
 --- !u!61 &-7605921204502077150
 BoxCollider2D:
   m_ObjectHideFlags: 0
