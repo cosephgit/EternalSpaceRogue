@@ -27,6 +27,7 @@ public class PawnControllerBase : MonoBehaviour
     [SerializeField]Animator animator;
     [SerializeField]float animatorBreathReduction = 4f;
     [SerializeField]float animatorBreathRate = 2f;
+    [SerializeField]float animatorMoveJiggle = 1f; // the amount of jiggling the sprite does when moving
     private EventInstance walkEvent;
     protected bool moving = false; // is this pawn currently moving between cells?
     protected int movePoints;
@@ -130,7 +131,7 @@ public class PawnControllerBase : MonoBehaviour
 
             moveAnim += Time.deltaTime;
             float moveCycle = moveAnim * Mathf.PI * 2 / moveTime;
-            moveRotate = Mathf.Cos(moveCycle) * -10f; // so the pawn oscillates back and forth once for each frame
+            moveRotate = Mathf.Cos(moveCycle) * -10f * animatorMoveJiggle; // so the pawn oscillates back and forth once for each frame
             moveOffset.x = Mathf.Cos(moveCycle) * 0.2f;
             moveOffset.y = Mathf.Abs(Mathf.Sin(moveCycle) * 0.2f);
 

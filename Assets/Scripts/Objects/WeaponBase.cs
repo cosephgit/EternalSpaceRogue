@@ -37,6 +37,7 @@ public class WeaponBase : MonoBehaviour
     bool freeMoving = true;
     Vector3 holdPosition;
     float holdAngle;
+    const int RECOILCOUNT = 4;
 
     void Awake()
     {
@@ -107,6 +108,7 @@ public class WeaponBase : MonoBehaviour
     // this equips the weapon to the passed owner pawn
     public bool EquipWeapon(PawnControllerBase owner, Vector3 dir)
     {
+        if (!freeMoving) return false; // not available!
         Initialise();
         weapOwner = owner;
         transform.parent = owner.transform;
@@ -124,7 +126,7 @@ public class WeaponBase : MonoBehaviour
             weapOwner.UnequipWeapon(this);
         }
         transform.parent = null;
-        BounceAway();
+        StartCoroutine(BounceAway());
         return true;
     }
 
@@ -151,7 +153,8 @@ public class WeaponBase : MonoBehaviour
             holdAngle = 0;
             return;
         }
-        holdPosition = (new Vector3(dir.y, -dir.x) * 0.5f) + (dir * 0.25f) + (Vector3.up * 0.25f);
+        // holdPosition = (a bit to the right) + (a bit forward) + (a bit up from the ground)
+        holdPosition = (new Vector3(dir.y, -dir.x) * 0.5f) + (dir * 0.25f) + (Vector3.up * Global.WEAPONHOLDHEIGHT);
         if (dir.x == 1)
         {
             holdAngle = 180f;
@@ -280,41 +283,64 @@ public class WeaponBase : MonoBehaviour
         }
         else if (animsIncrement)
         {
-            // make weapon recoil backwards slightly - could make it a staccato effect if "animsincrement" too?
+            // make weapon recoil backwards slightly - burst effect with multiple small bumps
             StartCoroutine(AnimWeaponRecoilBurst(facing));
         }
         else
         {
-            // make weapon recoil backwards slightly - could make it a staccato effect if "animsincrement" too?
-            StartCoroutine(AnimWeaponRecoil(facing));
+            Vector3 pos = gun.transform.localPosition - (facing * 0.5f); // simple recoil bump, the Update method will smoothly return it to position
+            gun.transform.localPosition = pos;
         }
     }
 
+    // lunge is a bit more complicated than the recoil!
     IEnumerator AnimWeaponLunge(Vector3 dir)
     {
-        Vector3 posStart;
+        Vector3 posStart = holdPosition; // the move is all completed relative to the holdPosition
+        Vector3 posReady = holdPosition + dir * 0.25f;
+        Vector3 posEnd = posReady + new Vector3(-dir.y, dir.x); // left from forward dir
         float animTime = 0;
+        float animTimeEnd;
+        Vector3 pos;
+
         freeMoving = false;
-        while (animTime < Global.combatStepDelay)
+
+        // first step of animation: move forward and right and angle to the side
+        animTimeEnd = Global.combatStepDelay * 0.5f;
+        while (animTime < animTimeEnd)
         {
             animTime += Time.deltaTime;
+
+            pos = Vector3.Lerp(posStart, posReady, animTime / animTimeEnd);
+            gun.transform.localPosition = pos;
+            yield return new WaitForEndOfFrame();
+        }
+        
+        // second step of animation: sweep right to left
+        animTime = 0;
+        animTimeEnd = Global.combatStepDelay * 0.5f;
+        while (animTime < animTimeEnd)
+        {
+            animTime += Time.deltaTime;
+
+            pos = Vector3.Lerp(posReady, posEnd, animTime / animTimeEnd);
+            gun.transform.localPosition = pos;
+            yield return new WaitForEndOfFrame();
         }
 
-        yield return new WaitForEndOfFrame();
-
+        // return control back to the ordinary position management
         freeMoving = true;
-    }
-
-    IEnumerator AnimWeaponRecoil(Vector3 dir)
-    {
-        yield return new WaitForSeconds(0.1f);
     }
 
     IEnumerator AnimWeaponRecoilBurst(Vector3 dir)
     {
-        freeMoving = false;
-        yield return new WaitForSeconds(0.1f);
-        freeMoving = true;
+        float recoilDelay = Global.combatStepDelay / RECOILCOUNT; // recoil 5 times
+        for (int i = 0; i < RECOILCOUNT; i++)
+        {
+            Vector3 pos = gun.transform.localPosition - (dir * 0.2f); // simple recoil bump, the Update method will smoothly return it to position
+            gun.transform.localPosition = pos;
+            yield return new WaitForSeconds(recoilDelay);
+        }
     }
 
     // this coroutine causes the impact points to be triggered one by one rather than all at once
@@ -364,9 +390,57 @@ public class WeaponBase : MonoBehaviour
     }
 
     // make this weapon bounce away and disappear
-    void BounceAway()
+    IEnumerator BounceAway()
     {
-        // TODO finish
+        if (gun)
+        {
+            Vector3 bounceDir = Quaternion.Euler(0, 0, Random.Range(-180f, 180f)) * Vector3.up;
+            Vector3 groundPos = gun.transform.localPosition;
+            float fakeYvee = 1f;
+            float fakeY = Global.WEAPONHOLDHEIGHT;
+            Vector3 pos;
+
+            groundPos.y -= fakeY;
+
+            freeMoving = false;
+
+            // bounce away
+            while (fakeY != 0 || fakeYvee != 0)
+            {
+                // move in the bounce direction
+                groundPos += bounceDir * Time.deltaTime;
+
+                // apply fake gravitational acceleration and velocity
+                fakeYvee += Global.FAKEGRAVITY * Time.deltaTime;
+                fakeY += fakeYvee * Time.deltaTime;
+
+                pos = groundPos + new Vector3(0, fakeY, 0);
+                gun.transform.localPosition = pos;
+
+                if (fakeY < 0)
+                {
+                    // bounce!
+                    fakeY = 0;
+                    if (fakeYvee > -0.5f) // let it stop bouncing
+                        fakeYvee = 0;
+                    else
+                    {
+                        fakeYvee = -0.8f * fakeYvee;
+                        bounceDir *= 0.8f; // slow down slightly
+                    }
+                }
+                yield return new WaitForEndOfFrame();
+            }
+
+            // flash and disappear
+            for (int i = 0; i < 10; i++)
+            {
+                if (i % 2 == 0) gun.enabled = false;
+                else gun.enabled = true;
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+        yield return new WaitForEndOfFrame();
         Destroy(gameObject);
     }
 
@@ -378,20 +452,20 @@ public class WeaponBase : MonoBehaviour
 
     void Update()
     {
-        if (freeMoving)
+        if (gun && freeMoving)
         {
-            if (!Global.ApproxVector(holdPosition, transform.localPosition))
+            if (!Global.ApproxVector(holdPosition, gun.transform.localPosition))
             {
-                // gradually move back to default position
-                Vector3 pos = holdPosition - transform.localPosition;
+                // gradually move to default position
+                Vector3 pos = holdPosition - gun.transform.localPosition;
                 if (pos.magnitude > Time.deltaTime)
                 {
                     pos = pos.normalized * Time.deltaTime;
                 }
-                pos += transform.localPosition;
-                transform.localPosition = pos;
+                pos += gun.transform.localPosition;
+                gun.transform.localPosition = pos;
             }
-            transform.rotation = Quaternion.Euler(0, 0, holdAngle);
+            gun.transform.rotation = Quaternion.Euler(0, 0, holdAngle);
         }
     }
 }

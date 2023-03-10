@@ -176,6 +176,7 @@ MonoBehaviour:
   animator: {fileID: 329860723102987434}
   animatorBreathReduction: 20
   animatorBreathRate: 2
+  animatorMoveJiggle: 0.5
   moveSensitivity: 0.1
   armorMax: 10
 --- !u!61 &-7605921204502077150

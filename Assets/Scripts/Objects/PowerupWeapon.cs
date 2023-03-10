@@ -12,6 +12,7 @@ public class PowerupWeapon : PowerUpBase
     {
         weaponActual = Instantiate(weapons.Select(maxStrength), transform.position + weapOffset, Quaternion.identity);
         weaponActual.transform.parent = transform;
+        weaponActual.SetWeaponPosition(Vector3.zero);
     }
 
     // this is used to instruct this power up to accept a pre-existing weapon
@@ -20,6 +21,7 @@ public class PowerupWeapon : PowerUpBase
         weaponActual = weapon;
         weaponActual.transform.parent = transform;
         weaponActual.transform.position = transform.position;
+        weaponActual.SetWeaponPosition(Vector3.zero);
     }
 
     public override bool TouchPowerup(PlayerPawn pawn)
