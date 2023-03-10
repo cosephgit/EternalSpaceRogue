@@ -276,20 +276,24 @@ public class WeaponBase : MonoBehaviour
             // place the impact points one at a time instead of all at once
             StartCoroutine(AnimEffectsIncremented());
         }
-        if (replaceRecoilWithLunge)
+        if (gun)
         {
-            // make weapon do a swinging arc
-            StartCoroutine(AnimWeaponLunge(facing));
-        }
-        else if (animsIncrement)
-        {
-            // make weapon recoil backwards slightly - burst effect with multiple small bumps
-            StartCoroutine(AnimWeaponRecoilBurst(facing));
-        }
-        else
-        {
-            Vector3 pos = gun.transform.localPosition - (facing * 0.5f); // simple recoil bump, the Update method will smoothly return it to position
-            gun.transform.localPosition = pos;
+            // this is all triggering animations so only do them if there is a gun!
+            if (replaceRecoilWithLunge)
+            {
+                // make weapon do a swinging arc
+                StartCoroutine(AnimWeaponLunge(facing));
+            }
+            else if (animsIncrement)
+            {
+                // make weapon recoil backwards slightly - burst effect with multiple small bumps
+                StartCoroutine(AnimWeaponRecoilBurst(facing));
+            }
+            else
+            {
+                Vector3 pos = gun.transform.localPosition - (facing * 0.5f); // simple recoil bump, the Update method will smoothly return it to position
+                gun.transform.localPosition = pos;
+            }
         }
     }
 
@@ -310,9 +314,11 @@ public class WeaponBase : MonoBehaviour
         while (animTime < animTimeEnd)
         {
             animTime += Time.deltaTime;
-
-            pos = Vector3.Lerp(posStart, posReady, animTime / animTimeEnd);
-            gun.transform.localPosition = pos;
+            if (gun)
+            {
+                pos = Vector3.Lerp(posStart, posReady, animTime / animTimeEnd);
+                gun.transform.localPosition = pos;
+            }
             yield return new WaitForEndOfFrame();
         }
         
@@ -322,9 +328,11 @@ public class WeaponBase : MonoBehaviour
         while (animTime < animTimeEnd)
         {
             animTime += Time.deltaTime;
-
-            pos = Vector3.Lerp(posReady, posEnd, animTime / animTimeEnd);
-            gun.transform.localPosition = pos;
+            if (gun)
+            {
+                pos = Vector3.Lerp(posReady, posEnd, animTime / animTimeEnd);
+                gun.transform.localPosition = pos;
+            }
             yield return new WaitForEndOfFrame();
         }
 

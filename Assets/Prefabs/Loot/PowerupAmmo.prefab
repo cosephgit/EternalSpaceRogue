@@ -54,6 +54,7 @@ MonoBehaviour:
       Data3: 1175027365
       Data4: 312766168
     Path: event:/SFX/PickupWeapon
+  pickupAnim: {fileID: 0}
 --- !u!58 &-7294799918271428771
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -153,4 +154,4 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1

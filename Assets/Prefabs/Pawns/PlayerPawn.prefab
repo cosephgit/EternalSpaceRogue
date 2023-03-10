@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!95 &329860723102987434
 Animator:
   serializedVersion: 5
@@ -176,7 +176,7 @@ MonoBehaviour:
   animator: {fileID: 329860723102987434}
   animatorBreathReduction: 20
   animatorBreathRate: 2
-  animatorMoveJiggle: 0.5
+  animatorMoveJiggle: 0.25
   moveSensitivity: 0.1
   armorMax: 10
 --- !u!61 &-7605921204502077150

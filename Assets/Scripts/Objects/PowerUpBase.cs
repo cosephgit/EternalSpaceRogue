@@ -32,6 +32,7 @@ public class PowerUpBase : MonoBehaviour
 {
     [SerializeField]protected float quality = 1;
     [SerializeField]EventReference pickupSound;
+    [SerializeField]Animator pickupAnim;
     protected bool ready = true;
 
     public virtual void PrepPowerup(float maxStrength)
@@ -43,15 +44,24 @@ public class PowerUpBase : MonoBehaviour
     {
         if (!ready) return true;
 
-        if (!pickupSound.IsNull)
-            AudioManager.instance.PlayOneShot(pickupSound, transform.position);
         Consume();
         return true;
     }
 
-    protected virtual void Consume()
+    protected void Consume()
     {
         ready = false;
+        if (!pickupSound.IsNull)
+            AudioManager.instance.PlayOneShot(pickupSound, transform.position);
+
+        if (pickupAnim) StartCoroutine(ConsumeAnim());
+        else Destroy(gameObject);
+    }
+
+    IEnumerator ConsumeAnim()
+    {
+        pickupAnim.SetBool("Used", true);
+        yield return new WaitForSeconds(0.5f);
         Destroy(gameObject);
     }
 

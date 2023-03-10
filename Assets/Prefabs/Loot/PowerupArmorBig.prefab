@@ -70,6 +70,7 @@ MonoBehaviour:
       Data3: -1480112987
       Data4: 1577391594
     Path: event:/SFX/PickupArmor
+  pickupAnim: {fileID: 0}
   armorAmount: 6
 --- !u!1 &3359278963155171122
 GameObject:
@@ -154,4 +155,4 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1

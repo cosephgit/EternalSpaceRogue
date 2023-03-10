@@ -35,9 +35,8 @@ public class StageInit : BaseState
         {
             // face less enemy strength overall BUT the basic group strength will be bigger
             // the 20% in the UI is just an approximation
-            float factor = 1f + ((float)_sm.playerPawn.upgradeTerror * 0.1f);
-            initEnemyTotal /= factor;
-            initEnemyIndividual *= factor;
+            initEnemyTotal /= (1f + ((float)_sm.playerPawn.upgradeTerror * 0.1f));
+            initEnemyIndividual *= (1f + ((float)_sm.playerPawn.upgradeTerror * 0.5f));
         }
 
         _sm.powerPoints = initPower;
@@ -290,11 +289,22 @@ public class StageInit : BaseState
         while (initEnemyTotal > 0)
         {
             Vector3 pos = SelectSpawnPoint();
+            EnemyPawn prefab = enemiesValid[Random.Range(0, enemiesValid.Count)];
+
+            if (_sm.playerPawn.upgradeTerror > 0)
+            {
+                float terrorMax = initEnemyIndividual * (6f - _sm.playerPawn.upgradeTerror) / 6f;
+                if (prefab.enemyStrength < terrorMax)
+                {
+                    // if the player has terror upgrades, weaker enemies get rerolled once (reduces chance of them)
+                    prefab = enemiesValid[Random.Range(0, enemiesValid.Count)];
+                }
+            }
 
             if (pos.magnitude > 0)
             {
                 // place the enemy
-                enemySpawned = GameObject.Instantiate(enemiesValid[Random.Range(0, enemiesValid.Count)], pos, Quaternion.identity);
+                enemySpawned = GameObject.Instantiate(prefab, pos, Quaternion.identity);
                 _sm.enemySpawns.Add(enemySpawned);
                 // set the enemy strength based on stage difficulty, and adjust the remaining stage enemy strength total by the result
                 // TODO spawn "pods" of enemies if they're individually very weak on a later stage

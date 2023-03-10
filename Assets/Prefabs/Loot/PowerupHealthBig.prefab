@@ -54,6 +54,7 @@ MonoBehaviour:
       Data3: 1097121973
       Data4: -1652521685
     Path: event:/SFX/PickupHealth
+  pickupAnim: {fileID: 0}
   healAmount: 6
 --- !u!58 &-3905970351539689918
 CircleCollider2D:
@@ -154,4 +155,4 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
