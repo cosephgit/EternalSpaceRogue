@@ -195,6 +195,31 @@ public class PlayerPawn : PawnControllerBase
     protected override void PreAttack()
     {
         base.PreAttack();
+
+        if (indicators.Count > 0 && Global.RandomBool())
+        {
+            bool target = false;
+
+            for (int i = 0; i < indicators.Count; i++)
+            {
+                Collider2D targetHit = Physics2D.OverlapPoint(indicators[i].transform.position, Global.LayerPawn());
+
+                if (targetHit)
+                {
+                    if (targetHit.transform != transform)
+                    {
+                        target = true; // if player is targeting a pawn beside themselves
+                        i = indicators.Count; // end the loop, no more need
+                    }
+                }
+            }
+
+            if (target)
+            {
+                AudioManager.instance.PlayOneShot(voiceTaunt, transform.position);
+            }
+        }
+
         FlashAttackIndicators();
         if (weaponReady) UpdateAmmoBar(); // no need if using fist
     }
@@ -533,19 +558,6 @@ public class PlayerPawn : PawnControllerBase
             AudioManager.instance.PlayOneShot(voicePain, transform.position);
             // if still alive, try to pick up any health/armour in the space
             CheckPickups();
-        }
-    }
-
-    // called every time an enemy takes damage
-    // will not taunt more than once per round
-    public void SayTaunt()
-    {
-        if (roundTaunt)
-        {
-            if (Global.RandomBool())
-                AudioManager.instance.PlayOneShot(voiceTaunt, transform.position);
-
-            roundTaunt = false;
         }
     }
 

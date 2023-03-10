@@ -35,7 +35,6 @@ public class EnemyPawn : PawnControllerBase
     public override void TakeDamage(int amount)
     {
         base.TakeDamage(amount);
-        StageManager.instance.playerPawn.SayTaunt();
     }
 
     protected override void Death()
