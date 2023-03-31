@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{4b23471f-013e-48b4-b7c3-2b98b6e82f93}">
+		<property name="assetPath">
+			<value>old_heartbeat.wav</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>106.90848072562358</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f95c799a-5fc6-498b-aad8-ce38ee283c6a}</destination>
+		</relationship>
+	</object>
+</objects>

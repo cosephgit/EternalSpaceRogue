@@ -10,7 +10,7 @@ public static class Global
     // movement/animation speed incrementors which can be adjusted from the menu
     public static float scalePawnSpeed = 1f; // this can be used to adjust the rate at which pawns move from space to space
     public static float combatStepDelay = 0.3f; // the time between preattack, attack and postattack combat steps
-    public static float actionRepeatDelay = 0.2f; // the time between aimpoint moves and other player actions
+    public static float actionRepeatDelay = 0.1f; // the time between aimpoint moves and other player actions
     // weapon animation constants
     public const float WEAPONHOLDHEIGHT = 0.25f; // the height a weapon is held at
     public const float FAKEGRAVITY = -5f; // fake gravity
@@ -40,7 +40,7 @@ public static class Global
     public const float XPPERSTAGEEXPONENT = 1.4f; // exponent for stage difficulty
     public const float XPPERSTRENGTH = 2f; // // XP gained per point of enemy strength
     public const float XPPERLEVELBASE = 20f; // base XP needed per level
-    public const float XPPERLEVELEXPONENT = 1.4f;
+    public const float XPPERLEVELEXPONENT = 1.5f;
     // save data keys
     public const string KEYVOLMASTER = "VolumeMaster";
     public const string KEYVOLSFX = "VolumeSFX";

@@ -228,18 +228,22 @@ public class EnemyPawn : PawnControllerBase
     {
         Vector3[] attackSpaces;
         int rangeCheck = 1;
+        WeaponBase weaponUsed;
         rangeOptimal = 0;
         rangeOptimalFF = 0;
+
+        if (weaponEquipped) weaponUsed = weaponEquipped;
+        else weaponUsed = weaponUnarmed;
 
         // so now we get all attack points for the weapon and if any of them contain the player, its' good!
         // we need to check all possible attack ranges though
         // if there are multiple good answers, take the one that hits the least friendlies
-        while (rangeCheck <= weaponEquipped.rangeMax)
+        while (rangeCheck <= weaponUsed.rangeMax)
         {
             float rangeCheckFF = 0;
             bool rangeHitsPlayer = false;
 
-            attackSpaces = weaponEquipped.GetHitLocations(transform.position, checkDir, rangeCheck);
+            attackSpaces = weaponUsed.GetHitLocations(transform.position, checkDir, rangeCheck);
 
             // check for the player and for friendlies that will be hit by using this range, we need all of this before making decisions
             for (int i = 0; i < attackSpaces.Length; i++)
@@ -297,7 +301,7 @@ public class EnemyPawn : PawnControllerBase
 
             // check if the current aim space is obstructed by a pawn or wall - if so, it's the maximum range we can try
             Collider2D blockedSpace = Physics2D.OverlapPoint(transform.position + (checkDir * rangeCheck), Global.LayerObstacle());
-            if (blockedSpace) rangeCheck = weaponEquipped.rangeMax + 1;
+            if (blockedSpace) rangeCheck = weaponUsed.rangeMax + 1;
             else rangeCheck++;
         }
     }
@@ -346,6 +350,8 @@ public class EnemyPawn : PawnControllerBase
 
             if (weaponEquipped)
                 rangeCurrentMax = weaponEquipped.rangeHitMax;
+            else if (weaponUnarmed)
+                rangeCurrentMax = weaponUnarmed.rangeHitMax;
 
             if (rangeCurrent <= 1)
             {
@@ -355,6 +361,8 @@ public class EnemyPawn : PawnControllerBase
                 attackRange = 1;
                 if (weaponEquipped)
                     weaponEquipped.SetWeaponPosition(attackFacing);
+                else if (weaponUnarmed)
+                    weaponUnarmed.SetWeaponPosition(attackFacing);
             }
             else if (rangeCurrent <= rangeCurrentMax)
             {
@@ -420,6 +428,8 @@ public class EnemyPawn : PawnControllerBase
                     attackFacing = attackDir;
                     if (weaponEquipped)
                         weaponEquipped.SetWeaponPosition(attackFacing);
+                    else if (weaponUnarmed)
+                        weaponUnarmed.SetWeaponPosition(attackFacing);
                     attackRange = rangeOptimal;
                 }
             }
